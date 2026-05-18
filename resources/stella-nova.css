@@ -1,0 +1,61 @@
+/* Stella Nova — layout y componentes. Mobile-first, Grid + Flexbox. */
+html { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+	margin: 0;
+	background: var(--sn-color-bg);
+	color: var(--sn-color-text);
+	font-family: var(--sn-font-body);
+	line-height: 1.6;
+}
+a { color: var(--sn-color-link); }
+.sn-root { display: flex; flex-direction: column; min-height: 100vh; }
+.sn-skiplink {
+	position: absolute; left: -999px;
+	background: var(--sn-color-accent); color: #fff;
+	padding: var(--sn-space-2) var(--sn-space-3); z-index: 100;
+}
+.sn-skiplink:focus { left: var(--sn-space-2); top: var(--sn-space-2); }
+.sn-header {
+	display: flex; flex-wrap: wrap; gap: var(--sn-space-3);
+	align-items: center; padding: var(--sn-space-3);
+	border-bottom: 1px solid var(--sn-color-border);
+	background: var(--sn-color-surface);
+}
+.sn-logo { font-weight: 700; font-size: 1.25rem; text-decoration: none;
+	color: var(--sn-color-text); }
+.sn-search { margin-left: auto; display: flex; gap: var(--sn-space-1); }
+.sn-layout { display: block; flex: 1; }
+.sn-sidebar {
+	padding: var(--sn-space-3);
+	border-bottom: 1px solid var(--sn-color-border);
+}
+.sn-portlet-label { font-size: .8rem; text-transform: uppercase;
+	letter-spacing: .04em; color: var(--sn-color-muted); margin: 0 0 var(--sn-space-1); }
+.sn-portlet ul { list-style: none; margin: 0 0 var(--sn-space-3); padding: 0; }
+.sn-main {
+	padding: var(--sn-space-4) var(--sn-space-3);
+	max-width: var(--sn-measure);
+	margin-inline: auto;
+}
+.sn-footer {
+	border-top: 1px solid var(--sn-color-border);
+	padding: var(--sn-space-4) var(--sn-space-3);
+	color: var(--sn-color-muted); font-size: .9rem;
+	background: var(--sn-color-surface);
+}
+@media (min-width: 60rem) {
+	.sn-layout {
+		display: grid;
+		grid-template-columns: 16rem minmax(0, 1fr);
+		gap: var(--sn-space-4);
+	}
+	.sn-sidebar { border-bottom: 0; border-right: 1px solid var(--sn-color-border); }
+	.sn-main { padding-block: var(--sn-space-5); }
+}
+:where(a, button, input, [tabindex]):focus-visible {
+	outline: 3px solid var(--sn-color-accent); outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+	* { transition: none !important; animation: none !important; }
+}

@@ -1,0 +1,4 @@
+/* Stella Nova — impresión: ocultar cromo, contenido a ancho completo. */
+.sn-header, .sn-sidebar, .sn-footer, .sn-skiplink { display: none !important; }
+.sn-main { max-width: none; margin: 0; padding: 0; }
+a { color: #000; text-decoration: underline; }

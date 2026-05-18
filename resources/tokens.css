@@ -1,0 +1,28 @@
+/* Stella Nova — tokens (custom properties). Light/dark con prefers-color-scheme. */
+:root {
+	--sn-color-bg: #ffffff;
+	--sn-color-surface: #f6f7f9;
+	--sn-color-text: #1b1b1d;
+	--sn-color-muted: #5a5d63;
+	--sn-color-border: #d6d9de;
+	--sn-color-link: #0b5fff;
+	--sn-color-accent: #b3122e;
+	--sn-space-1: .25rem; --sn-space-2: .5rem; --sn-space-3: 1rem;
+	--sn-space-4: 1.5rem; --sn-space-5: 2.5rem;
+	--sn-radius: 8px;
+	--sn-font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--sn-font-head: var(--sn-font-body);
+	--sn-measure: 72ch;
+	--sn-transition: 160ms ease;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--sn-color-bg: #16181c;
+		--sn-color-surface: #1f2228;
+		--sn-color-text: #e8e9ec;
+		--sn-color-muted: #a4a8b0;
+		--sn-color-border: #333741;
+		--sn-color-link: #7fb0ff;
+		--sn-color-accent: #ff7a90;
+	}
+}

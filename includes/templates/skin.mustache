@@ -1,0 +1,42 @@
+{{{html-headelement}}}
+<div class="sn-root">
+	<a class="sn-skiplink" href="#sn-content">{{msg-stellanova-skip-to-content}}</a>
+	<header class="sn-header">
+		<a class="sn-logo" href="{{link-mainpage}}">{{msg-sitetitle}}</a>
+		{{#data-search-box}}
+		<form class="sn-search" role="search" action="{{form-action}}">
+			{{{html-input}}}{{{html-button-search}}}
+		</form>
+		{{/data-search-box}}
+		{{#data-portlets.data-user-menu}}
+		<nav class="sn-usermenu" aria-label="{{label}}">{{{html-items}}}</nav>
+		{{/data-portlets.data-user-menu}}
+	</header>
+	<div class="sn-layout">
+		<aside class="sn-sidebar" aria-label="{{msg-stellanova-sidebar}}">
+			{{#data-portlets-sidebar.array-portlets}}
+			<nav class="sn-portlet" aria-labelledby="{{id}}-label">
+				<h3 id="{{id}}-label" class="sn-portlet-label">{{label}}</h3>
+				<div class="sn-portlet-body">{{{html-items}}}</div>
+			</nav>
+			{{/data-portlets-sidebar.array-portlets}}
+		</aside>
+		<main id="sn-content" class="sn-main">
+			{{{html-site-notice}}}
+			{{{html-title-heading}}}
+			{{{html-subtitle}}}
+			{{{html-undelete-link}}}
+			<div class="sn-body mw-body-content">{{{html-body-content}}}</div>
+			{{{html-categories}}}
+		</main>
+	</div>
+	<footer class="sn-footer">
+		{{#data-footer.array-items}}
+		<div class="sn-footer-block">{{{html-items}}}</div>
+		{{/data-footer.array-items}}
+	</footer>
+</div>
+{{{html-after-content}}}
+{{{html-printtail}}}
+</body>
+</html>

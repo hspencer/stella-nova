@@ -1,0 +1,68 @@
+{
+	"manifest_version": 2,
+	"name": "StellaNova",
+	"namemsg": "skinname-stellanova",
+	"version": "0.1.0",
+	"author": [ "Herbert Spencer" ],
+	"url": "https://github.com/eadpucv/stella-nova",
+	"descriptionmsg": "stellanova-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "skin",
+	"requires": { "MediaWiki": ">= 1.43.0" },
+	"AutoloadNamespaces": {
+		"MediaWiki\\Skins\\StellaNova\\": "includes/"
+	},
+	"ValidSkinNames": {
+		"stellanova": {
+			"class": "MediaWiki\\Skins\\StellaNova\\SkinStellaNova",
+			"args": [
+				{
+					"name": "stellanova",
+					"responsive": true,
+					"templateDirectory": "includes/templates",
+					"styles": [ "skins.stellanova.styles" ],
+					"scripts": [ "skins.stellanova.scripts" ],
+					"messages": [
+						"stellanova-skip-to-content",
+						"stellanova-sidebar"
+					],
+					"menus": [
+						"user-menu",
+						"user-interface-preferences",
+						"notifications",
+						"views",
+						"actions",
+						"namespaces",
+						"associated-pages",
+						"variants"
+					]
+				}
+			]
+		}
+	},
+	"MessagesDirs": { "StellaNova": [ "i18n" ] },
+	"ResourceFileModulePaths": {
+		"localBasePath": "resources",
+		"remoteSkinPath": "StellaNova/resources"
+	},
+	"ResourceModules": {
+		"skins.stellanova.styles": {
+			"class": "MediaWiki\\ResourceLoader\\SkinModule",
+			"features": {
+				"normalize": true,
+				"elements": true,
+				"content-links": true,
+				"content-tables": true,
+				"toc": true
+			},
+			"styles": {
+				"tokens.css": {},
+				"stella-nova.css": {},
+				"print.css": { "media": "print" }
+			}
+		},
+		"skins.stellanova.scripts": {
+			"scripts": [ "skin.js" ]
+		}
+	}
+}
