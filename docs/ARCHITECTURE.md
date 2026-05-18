@@ -11,7 +11,7 @@ heredar de Chameleon. Solo el contrato mínimo de MediaWiki (`SkinMustache` +
 referencia, no se copian.
 
 El **contrato de comportamiento** vive en
-[`../stella-nova.allium`](../stella-nova.allium) (Allium, validado con
+[`../specs/stella-nova.allium`](../specs/stella-nova.allium) (Allium, validado con
 `allium check`): este doc fija doctrina y principios; el spec, la
 especificación verificable de *qué hace* el skin (preferencias, chrome,
 identidad, modo de página, fidelidad estructural). Ante desacuerdo, el

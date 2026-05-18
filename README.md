@@ -39,7 +39,7 @@ Probar sin cambiar el default: añadir `?useskin=stellanova` a cualquier URL.
 
 ## Especificación y documentación
 
-- [`stella-nova.allium`](stella-nova.allium) — **especificación de
+- [`specs/stella-nova.allium`](specs/stella-nova.allium) — **especificación de
   comportamiento** (Allium): resolución de las 7 preferencias de skin,
   chrome administrable desde el namespace `Stella-Nova`, modo pantalla
   completa para páginas experimentales, identidad tri-estado (anónimo /
