@@ -136,7 +136,10 @@
 			"+ext.pageforms.forminput.styles": "skinStyles/pageforms.css",
 			"+ext.pageforms.submit.styles": "skinStyles/pageforms.css",
 			"+ext.pageforms.checkboxes.styles": "skinStyles/pageforms.css",
-			"+ext.pageforms.rating.styles": "skinStyles/pageforms.css"
+			"+ext.pageforms.rating.styles": "skinStyles/pageforms.css",
+			"+oojs-ui-core.styles": "skinStyles/oojs-ui.css",
+			"+oojs-ui-widgets.styles": "skinStyles/oojs-ui.css",
+			"+oojs-ui-windows.styles": "skinStyles/oojs-ui.css"
 		}
 	}
 }

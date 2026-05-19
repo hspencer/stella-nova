@@ -429,7 +429,13 @@ a:visited { color: var(--sn-link-visited); }
 .sn-body :is(ul, ol) { margin: 0 0 var(--sn-s-4); padding-left: var(--sn-s-5); }
 .sn-body li { margin: .2rem 0; }
 .sn-body li::marker { color: var(--sn-ink-faint); }
+/* Enlaces del contenido: el token manda. Especificidad .sn-body a*
+   (0,0,2,x) para vencer a MediaWiki:Common.css `a:visited{...}`, que
+   carga después del skin (módulo `site`) con igual especificidad. */
 .sn-body a { color: var(--sn-link); }
+.sn-body a:hover { color: var(--sn-link-hover); }
+.sn-body a:visited { color: var(--sn-link-visited); }
+.sn-body a:visited:hover { color: var(--sn-link-hover); }
 
 /* Enlaces externos: el ÍCONO lo define el skin (Feather external-link),
    no el de core. Se anula el background de la feature content-links y se
@@ -876,6 +882,9 @@ canvas, iframe,
 
 /* ─── Editor: tipografía monoespaciada recién instalada (IBM Plex Mono),
    un pelo más grande, padding 1ex; legible también en modo oscuro. ─── */
+/* Sin borde ni radio: el textarea va envuelto por el chrome de
+   WikiEditor, que ya aporta borde/redondez (si los duplicamos se ve
+   doble). El skin solo aporta tipografía/espacio/color. */
 #wpTextbox1,
 .mw-editfont-monospace,
 .wikiEditor-ui-text textarea,
@@ -886,9 +895,12 @@ textarea.mw-editfont-monospace {
 	padding: 1ex !important;
 	color: var(--sn-ink);
 	background: var(--sn-paper);
-	border: 1px solid var(--sn-hairline);
-	border-radius: var(--sn-radius);
+	border: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
 }
-#wpTextbox1:focus, .wikiEditor-ui-text textarea:focus {
-	outline: none; border-color: var(--sn-ink-faint);
-}
+#wpTextbox1:focus, .wikiEditor-ui-text textarea:focus { outline: none; }
+/* Los componentes OOUI (botones, campos, casillas, diálogos) del editor
+   y de todo el wiki se reskinea de forma centralizada y token-driven en
+   resources/skinStyles/oojs-ui.css (registrado contra los módulos
+   oojs-ui-* en skin.json). Aquí no se parchea OOUI. */

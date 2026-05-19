@@ -71,8 +71,7 @@ externo es el token `--sn-ext-icon` (máscara) en
 
 **Color.** Acento único (la “nova”, carmín) en `--sn-nova`; tinta y
 campo en `--sn-ink*` / `--sn-field` / `--sn-paper`. Light/dark se
-resuelven en [`tokens.css`](resources/tokens.css) (`prefers-color-scheme`
-+ `[data-sn-theme]`).
+resuelven en [`tokens.css`](resources/tokens.css) (`prefers-color-scheme`+ `[data-sn-theme]`).
 
 ## Licencia
 

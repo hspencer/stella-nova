@@ -32,9 +32,9 @@
 	--sn-nova-wash:    #f7e9e6;   /* lavado tenue: selección, fondo activo   */
 
 	/* — Enlaces (AA sobre papel cálido) — */
-	--sn-link:         #1f4fa8;
-	--sn-link-hover:   #16386f;
-	--sn-link-visited: #6a4a86;
+	--sn-link:         #ae2d13;
+	--sn-link-hover:   #962c08;
+	--sn-link-visited: #612403;
 
 	/* Íconos de UI: nunca negro pleno ni acento; tinta al ~70% en reposo,
 	   tinta plena al hover/activo. Nunca carmín. */
@@ -45,6 +45,44 @@
 	--sn-ok:           #2f6f43;
 	--sn-warn:         #8a5a12;
 	--sn-danger:       #b21e33;
+
+	/* — Controles / formularios (capa SEMÁNTICA) —
+	   Único origen de verdad para botones, campos, casillas y diálogos
+	   (los consume tanto stella-nova.css como skinStyles/oojs-ui.css —
+	   ahí se reskinea OOUI). Todo se deriva de las primitivas de arriba,
+	   así claro/oscuro voltea solo (no se redefine en los bloques de
+	   tema). La nova NO rellena controles: solo foco. */
+	/* Botón neutro (enmarcado, acción secundaria) */
+	--sn-btn-bg:            var(--sn-sunk);
+	--sn-btn-bg-hover:      var(--sn-paper);
+	--sn-btn-fg:            var(--sn-ink);
+	--sn-btn-border:        var(--sn-hairline);
+	--sn-btn-border-hover:  var(--sn-ink-faint);
+	/* Acción primaria (Guardar): tinta plena, decidida — sin azul */
+	--sn-btn-primary-bg:        var(--sn-ink);
+	--sn-btn-primary-bg-hover:  color-mix(in oklab, var(--sn-ink) 86%, var(--sn-paper));
+	--sn-btn-primary-fg:        var(--sn-paper);
+	/* Acción destructiva primaria */
+	--sn-btn-danger-bg:     var(--sn-danger);
+	--sn-btn-danger-fg:     var(--sn-nova-ink);
+	/* Campos de texto / select / textarea */
+	--sn-field-bg:          var(--sn-paper);
+	--sn-field-bg-disabled: var(--sn-sunk);
+	--sn-field-fg:          var(--sn-ink);
+	--sn-field-border:      var(--sn-hairline);
+	--sn-field-placeholder: var(--sn-ink-faint);
+	/* Marcado (casilla/radio/interruptor activos) */
+	--sn-on-bg:             var(--sn-ink);
+	--sn-on-fg:             var(--sn-paper);
+	/* Opciones de menú/desplegable */
+	--sn-opt-hover-bg:      var(--sn-sunk);
+	--sn-opt-sel-bg:        var(--sn-nova-wash);
+	--sn-opt-fg:            var(--sn-ink);
+	/* Foco: único uso de la nova en controles (aro + borde) */
+	--sn-focus-border:      var(--sn-nova);
+	--sn-focus-ring:        0 0 0 2px var(--sn-nova-wash);
+	/* Velo de diálogos modales */
+	--sn-scrim:             color-mix(in oklab, var(--sn-ink) 45%, transparent);
 
 	/* — Tipografía — Work Sans (cuerpo/UI), Newsreader (display: titulares,
 	   citas, <poem> — serif editorial con eje óptico), IBM Plex Mono

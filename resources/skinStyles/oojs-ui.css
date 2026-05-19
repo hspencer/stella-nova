@@ -1,0 +1,206 @@
+/* Stella Nova — reskin centralizado de OOUI (oojs-ui, tema WikimediaUI).
+ *
+ * OOUI es la librería de componentes de MediaWiki (botones, campos,
+ * casillas, desplegables, diálogos). La usan el editor, Preferencias,
+ * páginas especiales, PageForms y la UI de SMW. Su tema trae colores
+ * fijos (el azul «progressive» #36c) que en 1.43 no leen variables en
+ * runtime: hay que sobrescribir sus selectores.
+ *
+ * Este archivo se registra en skin.json vía ResourceModuleSkinStyles
+ * contra +oojs-ui-core.styles / +oojs-ui-widgets.styles /
+ * +oojs-ui-windows.styles, así que aplica en TODO el wiki: un solo
+ * esquema, no dos. El skin POSEE OOUI.
+ *
+ * Regla de oro: cero literales aquí. Todo sale de la capa semántica de
+ * tokens.css (--sn-btn-* / --sn-field-* / --sn-on-* / --sn-opt-* /
+ * --sn-focus-* / --sn-scrim). Para retunear: tokens.css, no este
+ * archivo. `!important` solo donde OOUI gana por especificidad/!important
+ * propio. No se reestructura el DOM de OOUI, solo color/superficie.
+ */
+
+/* ─────────────────────── Botones ─────────────────────── */
+
+/* Neutro enmarcado (acción secundaria: Mostrar previsualización, etc.) */
+.oo-ui-buttonElement-framed > .oo-ui-buttonElement-button {
+	background-color: var(--sn-btn-bg) !important;
+	color: var(--sn-btn-fg) !important;
+	border-color: var(--sn-btn-border) !important;
+	box-shadow: none !important;
+}
+.oo-ui-buttonElement-framed > .oo-ui-buttonElement-button:hover {
+	background-color: var(--sn-btn-bg-hover) !important;
+	border-color: var(--sn-btn-border-hover) !important;
+	color: var(--sn-btn-fg) !important;
+}
+
+/* Sin marco (tipo enlace / icónico): token de enlace, sin azul */
+.oo-ui-buttonElement-frameless > .oo-ui-buttonElement-button {
+	color: var(--sn-link) !important;
+	box-shadow: none !important;
+}
+.oo-ui-buttonElement-frameless > .oo-ui-buttonElement-button:hover {
+	color: var(--sn-link-hover) !important;
+	background-color: transparent !important;
+}
+
+/* Progressive primaria (Guardar cambios): tinta plena, decidida */
+.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button {
+	background-color: var(--sn-btn-primary-bg) !important;
+	color: var(--sn-btn-primary-fg) !important;
+	border-color: transparent !important;
+	box-shadow: none !important;
+}
+.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button:hover {
+	background-color: var(--sn-btn-primary-bg-hover) !important;
+}
+
+/* Progressive sin primaria (enlaces de acción: Cancelar, secciones) */
+.oo-ui-flaggedElement-progressive:not(.oo-ui-flaggedElement-primary) > .oo-ui-buttonElement-button {
+	color: var(--sn-link) !important;
+}
+.oo-ui-flaggedElement-progressive:not(.oo-ui-flaggedElement-primary).oo-ui-buttonElement-framed > .oo-ui-buttonElement-button {
+	background-color: var(--sn-btn-bg) !important;
+	border-color: var(--sn-btn-border) !important;
+}
+
+/* Destructive (Borrar / Revertir) */
+.oo-ui-flaggedElement-destructive:not(.oo-ui-flaggedElement-primary) > .oo-ui-buttonElement-button {
+	color: var(--sn-danger) !important;
+}
+.oo-ui-flaggedElement-primary.oo-ui-flaggedElement-destructive > .oo-ui-buttonElement-button {
+	background-color: var(--sn-btn-danger-bg) !important;
+	color: var(--sn-btn-danger-fg) !important;
+	border-color: transparent !important;
+}
+
+/* Deshabilitado: apagado, sin acento */
+.oo-ui-widget-disabled.oo-ui-buttonElement > .oo-ui-buttonElement-button,
+.oo-ui-widget-disabled .oo-ui-buttonElement-button {
+	background-color: var(--sn-field-bg-disabled) !important;
+	color: var(--sn-ink-faint) !important;
+	border-color: var(--sn-btn-border) !important;
+	box-shadow: none !important;
+}
+
+/* ──────────────── Campos de texto / búsqueda ──────────────── */
+
+.oo-ui-textInputWidget .oo-ui-inputWidget-input,
+.oo-ui-textInputWidget textarea.oo-ui-inputWidget-input {
+	background-color: var(--sn-field-bg) !important;
+	color: var(--sn-field-fg) !important;
+	border-color: var(--sn-field-border) !important;
+	box-shadow: none !important;
+}
+.oo-ui-textInputWidget .oo-ui-inputWidget-input::placeholder {
+	color: var(--sn-field-placeholder) !important;
+	opacity: 1;
+}
+.oo-ui-textInputWidget.oo-ui-widget-disabled .oo-ui-inputWidget-input {
+	background-color: var(--sn-field-bg-disabled) !important;
+	color: var(--sn-ink-faint) !important;
+}
+
+/* ──────────── Casilla / radio / interruptor ──────────── */
+
+.oo-ui-checkboxInputWidget .oo-ui-checkboxInputWidget-checkIcon,
+.oo-ui-radioInputWidget input,
+.oo-ui-checkboxInputWidget input {
+	background-color: var(--sn-field-bg);
+	border-color: var(--sn-field-border);
+}
+.oo-ui-checkboxInputWidget.oo-ui-checkboxInputWidget-checked input,
+.oo-ui-radioInputWidget.oo-ui-radioInputWidget-checked input {
+	background-color: var(--sn-on-bg) !important;
+	border-color: var(--sn-on-bg) !important;
+}
+.oo-ui-radioInputWidget.oo-ui-radioInputWidget-checked input {
+	/* el punto interior lo dibuja OOUI con box-shadow del color de fondo */
+	box-shadow: inset 0 0 0 3px var(--sn-on-fg) !important;
+}
+.oo-ui-toggleSwitchWidget.oo-ui-toggleWidget-on {
+	background-color: var(--sn-on-bg) !important;
+	border-color: var(--sn-on-bg) !important;
+}
+.oo-ui-toggleSwitchWidget .oo-ui-toggleSwitchWidget-grip {
+	background-color: var(--sn-on-fg) !important;
+}
+
+/* ─────────── Desplegables / combobox / menús / tags ─────────── */
+
+.oo-ui-dropdownWidget-handle,
+.oo-ui-comboBoxInputWidget-php .oo-ui-inputWidget-input {
+	background-color: var(--sn-field-bg) !important;
+	color: var(--sn-field-fg) !important;
+	border-color: var(--sn-field-border) !important;
+}
+.oo-ui-menuSelectWidget {
+	background-color: var(--sn-field-bg) !important;
+	border-color: var(--sn-field-border) !important;
+	box-shadow: var(--sn-lift) !important;
+}
+.oo-ui-menuOptionWidget,
+.oo-ui-decoratedOptionWidget {
+	color: var(--sn-opt-fg) !important;
+}
+.oo-ui-menuOptionWidget.oo-ui-optionWidget-highlighted {
+	background-color: var(--sn-opt-hover-bg) !important;
+	color: var(--sn-opt-fg) !important;
+}
+.oo-ui-menuOptionWidget.oo-ui-optionWidget-selected {
+	background-color: var(--sn-opt-sel-bg) !important;
+	color: var(--sn-opt-fg) !important;
+}
+/* Capsule / tags (TagMultiselect) */
+.oo-ui-tagItemWidget {
+	background-color: var(--sn-btn-bg) !important;
+	color: var(--sn-btn-fg) !important;
+	border-color: var(--sn-btn-border) !important;
+}
+
+/* ─────────────────── Diálogos / ventanas ─────────────────── */
+
+.oo-ui-window-frame {
+	background-color: var(--sn-paper) !important;
+	box-shadow: var(--sn-lift) !important;
+}
+.oo-ui-processDialog-location,
+.oo-ui-window-head,
+.oo-ui-window-foot {
+	background-color: var(--sn-paper) !important;
+	border-color: var(--sn-hairline) !important;
+}
+.oo-ui-dialog-content > .oo-ui-window-frame {
+	border-color: var(--sn-hairline) !important;
+}
+/* Velo del modal */
+.oo-ui-windowManager-modal > .oo-ui-dialog {
+	background-color: var(--sn-scrim) !important;
+}
+.oo-ui-messageDialog-title,
+.oo-ui-processDialog-title {
+	color: var(--sn-ink) !important;
+}
+
+/* ─────────────── Barra de progreso ─────────────── */
+
+.oo-ui-progressBarWidget {
+	background-color: var(--sn-field-bg-disabled) !important;
+	border-color: var(--sn-field-border) !important;
+}
+.oo-ui-progressBarWidget-bar {
+	background-color: var(--sn-on-bg) !important;
+}
+
+/* ─────────────────── Foco (mata el azul) ─────────────────── */
+/* Único uso de la nova en controles: aro + borde de foco coherentes
+   con el resto del skin. Reemplaza el inset azul de OOUI. */
+.oo-ui-buttonElement-button:focus,
+.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input:focus,
+.oo-ui-dropdownWidget.oo-ui-widget-enabled .oo-ui-dropdownWidget-handle:focus,
+.oo-ui-checkboxInputWidget input:focus,
+.oo-ui-radioInputWidget input:focus,
+.oo-ui-toggleSwitchWidget:focus {
+	border-color: var(--sn-focus-border) !important;
+	box-shadow: var(--sn-focus-ring) !important;
+	outline: none !important;
+}
