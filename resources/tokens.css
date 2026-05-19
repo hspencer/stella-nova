@@ -1,28 +1,180 @@
-/* Stella Nova — tokens (custom properties). Light/dark con prefers-color-scheme. */
+/* Stella Nova — sistema de tokens (custom properties).
+ *
+ * Metáfora rectora: "página de papel". Una hoja cálida flota sobre un campo
+ * gris ahuesado (el atelier de la e[ad]); un único punto de luz carmín es la
+ * nova. Editorial, sobrio, cálido. Work Sans (cuerpo/UI) · Newsreader
+ * (titulares, citas, poemas) · IBM Plex Mono (código).
+ *
+ * Tema: prefers-color-scheme + override [data-sn-theme]. Las 7 preferencias
+ * del spec se enchufan por data-attributes en <html> (resueltas server-side
+ * para registrados, pre-paint para anónimo/temporal). Aquí solo los valores;
+ * el contrato de resolución (explícito > SO > default) vive en el spec.
+ */
+
 :root {
-	--sn-color-bg: #ffffff;
-	--sn-color-surface: #f6f7f9;
-	--sn-color-text: #1b1b1d;
-	--sn-color-muted: #5a5d63;
-	--sn-color-border: #d6d9de;
-	--sn-color-link: #0b5fff;
-	--sn-color-accent: #b3122e;
-	--sn-space-1: .25rem; --sn-space-2: .5rem; --sn-space-3: 1rem;
-	--sn-space-4: 1.5rem; --sn-space-5: 2.5rem;
-	--sn-radius: 8px;
-	--sn-font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-	--sn-font-head: var(--sn-font-body);
-	--sn-measure: 72ch;
-	--sn-transition: 160ms ease;
+	/* — Campo y papel (luz cálida, no #fff puro: el papel tiene cuerpo) — */
+	--sn-field:        #e8e4da;   /* gris ahuesado: el escritorio/atelier   */
+	--sn-field-grain:  0.035;     /* opacidad del grano de papel sobre field */
+	--sn-paper:        #fcfbf7;   /* la hoja: superficie del contenido       */
+	--sn-paper-edge:   #f3f0e7;   /* borde/sombra interna de la hoja         */
+	--sn-sunk:         #efece2;   /* hundido: inputs, code, celdas alternas  */
+
+	/* — Tinta — */
+	--sn-ink:          #221f1a;   /* texto: negro cálido, no #000            */
+	--sn-ink-soft:     #6b6357;   /* secundario, metadatos, captions         */
+	--sn-ink-faint:    #968c7c;   /* terciario, placeholders, deshabilitado  */
+	--sn-hairline:     #ddd6c7;   /* filete: bordes de 1px, separadores      */
+	--sn-hairline-soft:#e7e1d3;   /* filete aún más tenue                    */
+
+	/* — La nova: único acento agudo, usado con avaricia — */
+	--sn-nova:         #b22f1e;   /* carmín: foco, activo, marca de posición */
+	--sn-nova-ink:     #ffffff;   /* texto sobre nova                        */
+	--sn-nova-wash:    #f7e9e6;   /* lavado tenue: selección, fondo activo   */
+
+	/* — Enlaces (AA sobre papel cálido) — */
+	--sn-link:         #1f4fa8;
+	--sn-link-hover:   #16386f;
+	--sn-link-visited: #6a4a86;
+
+	/* Íconos de UI: nunca negro pleno ni acento; tinta al ~70% en reposo,
+	   tinta plena al hover/activo. Nunca carmín. */
+	--sn-icon:         color-mix(in oklab, var(--sn-ink) 55%, transparent);
+	--sn-icon-active:  var(--sn-ink);
+
+	/* — Señales — */
+	--sn-ok:           #2f6f43;
+	--sn-warn:         #8a5a12;
+	--sn-danger:       #b21e33;
+
+	/* — Tipografía — Work Sans (cuerpo/UI), Newsreader (display: titulares,
+	   citas, <poem> — serif editorial con eje óptico), IBM Plex Mono
+	   (código). Auto-alojadas (fonts.css). */
+	--sn-font-text: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--sn-font-display: 'Newsreader', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
+	--sn-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
+
+	/* Escala fluida sobria (sin titulares exagerados). --sn-font-scale lo
+	   modula la preferencia tamaño-de-fuente; --sn-leading el interlineado. */
+	--sn-font-scale: 1;
+	--sn-leading: 1.65;
+	--sn-leading-tight: 1.22;
+
+	--sn-fs-root:  calc(1rem * var(--sn-font-scale));
+	--sn-fs-xs:    clamp(.72rem, .70rem + .10vw, .78rem);
+	--sn-fs-sm:    clamp(.82rem, .79rem + .14vw, .90rem);
+	--sn-fs-base:  calc(clamp(1rem, .97rem + .16vw, 1.05rem) * var(--sn-font-scale));
+	--sn-fs-md:    calc(clamp(1.05rem, 1.01rem + .22vw, 1.18rem) * var(--sn-font-scale));
+	--sn-fs-lg:    calc(clamp(1.2rem, 1.12rem + .40vw, 1.42rem) * var(--sn-font-scale));
+	--sn-fs-xl:    calc(clamp(1.35rem, 1.22rem + .55vw, 1.62rem) * var(--sn-font-scale));
+	--sn-fs-display: calc(clamp(1.5rem, 1.32rem + .85vw, 2rem) * var(--sn-font-scale));
+
+	/* — Ritmo espacial (escala 1.5) — */
+	--sn-s-1: .25rem;  --sn-s-2: .5rem;   --sn-s-3: .75rem;
+	--sn-s-4: 1rem;    --sn-s-5: 1.5rem;  --sn-s-6: 2.25rem;
+	--sn-s-7: 3.5rem;  --sn-s-8: 5.25rem;
+
+	/* Ancho máximo de la HOJA (no del texto: el contenido va al 100%).
+	   Lo modula la preferencia ContentWidth. */
+	--sn-measure: 58rem;          /* = standard (default)                   */
+	--sn-rail: 15.5rem;           /* (sin uso; reservado)                   */
+	--sn-shell: 82rem;            /* ancho máximo del conjunto (header/pie) */
+
+	/* Ícono de enlace externo (Feather "external-link"), como máscara para
+	   teñirlo con currentColor. Definido por diseño en el skin. */
+	--sn-ext-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E");
+
+	/* Altura común de los controles de la barra superior (todos igual). */
+	--sn-ctl: 2.4rem;
+
+	/* — Forma y materia — */
+	--sn-radius-s: 2px;
+	--sn-radius:   4px;
+	--sn-radius-l: 8px;
+	--sn-radius-paper: 3px;        /* la hoja: esquinas apenas redondeadas  */
+	--sn-hair: 1px solid var(--sn-hairline);
+
+	/* Sombra de la hoja: muy sutil, apenas un asentamiento sobre el campo. */
+	--sn-lift-paper:
+		0 1px 1px rgba(40, 33, 20, .03),
+		0 3px 8px rgba(40, 33, 20, .04);
+	/* Sombra para popovers/diálogos (necesitan despegar más). */
+	--sn-lift:
+		0 1px 2px rgba(40, 33, 20, .05),
+		0 8px 24px rgba(40, 33, 20, .08);
+	--sn-lift-soft: 0 2px 8px rgba(40, 33, 20, .05);
+
+	/* — Movimiento (--sn-motion lo apaga la preferencia/SO) — */
+	--sn-motion: 1;
+	--sn-dur-1: calc(120ms * var(--sn-motion));
+	--sn-dur-2: calc(220ms * var(--sn-motion));
+	--sn-dur-3: calc(420ms * var(--sn-motion));
+	--sn-ease: cubic-bezier(.22, 1, .36, 1);
+
+	--sn-z-rail: 10;
+	--sn-z-header: 20;
+	--sn-z-panel: 40;
+	--sn-z-skip: 60;
+
+	color-scheme: light;
+}
+
+/* ── Tema oscuro: la noche que Tycho miró. La hoja sigue siendo la luz. ──
+ *
+ * DEFAULT = CLARO. El esquema del SO NO oscurece por sí solo: solo se
+ * aplica oscuro si el usuario lo elige explícitamente (data-sn-theme="dark")
+ * o si elige seguir al SO (data-sn-theme="auto") y el SO está en oscuro.
+ * Sin preferencia guardada → claro. (Nota: diverge del paso `os_scheme`
+ * del spec para el tema; decisión de producto del usuario, 2026-05-18.)
+ */
+:root[data-sn-theme="dark"] {
+	--sn-field:#141209; --sn-field-grain:.05; --sn-paper:#1e1c15;
+	--sn-paper-edge:#262318; --sn-sunk:#181610;
+	--sn-ink:#ece7da; --sn-ink-soft:#a39a86; --sn-ink-faint:#756d5d;
+	--sn-hairline:#353123; --sn-hairline-soft:#2a2719;
+	--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
+	--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
+	--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-danger:#ff6b7e;
+	--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
+	--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
+	--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
+	color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
-	:root {
-		--sn-color-bg: #16181c;
-		--sn-color-surface: #1f2228;
-		--sn-color-text: #e8e9ec;
-		--sn-color-muted: #a4a8b0;
-		--sn-color-border: #333741;
-		--sn-color-link: #7fb0ff;
-		--sn-color-accent: #ff7a90;
+	:root[data-sn-theme="auto"] {
+		--sn-field:#141209; --sn-field-grain:.05; --sn-paper:#1e1c15;
+		--sn-paper-edge:#262318; --sn-sunk:#181610;
+		--sn-ink:#ece7da; --sn-ink-soft:#a39a86; --sn-ink-faint:#756d5d;
+		--sn-hairline:#353123; --sn-hairline-soft:#2a2719;
+		--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
+		--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
+		--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-danger:#ff6b7e;
+		--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
+		--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
+		--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
+		color-scheme: dark;
 	}
 }
+
+/* ── Preferencia: ancho de contenido (spec ContentWidth) ── */
+/* Escala recalibrada: el más angosto = el "mediano" anterior (42rem),
+   y de ahí hacia arriba. La hoja ya no constriñe el texto (va al 100%). */
+:root[data-sn-width="narrow"]   { --sn-measure: 42rem; }
+:root[data-sn-width="standard"] { --sn-measure: 58rem; }
+:root[data-sn-width="wide"]     { --sn-measure: 76rem; }
+:root[data-sn-width="full"]     { --sn-measure: none; --sn-shell: 100%; }
+
+/* ── Preferencia: tamaño de fuente (spec FontSize) ── */
+:root[data-sn-font="small"]  { --sn-font-scale: .92; }
+:root[data-sn-font="medium"] { --sn-font-scale: 1; }
+:root[data-sn-font="large"]  { --sn-font-scale: 1.14; }
+
+/* ── Preferencia: interlineado (spec LineHeight) ── */
+:root[data-sn-leading="compact"] { --sn-leading: 1.45; }
+:root[data-sn-leading="normal"]  { --sn-leading: 1.65; }
+:root[data-sn-leading="relaxed"] { --sn-leading: 1.9; }
+
+/* ── Movimiento: SO + override (spec Motion; reduced-motion 1ª clase) ── */
+@media (prefers-reduced-motion: reduce) {
+	:root:not([data-sn-motion="full"]) { --sn-motion: 0; }
+}
+:root[data-sn-motion="reduced"] { --sn-motion: 0; }

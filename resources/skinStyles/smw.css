@@ -1,0 +1,135 @@
+/* Stella Nova · skinStyles → Semantic MediaWiki.
+ *
+ * Doctrina §3 + contrato SkinRenderFidelity: refinar con CSS, NUNCA
+ * reestructurar el DOM de SMW. Sin anchos/altos rígidos. Desbordamiento
+ * por contenedor (overflow), jamás recortando contenido. Carga junto a
+ * los módulos ext.smw.*.styles (ver skin.json ResourceModuleSkinStyles).
+ */
+
+/* ── Factbox: ficha semántica como inset callado de la hoja ── */
+.smw-factbox,
+.smwfact {
+	margin: var(--sn-s-6) 0 var(--sn-s-5);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius-l);
+	background: color-mix(in oklab, var(--sn-sunk) 55%, transparent);
+	overflow: hidden;
+	font-size: var(--sn-fs-sm);
+}
+.smw-factbox-head,
+.smwfactboxhead {
+	padding: var(--sn-s-3) var(--sn-s-4);
+	border-bottom: 1px solid var(--sn-hairline-soft);
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .08em;
+	color: var(--sn-ink-soft);
+}
+.smw-factbox table,
+.smwfact table.smwfacttable {
+	width: 100%; border-collapse: collapse; margin: 0;
+}
+.smwfact .smwpropname,
+.smw-factbox .smwpropname,
+.smwfact .smwspecprop {
+	width: 30%; vertical-align: top;
+	padding: var(--sn-s-2) var(--sn-s-4);
+	font-weight: 600; color: var(--sn-ink);
+}
+.smwfact .smwprops,
+.smw-factbox .smwprops,
+.smwfact .smwspecs {
+	padding: var(--sn-s-2) var(--sn-s-4);
+	color: var(--sn-ink-soft);
+}
+.smwfact tr:not(:last-child) > * { border-bottom: 1px solid var(--sn-hairline-soft); }
+.smwrdflink, .smw-factbox-facts-derived { padding: var(--sn-s-2) var(--sn-s-4);
+	font-size: var(--sn-fs-xs); color: var(--sn-ink-faint); }
+
+/* ── Tablas SMW / resultados #ask: overflow por contenedor ── */
+.sn-body :is(table.smwtable, table.broadtable, table.wikitable.sortable, .smw-table) {
+	border-collapse: collapse;
+	font-size: var(--sn-fs-sm);
+	max-width: 100%;
+}
+/* Desbordamiento: contenedores SMW conocidos hacen scroll, sin recorte. */
+.sn-body :is(.smw-table, .smw-datatable, .datatables-wrapper, .smw-format.table-format) {
+	display: block; max-width: 100%; overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.sn-body :is(table.smwtable, table.broadtable) :is(th, td) {
+	padding: var(--sn-s-2) var(--sn-s-3);
+	border-bottom: 1px solid var(--sn-hairline-soft);
+	text-align: left; vertical-align: top;
+}
+.sn-body :is(table.smwtable, table.broadtable) thead th,
+.sn-body :is(table.smwtable, table.broadtable) th.smwtableheader {
+	background: var(--sn-sunk); color: var(--sn-ink);
+	font-weight: 600; border-bottom: 1px solid var(--sn-hairline);
+	position: sticky; top: 0;
+}
+.sn-body table.smwtable tr:hover td { background: color-mix(in oklab, var(--sn-nova-wash) 55%, transparent); }
+
+/* Listas de columnas (#ask format=ul/ol con columnas) */
+.smw-columnlist-container { column-gap: var(--sn-s-6); }
+.smw-column { break-inside: avoid; }
+.smw-columnlist-container ul { margin: 0; padding-left: var(--sn-s-5); }
+
+/* ── Entity-examiner / indicadores (cargan async; no saltos) ── */
+.smw-entity-examiner { margin-top: var(--sn-s-4); }
+.smw-indicator-vertical-bar-loader,
+.smw-indicators { color: var(--sn-ink-faint); }
+.smw-highlighter { font-size: var(--sn-fs-sm); }
+
+/* ── Pie SMW (junto al pie del skin; no se reubica) ── */
+.smw-footer {
+	margin-top: var(--sn-s-6); padding-top: var(--sn-s-4);
+	border-top: 1px solid var(--sn-hairline-soft);
+	font-size: var(--sn-fs-xs); color: var(--sn-ink-faint);
+}
+
+/* ── Especial:Navegar (Browse): hoja de datos legible ── */
+.smwb-content, .smwb-factbox { font-size: var(--sn-fs-sm); }
+.smwb-title { font-family: var(--sn-font-display);
+	font-size: var(--sn-fs-md); font-weight: 680;
+	letter-spacing: -.012em; color: var(--sn-ink); }
+.smwb-datasheet { width: 100%; border-collapse: collapse; }
+.smwb-cell, .smwb-propvalue, .smwb-prophead, .smwb-ivalue, .smwb-propval {
+	padding: var(--sn-s-2) var(--sn-s-3);
+	border-bottom: 1px solid var(--sn-hairline-soft);
+	vertical-align: top;
+}
+.smwb-prophead, .smwb-cell.smwb-propval, .smwb-center {
+	color: var(--sn-ink); font-weight: 600;
+}
+.smwb-ivalue, .smwb-propvalue { color: var(--sn-ink-soft); }
+.smwb-center a { color: var(--sn-link); }
+
+/* ── Especial:Preguntar (Ask) ── */
+.smw-ask-actions, .smw-ask-options {
+	background: var(--sn-sunk); border: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius); padding: var(--sn-s-4); margin-bottom: var(--sn-s-4);
+}
+.smw-ask-button, .smw-form-group .button {
+	background: var(--sn-ink); color: var(--sn-paper);
+	border: 0; border-radius: var(--sn-radius);
+	padding: .45rem var(--sn-s-4); font: inherit; cursor: pointer;
+}
+.smw-ask-button:hover { background: var(--sn-nova); color: var(--sn-nova-ink); }
+
+/* ── Tooltips / modal SMW ── */
+.smwtt, .smw-tooltip, [class*="smwtticon"] { color: var(--sn-nova); }
+.smw-modal, .smw-dialog-modal {
+	background: var(--sn-paper); color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius-l);
+	box-shadow: var(--sn-lift);
+}
+.smw-modal-header { border-bottom: 1px solid var(--sn-hairline-soft);
+	font-family: var(--sn-font-display); }
+
+/* Página de Propiedad / Concepto */
+.smw-property-page-results, .smw-concept-page {
+	border-top: 1px solid var(--sn-hairline-soft);
+	margin-top: var(--sn-s-5); padding-top: var(--sn-s-4);
+}

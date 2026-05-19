@@ -1,0 +1,91 @@
+/* Stella Nova · skinStyles → SemanticResultFormats.
+ *
+ * Conserva el markup de cada formato (tablas, listas, calendarios, mapas,
+ * galerías, datatables). Solo color/espaciado/tipografía + overflow por
+ * contenedor. Sin alturas/anchos rígidos. Carga junto a ext.srf* .
+ */
+
+/* DataTables: el contenedor hace scroll; cabeceras y controles a tono */
+.sn-body .datatables-wrapper,
+.sn-body .srf-datatable,
+.sn-body div[class^="srf-datatable"] {
+	display: block; max-width: 100%; overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	font-size: var(--sn-fs-sm);
+}
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+	background: var(--sn-paper); color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline); border-radius: var(--sn-radius);
+	padding: .3rem var(--sn-s-3); font: inherit;
+}
+table.dataTable thead th {
+	background: var(--sn-sunk); color: var(--sn-ink);
+	border-bottom: 1px solid var(--sn-hairline) !important;
+	font-weight: 600;
+}
+table.dataTable td { border-bottom: 1px solid var(--sn-hairline-soft); }
+table.dataTable tbody tr:hover td {
+	background: color-mix(in oklab, var(--sn-nova-wash) 55%, transparent);
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	color: var(--sn-ink-soft) !important; border-radius: var(--sn-radius);
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+	background: var(--sn-ink) !important; color: var(--sn-paper) !important;
+	border: 0 !important;
+}
+
+/* Calendario / eventline */
+.srf-calendar, .srf-eventcalendar, .fc {
+	font-size: var(--sn-fs-sm); border-radius: var(--sn-radius-l);
+	overflow: hidden;
+}
+.srf-calendar th, .fc .fc-col-header-cell {
+	background: var(--sn-sunk); color: var(--sn-ink);
+	font-weight: 600; border-color: var(--sn-hairline-soft) !important;
+}
+.srf-calendar td, .fc .fc-daygrid-day { border-color: var(--sn-hairline-soft) !important; }
+.fc .fc-button-primary {
+	background: var(--sn-ink); border-color: var(--sn-ink); color: var(--sn-paper);
+}
+.fc .fc-button-primary:hover { background: var(--sn-nova); border-color: var(--sn-nova); }
+.fc-event, .srf-event { background: var(--sn-nova-wash);
+	border: 1px solid var(--sn-nova); color: var(--sn-ink); border-radius: var(--sn-radius-s); }
+
+/* Galería / carrusel / slideshow */
+.srf-gallery, .srf-slideshow, .srf-carousel {
+	margin: var(--sn-s-5) 0; max-width: 100%;
+}
+.srf-gallery .gallerybox div.thumb,
+.srf-gallery img {
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius); background: var(--sn-paper);
+}
+.srf-gallerycaption, .srf-gallery .gallerytext {
+	font-size: var(--sn-fs-sm); color: var(--sn-ink-soft);
+}
+
+/* Listas / tag clouds / sparklines */
+.srf-listwidget, .srf-tagcloud { line-height: 1.9; }
+.srf-tagcloud a { color: var(--sn-link); margin: 0 .25rem; }
+.srf-sparkline, .srf-sparkbar { vertical-align: middle; }
+
+/* Gráficas (dygraphs/chart) — caja líquida, sin alto rígido del skin */
+.srf-dygraphs, .srf-chartjs, .srf-chart, .srf-pchart {
+	max-width: 100%; margin: var(--sn-s-5) 0;
+	border: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius); padding: var(--sn-s-4);
+	background: var(--sn-paper);
+}
+
+/* Tablas SRF genéricas que no son datatable */
+.sn-body table.srf-table, .sn-body .srf-format-table table {
+	border-collapse: collapse; font-size: var(--sn-fs-sm); max-width: 100%;
+}
+.sn-body table.srf-table :is(th, td) {
+	padding: var(--sn-s-2) var(--sn-s-3);
+	border-bottom: 1px solid var(--sn-hairline-soft); text-align: left;
+}
+.sn-body table.srf-table thead th { background: var(--sn-sunk);
+	color: var(--sn-ink); font-weight: 600; }

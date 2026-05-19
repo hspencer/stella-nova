@@ -8,12 +8,20 @@
 --   · tipografía "Work Sans" (cargar vs. clonar es decisión de empaquetado),
 --   · feather icons, la metáfora "página de papel", fondo gris ahuesado,
 --   · tokens semánticos en archivos separados, layout/posiciones exactas,
+--   · la PRESENTACIÓN de la navegación: que el chrome del sitio se muestre
+--     como riel lateral, como dropdowns en barra superior o colapsado tras
+--     hamburguesa es decisión de presentación (hoy: dropdowns superiores +
+--     hamburguesa en pantallas pequeñas, sin riel persistente — decisión
+--     de producto 2026-05-18). El spec sólo fija QUÉ regiones existen y
+--     qué exponen, no DÓNDE se sitúan ni su afordancia de despliegue,
 --   · la búsqueda y el logo→home (comportamiento de MediaWiki core, no del skin).
 --
 -- Sí modela los núcleos con estado y decisión condicional:
 --   1. Preferencias de skin (7, estilo Citizen): resolución por campo
---      explícito > SO (donde aplica) > default; persistencia híbrida por
---      identidad — registrado → cuenta MediaWiki (BBDD, cross-device);
+--      explícito > SO (donde aplica) > default. EXCEPCIÓN tema: default
+--      claro; el SO sólo aplica si la elección es `auto` (decisión de
+--      producto 2026-05-18). Persistencia híbrida por identidad —
+--      registrado → cuenta MediaWiki (BBDD, cross-device);
 --      anónimo/temporal → sesión del navegador (por-navegador).
 --   2. Chrome administrable desde páginas wiki del namespace Stella-Nova
 --      (pie, barra lateral, aviso): visibilidad y autorización CRUD.
@@ -135,13 +143,25 @@ contract SkinRenderFidelity {
 -- Enumerations
 ------------------------------------------------------------
 
+-- Tema APLICADO: siempre resuelto a claro u oscuro (ver
+-- ViewingSession.active_theme e invariante ThemeAlwaysResolved).
 enum Theme { light | dark }
+
+-- Elección de tema del usuario (lo que guarda): tres valores. `auto`
+-- significa "seguir al SO"; light|dark fuerzan. Distinta del tema
+-- aplicado (Theme): sin elección guardada el default es CLARO y el SO
+-- NO oscurece por sí solo — sólo se sigue al SO si se eligió `auto`.
+enum ThemeChoice { light | dark | auto }
 
 -- MediaWiki 1.43: el editor no autenticado obtiene una cuenta temporal
 -- (IP-masking, nombre ~AAAA-NNN, no puede loguear, features limitadas);
 -- distinta del anónimo-IP clásico y del registrado.
 enum UserIdentity { anonymous | temporary | registered }
 
+-- Identidades de región del chrome gestionado (cada una = una página
+-- wiki del namespace del skin), NO posiciones en pantalla. `sidebar` es
+-- el fragmento institucional de navegación; su presentación (riel,
+-- dropdown, hamburguesa) la fija la realización, no el spec.
 enum ChromeSlot { footer | sidebar | notice }
 
 enum LayoutMode { standard | fullscreen }
@@ -159,9 +179,12 @@ enum Motion { full | reduced }
 ------------------------------------------------------------
 
 -- El conjunto de 7 preferencias de skin. Cada campo es opcional: null =
--- "sin elección explícita" → se resuelve por SO (donde aplica) o default.
+-- "sin elección explícita" → se resuelve por default (y, donde aplica,
+-- por SO). El tema es el caso especial: null → claro (el SO NO aplica);
+-- el SO sólo influye si theme = auto. Los demás (p. ej. motion) sí
+-- toman la señal del SO en ausencia de elección.
 value Preferences {
-    theme: Theme?
+    theme: ThemeChoice?
     content_width: ContentWidth?
     font_size: FontSize?
     line_height: LineHeight?
@@ -187,7 +210,17 @@ entity ViewingSession {
     -- Resolución por campo: explícito > SO (donde aplica) > default skin.
     -- Defaults de diseño (tunables por globales del skin en realización,
     -- ARCHITECTURE.md §6). active_theme nunca indeterminado.
-    active_theme: saved?.theme ?? os_scheme ?? light
+    --
+    -- TEMA (decisión de producto 2026-05-18): el default es CLARO y el SO
+    -- NO oscurece por sí solo. saved.theme = auto → seguir al SO (claro si
+    -- no hay señal); = light|dark → forzado; sin elección (null) → claro.
+    -- Sólo `auto` deja entrar prefers-color-scheme. El resto de campos sí
+    -- siguen "explícito > SO > default" (p. ej. motion).
+    active_theme:
+        if saved?.theme = auto: os_scheme ?? light
+        else if saved?.theme = dark: dark
+        else if saved?.theme = light: light
+        else: light
     active_motion: saved?.reduced_motion ?? os_motion ?? full
     active_content_width: saved?.content_width ?? standard
     active_font_size: saved?.font_size ?? medium
@@ -201,7 +234,19 @@ entity ViewingSession {
 -- que es exactamente la decisión "tres instancias concretas" tomada.
 entity InterfaceFragment {
     slot: ChromeSlot
+    -- Resolución de la fuente: por preferencia, la página de nombre del
+    -- slot en el namespace de chrome (config.chrome_namespace). Si ese
+    -- namespace NO está realizado en la instalación, la fuente es la
+    -- página homónima del espacio principal cuyo título es, literalmente,
+    -- "<chrome_namespace>:<slot>". La publicación (is_published) es
+    -- idéntica en ambos casos; lo que cambia es la autorización de
+    -- escritura — ver source_protected y RestrictChromeNamespaceWrites.
     source_page: WikiPage
+
+    -- Verdadero sólo si la fuente vive en el namespace dedicado; entonces
+    -- (y sólo entonces) RestrictChromeNamespaceWrites restringe la
+    -- escritura. En modo fallback (main ns) es falso: sin protección.
+    source_protected: source_page.namespace = config.chrome_namespace
 
     -- "is_blank" es una función caja-negra: contenido vacío tras recortar
     -- espacios/comentarios (semántica exacta = pregunta abierta).
@@ -226,7 +271,7 @@ entity PageRender {
 ------------------------------------------------------------
 
 config {
-    skin_version: String = "0.0.1"      -- debe coincidir con skin.json
+    skin_version: String = "0.0.3"      -- debe coincidir con skin.json
     chrome_namespace: String = "Stella-Nova"
     interface_editor_group: String = "editores-de-interfaz"
 }
@@ -274,6 +319,15 @@ rule RestrictChromeNamespaceWrites {
         -- de MediaWiki. La lectura del fragmento renderizado es pública.
         -- Las cuentas temporales (1.43) carecen del grupo y de sysop →
         -- denegadas, comportamiento correcto.
+        --
+        -- CONSECUENCIA del fallback (ver InterfaceFragment.source_page /
+        -- ManagedChrome.SourceResolution): el `requires` sólo casa cuando
+        -- la página está en config.chrome_namespace. Si el namespace NO
+        -- está realizado y la fuente es la página homónima del espacio
+        -- principal, esta regla NO casa → esas escrituras quedan SIN
+        -- restringir (cualquiera con permiso de edición puede tocarlas).
+        -- La garantía de autorización sólo se sostiene declarando el
+        -- namespace dedicado; el fallback es conveniencia, no seguridad.
 }
 
 ------------------------------------------------------------
@@ -315,9 +369,12 @@ surface PreferencesPanel {
 
     @guarantee Precedence
         -- Cada preferencia se resuelve: valor explícito guardado >
-        -- señal del SO donde aplica (tema ← prefers-color-scheme; motion
-        -- ← prefers-reduced-motion) > default de diseño del skin.
-        -- active_theme nunca es indeterminado.
+        -- señal del SO (donde aplica) > default de diseño del skin.
+        -- El SO aplica al motion (← prefers-reduced-motion) sin elección.
+        -- EXCEPCIÓN tema (decisión de producto): el default es claro y el
+        -- SO (prefers-color-scheme) sólo influye si la elección guardada
+        -- es `auto`; sin elección → claro, no el esquema del SO.
+        -- active_theme nunca es indeterminado (siempre claro u oscuro).
 
     @guarantee CrossDeviceForRegistered
         -- identity = registered: lo guardado persiste en la cuenta
@@ -349,11 +406,26 @@ surface ManagedChrome {
         fragment.source_page.content
             when fragment.is_published
 
+    @guarantee SourceResolution
+        -- La fuente del fragmento se resuelve, por preferencia, a la
+        -- página del slot en el namespace dedicado (config.chrome_namespace);
+        -- si ese namespace NO está realizado en la instalación, a la
+        -- página homónima del espacio principal ("<chrome_namespace>:
+        -- <slot>"). La publicación y su lectura son IDÉNTICAS en ambos
+        -- casos. La diferencia es de autorización: sólo con la fuente en
+        -- el namespace dedicado (fragment.source_protected) la escritura
+        -- queda restringida (RestrictChromeNamespaceWrites). El modo
+        -- fallback es de conveniencia y SIN protección: declarar el
+        -- namespace es lo recomendado para producción.
+
     @guarantee HiddenWhenUnpublished
-        -- Si is_published es falso (página ausente o en blanco) SÓLO este
-        -- bloque gestionado se omite; sin fallback ni contenido por
-        -- defecto para él. El pie core de MediaWiki es independiente y
-        -- sigue presente (ver SkinRenderFidelity.CoreFooterAlwaysPresent).
+        -- "Sin fallback" aquí significa: si is_published es falso (página
+        -- ausente o en blanco) SÓLO este bloque gestionado se omite, sin
+        -- contenido por defecto/placeholder para él (distinto de la
+        -- resolución de fuente de SourceResolution, que es sobre QUÉ
+        -- página, no sobre contenido por defecto). El pie core de
+        -- MediaWiki es independiente y sigue presente (ver
+        -- SkinRenderFidelity.CoreFooterAlwaysPresent).
 
     @guarantee SuppressedInFullscreen
         -- No se renderiza cuando la página vista está en
@@ -467,3 +539,5 @@ surface MediaWikiIntegration {
 open question "Semántica exacta de 'en blanco' para una página de chrome (¿sólo espacios? ¿sólo comentarios HTML? ¿sólo enlaces de categoría?) — gobierna is_published de InterfaceFragment."
 
 open question "Mecanismo definitivo de inyección de JS interactivo (p5.js) en páginas fullscreen: hoy es MediaWiki:Common.js global, subóptimo. Evaluar Widget curado, módulo ResourceLoader cargado sólo en páginas fullscreen, o assets por-página — sin habilitar JS arbitrario por editor."
+
+open question "Fallback de fuente de chrome a main ns cuando el namespace dedicado no está realizado (InterfaceFragment.source_page / ManagedChrome.SourceResolution): ¿se mantiene como conveniencia permanente asumiendo que el contenido es de baja sensibilidad, o se retira una vez que declarar el namespace sea obligatorio en la instalación? Mientras exista, source_protected=false ⇒ RestrictChromeNamespaceWrites no aplica y la escritura del fragmento no está protegida."

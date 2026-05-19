@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "StellaNova",
 	"namemsg": "skinname-stellanova",
-	"version": "0.1.0",
+	"version": "0.0.3",
 	"author": [ "Herbert Spencer" ],
 	"url": "https://github.com/eadpucv/stella-nova",
 	"descriptionmsg": "stellanova-desc",
@@ -23,8 +23,48 @@
 					"styles": [ "skins.stellanova.styles" ],
 					"scripts": [ "skins.stellanova.scripts" ],
 					"messages": [
+						"sitetitle",
+						"searchbutton",
+						"tagline",
+						"toc",
 						"stellanova-skip-to-content",
-						"stellanova-sidebar"
+						"stellanova-skip-to-nav",
+						"stellanova-sidebar",
+						"stellanova-home",
+						"stellanova-escape",
+						"stellanova-temp-account",
+						"stellanova-managed-nav",
+						"stellanova-pagetools",
+						"stellanova-nav",
+						"stellanova-page",
+						"stellanova-prefs",
+						"stellanova-close",
+						"stellanova-reset",
+						"stellanova-auto",
+						"stellanova-pref-theme",
+						"stellanova-theme-light",
+						"stellanova-theme-dark",
+						"stellanova-pref-width",
+						"stellanova-w-narrow",
+						"stellanova-w-standard",
+						"stellanova-w-wide",
+						"stellanova-w-full",
+						"stellanova-pref-font",
+						"stellanova-sz-s",
+						"stellanova-sz-m",
+						"stellanova-sz-l",
+						"stellanova-pref-leading",
+						"stellanova-ld-compact",
+						"stellanova-ld-normal",
+						"stellanova-ld-relaxed",
+						"stellanova-pref-toc",
+						"stellanova-toc-persistent",
+						"stellanova-toc-inline",
+						"stellanova-pref-collapsible",
+						"stellanova-pref-motion",
+						"stellanova-pref-motion-hint",
+						"stellanova-prefs-scope-browser",
+						"stellanova-prefs-scope-account"
 					],
 					"menus": [
 						"user-menu",
@@ -41,6 +81,16 @@
 		}
 	},
 	"MessagesDirs": { "StellaNova": [ "i18n" ] },
+	"ExtensionMessagesFiles": {
+		"StellaNovaMagic": "StellaNova.i18n.magic.php"
+	},
+	"Hooks": {
+		"GetDoubleUnderscoreIDs": "MediaWiki\\Skins\\StellaNova\\Hooks::onGetDoubleUnderscoreIDs",
+		"OutputPageParserOutput": "MediaWiki\\Skins\\StellaNova\\Hooks::onOutputPageParserOutput",
+		"GetPreferences": "MediaWiki\\Skins\\StellaNova\\Hooks::onGetPreferences",
+		"UserGetDefaultOptions": "MediaWiki\\Skins\\StellaNova\\Hooks::onUserGetDefaultOptions",
+		"BeforePageDisplay": "MediaWiki\\Skins\\StellaNova\\Hooks::onBeforePageDisplay"
+	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
 		"remoteSkinPath": "StellaNova/resources"
@@ -56,13 +106,37 @@
 				"toc": true
 			},
 			"styles": {
+				"fonts.css": {},
 				"tokens.css": {},
 				"stella-nova.css": {},
 				"print.css": { "media": "print" }
 			}
 		},
 		"skins.stellanova.scripts": {
-			"scripts": [ "skin.js" ]
+			"scripts": [ "skin.js" ],
+			"dependencies": [ "mediawiki.api" ]
+		}
+	},
+	"ResourceModuleSkinStyles": {
+		"stellanova": {
+			"localBasePath": "resources",
+			"remoteSkinPath": "StellaNova/resources",
+			"+ext.smw.styles": "skinStyles/smw.css",
+			"+ext.smw.factbox.styles": "skinStyles/smw.css",
+			"+ext.smw.page.styles": "skinStyles/smw.css",
+			"+ext.smw.table.styles": "skinStyles/smw.css",
+			"+ext.smw.browse.styles": "skinStyles/smw.css",
+			"+ext.smw.ask.styles": "skinStyles/smw.css",
+			"+ext.smw.tooltip.styles": "skinStyles/smw.css",
+			"+ext.smw.special.styles": "skinStyles/smw.css",
+			"+ext.smw.deferred.styles": "skinStyles/smw.css",
+			"+ext.srf": "skinStyles/srf.css",
+			"+ext.srf.datatables.v": "skinStyles/srf.css",
+			"+ext.pageforms.main.styles": "skinStyles/pageforms.css",
+			"+ext.pageforms.forminput.styles": "skinStyles/pageforms.css",
+			"+ext.pageforms.submit.styles": "skinStyles/pageforms.css",
+			"+ext.pageforms.checkboxes.styles": "skinStyles/pageforms.css",
+			"+ext.pageforms.rating.styles": "skinStyles/pageforms.css"
 		}
 	}
 }

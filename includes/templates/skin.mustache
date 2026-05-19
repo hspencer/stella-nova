@@ -1,42 +1,322 @@
+{{!
+	Stella Nova — plantilla raíz. Cumple SkinRenderFidelity: emite TODAS
+	las data keys estándar de SkinMustache 1.43 aunque no las estilice, no
+	recorta ni reestructura el HTML de extensiones, y respeta los puntos de
+	inyección (html-after-content, indicadores, catlinks, html-subtitle).
+
+	LightnCandy (Mustache de MW): se usan SECCIONES de un solo segmento
+	anidadas (rutas con punto en aperturas/cierres rompen al combinarse con
+	parciales); las interpolaciones con ruta-punto sí son válidas. No poner
+	sintaxis de plantilla dentro de comentarios: el primer cierre la trunca.
+
+	Datos propios (SkinStellaNova::getTemplateData):
+	  is-sn-fullscreen · sn-escape-href · sn-isotype{href,is-override,
+	  html-override,svg} · sn-identity · sn-prefs{…} · sn-chrome{notice,
+	  sidebar,footer}{is-published,html}
+}}
 {{{html-headelement}}}
-<div class="sn-root">
-	<a class="sn-skiplink" href="#sn-content">{{msg-stellanova-skip-to-content}}</a>
-	<header class="sn-header">
-		<a class="sn-logo" href="{{link-mainpage}}">{{msg-sitetitle}}</a>
-		{{#data-search-box}}
-		<form class="sn-search" role="search" action="{{form-action}}">
-			{{{html-input}}}{{{html-button-search}}}
-		</form>
-		{{/data-search-box}}
-		{{#data-portlets.data-user-menu}}
-		<nav class="sn-usermenu" aria-label="{{label}}">{{{html-items}}}</nav>
-		{{/data-portlets.data-user-menu}}
+<a class="sn-skip" href="#sn-content">{{msg-stellanova-skip-to-content}}</a>
+{{^is-sn-fullscreen}}<a class="sn-skip" href="#sn-nav">{{msg-stellanova-skip-to-nav}}</a>{{/is-sn-fullscreen}}
+
+{{#is-sn-fullscreen}}
+{{!	ExperimentalCanvas: la página posee el viewport. Solo sobrevive
+	EscapeAffordance (siempre alcanzable, operable por teclado). }}
+<main id="sn-content" class="sn-canvas" tabindex="-1">
+	{{{html-body-content}}}
+</main>
+<a class="sn-escape" href="{{sn-escape-href}}" accesskey="x"
+	aria-label="{{msg-stellanova-escape}}" title="{{msg-stellanova-escape}}">
+	<svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-corner-up-left"/></svg>
+	<span>{{msg-stellanova-escape}}</span>
+</a>
+{{/is-sn-fullscreen}}
+
+{{^is-sn-fullscreen}}
+<div class="sn-app">
+	<header class="sn-header" role="banner">
+		<div class="sn-header-bar">
+			{{!	Marca + navegación, juntas a la izquierda: el isotipo
+				(logotipo "Casiopea" + constelación, SVG colorizable →
+				portada; el wordmark va dentro, sin texto aparte) pegado al
+				menú hamburguesa de navegación del sitio. }}
+			<div class="sn-brandnav">
+				<a class="sn-isotype" href="{{sn-isotype.href}}" aria-label="{{msg-stellanova-home}}">
+					{{#sn-isotype}}
+					{{#is-override}}{{{html-override}}}{{/is-override}}
+					{{^is-override}}{{{svg}}}{{/is-override}}
+					{{/sn-isotype}}
+				</a>
+
+				{{!	Navegación del SITIO (Escuela/Wiki/Navegación…). La caja
+					de herramientas ("Herramientas y más") vive en el pie. }}
+				{{#sn-has-sitenav}}
+				<div class="sn-md sn-sitenav">
+					<button type="button" class="sn-md-trigger sn-md-icononly" aria-expanded="false"
+						aria-haspopup="true" data-sn-menu
+						title="{{msg-stellanova-nav}}" aria-label="{{msg-stellanova-nav}}">
+						<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-menu"/></svg>
+						<svg class="sn-i sn-md-caret" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24"><use href="#sn-i-chevron-down"/></svg>
+					</button>
+					<div class="sn-menu-list sn-megamenu" aria-label="{{msg-stellanova-sidebar}}">
+						{{#sn-sitenav}}
+						<section class="sn-mm-sec">
+							{{#label}}<h2 class="sn-mm-h">{{.}}</h2>{{/label}}
+							<ul>{{{html-items}}}</ul>
+						</section>
+						{{/sn-sitenav}}
+					</div>
+				</div>
+				{{/sn-has-sitenav}}
+			</div>
+
+			{{!	Buscador }}
+			{{#data-search-box}}
+			<form class="sn-search" role="search" action="{{form-action}}" id="searchform">
+				{{{html-input}}}
+				<input type="hidden" name="title" value="{{page-title}}">
+				<button type="submit" class="sn-search-go"
+					title="{{msg-searchbutton}}" aria-label="{{msg-searchbutton}}">
+					<svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-search"/></svg>
+				</button>
+			</form>
+			{{/data-search-box}}
+
+			{{!	Bloque "Página": acciones de edición SUBIDAS a la barra como
+				solo-íconos (Editar; Editar con formulario condicional, solo
+				si la página tiene formulario asociado vía PageForms) + el
+				menú colapsable con el resto (espacios/Discusión, vistas
+				restantes, acciones, variantes). El disparador del menú es
+				solo ícono + chevron (la palabra "Página" pasa a tooltip). }}
+			<div class="sn-pagecluster">
+				{{!	UN botón Editar (lápiz), antes del menú. href ya resuelto
+					en PHP: formulario si la página tiene uno, clásico si no. }}
+				{{#sn-edit}}
+				<a class="sn-iconbtn" href="{{href}}" data-sn-quick
+					title="{{label}}" aria-label="{{label}}">
+					<svg class="sn-i" aria-hidden="true" width="19" height="19" viewBox="0 0 24 24"><use href="#sn-i-edit"/></svg>
+				</a>
+				{{/sn-edit}}
+
+				<nav class="sn-md sn-pagemenu" aria-label="{{msg-stellanova-pagetools}}">
+					<button type="button" class="sn-md-trigger sn-md-icononly"
+						aria-expanded="false" aria-haspopup="true" data-sn-menu
+						title="{{msg-stellanova-page}}" aria-label="{{msg-stellanova-pagetools}}">
+						<svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-file"/></svg>
+						<svg class="sn-i sn-md-caret" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24"><use href="#sn-i-chevron-down"/></svg>
+					</button>
+					<div class="sn-menu-list">
+						{{!	"Editar código" (editor clásico) solo cuando la
+							página tiene formulario asociado. }}
+						{{#sn-editcode}}
+						<ul class="sn-mm-grp"><li class="mw-list-item"><a href="{{href}}">
+							<svg class="sn-i" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"><use href="#sn-i-file"/></svg>
+							{{label}}
+						</a></li></ul>
+						{{/sn-editcode}}
+						{{#data-portlets}}
+						{{#data-namespaces}}<ul class="sn-mm-grp">{{{html-items}}}</ul>{{/data-namespaces}}
+						{{/data-portlets}}
+						{{#sn-has-pageviews}}<ul class="sn-mm-grp">{{#sn-pageviews}}<li id="{{id}}" class="{{class}}">{{{html}}}</li>{{/sn-pageviews}}</ul>{{/sn-has-pageviews}}
+						{{#data-portlets}}
+						{{#data-actions}}<ul class="sn-mm-grp">{{{html-items}}}</ul>{{/data-actions}}
+						{{#data-variants}}<ul class="sn-mm-grp">{{{html-items}}}</ul>{{/data-variants}}
+						{{/data-portlets}}
+					</div>
+				</nav>
+			</div>
+
+			{{!	Herramientas del usuario (tri-estado; core decide el set) }}
+			<div class="sn-usertools">
+				{{#sn-prefs}}{{#is-temporary}}
+				<span class="sn-tempbadge" title="{{msg-stellanova-temp-account}}">
+					<svg class="sn-i" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"><use href="#sn-i-clock"/></svg>
+				</span>
+				{{/is-temporary}}{{/sn-prefs}}
+
+				{{#data-portlets}}
+				{{#data-notifications}}
+				<nav class="sn-notif" aria-label="{{label}}">{{{html-items}}}</nav>
+				{{/data-notifications}}
+				{{#data-user-menu}}
+				<div class="sn-md sn-usermenu">
+					<button type="button" class="sn-usermenu-trigger" aria-expanded="false"
+						aria-haspopup="true" data-sn-menu aria-label="{{label}}">
+						<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-user"/></svg>
+					</button>
+					<ul class="sn-menu-list">{{{html-items}}}</ul>
+				</div>
+				{{/data-user-menu}}
+				{{/data-portlets}}
+
+				<button type="button" class="sn-prefs-trigger" aria-haspopup="dialog"
+					aria-controls="sn-prefs" data-sn-prefs-open
+					aria-label="{{msg-stellanova-prefs}}" title="{{msg-stellanova-prefs}}">
+					<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-sliders"/></svg>
+				</button>
+			</div>
+		</div>
 	</header>
-	<div class="sn-layout">
-		<aside class="sn-sidebar" aria-label="{{msg-stellanova-sidebar}}">
-			{{#data-portlets-sidebar.array-portlets}}
-			<nav class="sn-portlet" aria-labelledby="{{id}}-label">
-				<h3 id="{{id}}-label" class="sn-portlet-label">{{label}}</h3>
-				<div class="sn-portlet-body">{{{html-items}}}</div>
-			</nav>
-			{{/data-portlets-sidebar.array-portlets}}
-		</aside>
-		<main id="sn-content" class="sn-main">
-			{{{html-site-notice}}}
-			{{{html-title-heading}}}
-			{{{html-subtitle}}}
-			{{{html-undelete-link}}}
-			<div class="sn-body mw-body-content">{{{html-body-content}}}</div>
-			{{{html-categories}}}
-		</main>
+
+	<div class="sn-shell">
+		<div class="sn-paper-wrap">
+			<article class="sn-paper mw-body">
+				<div class="sn-indicators mw-indicators">
+					{{#array-indicators}}<div id="{{id}}" class="mw-indicator">{{{html}}}</div>{{/array-indicators}}
+				</div>
+
+				{{{html-site-notice}}}
+				{{#sn-chrome}}{{#notice}}{{#is-published}}
+				<aside class="sn-notice" role="note">{{{html}}}</aside>
+				{{/is-published}}{{/notice}}{{/sn-chrome}}
+
+				{{{html-title-heading}}}
+
+				{{!	Sin scaffolding decorativo (ni tagline "De Casiopea" ni caja
+					.sn-subhead). Se emiten SOLO las inyecciones de core que el
+					contrato de fidelidad exige: html-subtitle (avisos de
+					redirección/contexto) y el enlace de restaurar. Vacíos no
+					insertan nada visible (:empty → display:none). #contentSub
+					se conserva por compatibilidad con gadgets/scripts. }}
+				<div id="contentSub" class="sn-subtitle"{{{html-user-language-attributes}}}>{{{html-subtitle}}}</div>
+				<div id="contentSub2" class="sn-subtitle">{{{html-undelete-link}}}</div>
+
+				{{{html-user-message}}}
+
+				{{!	NO se renderiza un índice propio: MediaWiki inyecta el TOC
+					en SU posición (la que marca __TOC__, o la automática). El
+					skin solo lo ESTILIZA in situ (.mw-parser-output .toc),
+					respetando la ubicación del magic word. }}
+
+				<div id="sn-content" class="sn-body mw-body-content" tabindex="-1">
+					{{{html-body-content}}}
+				</div>
+
+				{{{html-categories}}}
+			</article>
+		</div>
 	</div>
-	<footer class="sn-footer">
-		{{#data-footer.array-items}}
-		<div class="sn-footer-block">{{{html-items}}}</div>
-		{{/data-footer.array-items}}
+
+	{{!	Pie — replica la LÓGICA del pie de producción (wiki.ead.pucv.cl):
+		  1. Bloque institucional gestionado (página Stella-Nova:Pie) — el
+		     "espacio" propio del skin, arriba y destacado.
+		  2. Última modificación + licencia/atribución (data-info).
+		  3. Enlaces de sitio: privacidad · acerca · descargos (data-places).
+		  4. "Powered by" MediaWiki / Semantic MediaWiki (data-icons).
+		  5. "Herramientas y más" como sección DESPLEGABLE (igual que
+		     producción, que la trae colapsable) — el portlet tb.
+		Obligaciones core (2-4) SIEMPRE presentes. La navegación del sitio
+		(Escuela/Wiki/Navegación) vive en su menú del header, no aquí. }}
+	<footer class="sn-footer" role="contentinfo">
+		<div class="sn-footer-inner">
+			{{!	Col 1 — bloque institucional gestionado (Stella-Nova:Pie). }}
+			{{#sn-chrome}}{{#footer}}{{#is-published}}
+			<section class="sn-footer-col sn-footer-managed" aria-label="{{msg-sitetitle}}">{{{html}}}</section>
+			{{/is-published}}{{/footer}}{{/sn-chrome}}
+
+			{{!	Col 2 — última modificación + licencia (data-info) y los
+				enlaces de sitio del namespace Casiopea: privacidad, acerca,
+				descargos (data-places). Los logos enlazados (data-icons /
+				powered-by) se omiten a propósito. }}
+			<div class="sn-footer-col sn-footer-legal" {{{html-user-language-attributes}}}>
+				{{#data-footer}}
+				{{#data-info}}<ul class="sn-foot-info" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-info}}
+				{{#data-places}}<ul class="sn-foot-places" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-places}}
+				{{/data-footer}}
+			</div>
+
+			{{!	Col 3 — "Herramientas y más" (portlet tb) con ícono. }}
+			{{#sn-toolbox}}{{^is-empty}}
+			<nav class="sn-footer-col sn-footer-tools" aria-label="{{label}}">
+				<h2 class="sn-footer-h">
+					<svg class="sn-i" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"><use href="#sn-i-tool"/></svg>
+					{{#label}}{{.}}{{/label}}{{^label}}{{msg-stellanova-managed-nav}}{{/label}}
+				</h2>
+				<ul class="sn-footer-toollist">{{{html-items}}}</ul>
+			</nav>
+			{{/is-empty}}{{/sn-toolbox}}
+		</div>
 	</footer>
 </div>
+
+{{!	PreferencesPanel — diálogo. Expone las 7 preferencias resueltas + las
+	señales del SO. provides SavePreferences / ResetPreferences. JS lo hace
+	modal accesible; sin JS sigue siendo un formulario legible. }}
+<div class="sn-prefs-scrim" data-sn-prefs-scrim hidden></div>
+<aside class="sn-prefs" id="sn-prefs" role="dialog" aria-modal="true"
+	aria-labelledby="sn-prefs-title" hidden>
+	<form class="sn-prefs-form" data-sn-prefs-form>
+		<header class="sn-prefs-head">
+			<h2 id="sn-prefs-title">{{msg-stellanova-prefs}}</h2>
+			<button type="button" class="sn-prefs-x" data-sn-prefs-close
+				aria-label="{{msg-stellanova-close}}">
+				<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-x"/></svg>
+			</button>
+		</header>
+		<div class="sn-prefs-body">
+			<fieldset class="sn-pref">
+				<legend>{{msg-stellanova-pref-theme}}</legend>
+				<div class="sn-seg" role="radiogroup" data-sn-pref="theme" data-sn-os="{{sn-prefs.os-scheme}}">
+					<button type="button" data-v="auto">{{msg-stellanova-auto}}</button>
+					<button type="button" data-v="light">{{msg-stellanova-theme-light}}</button>
+					<button type="button" data-v="dark">{{msg-stellanova-theme-dark}}</button>
+				</div>
+			</fieldset>
+			<fieldset class="sn-pref">
+				<legend>{{msg-stellanova-pref-width}}</legend>
+				<div class="sn-seg" role="radiogroup" data-sn-pref="width">
+					<button type="button" data-v="narrow">{{msg-stellanova-w-narrow}}</button>
+					<button type="button" data-v="standard">{{msg-stellanova-w-standard}}</button>
+					<button type="button" data-v="wide">{{msg-stellanova-w-wide}}</button>
+					<button type="button" data-v="full">{{msg-stellanova-w-full}}</button>
+				</div>
+			</fieldset>
+			<fieldset class="sn-pref">
+				<legend>{{msg-stellanova-pref-font}}</legend>
+				<div class="sn-seg" role="radiogroup" data-sn-pref="font">
+					<button type="button" data-v="small">{{msg-stellanova-sz-s}}</button>
+					<button type="button" data-v="medium">{{msg-stellanova-sz-m}}</button>
+					<button type="button" data-v="large">{{msg-stellanova-sz-l}}</button>
+				</div>
+			</fieldset>
+			<fieldset class="sn-pref">
+				<legend>{{msg-stellanova-pref-leading}}</legend>
+				<div class="sn-seg" role="radiogroup" data-sn-pref="leading">
+					<button type="button" data-v="compact">{{msg-stellanova-ld-compact}}</button>
+					<button type="button" data-v="normal">{{msg-stellanova-ld-normal}}</button>
+					<button type="button" data-v="relaxed">{{msg-stellanova-ld-relaxed}}</button>
+				</div>
+			</fieldset>
+			<fieldset class="sn-pref">
+				<legend>{{msg-stellanova-pref-toc}}</legend>
+				<div class="sn-seg" role="radiogroup" data-sn-pref="toc">
+					<button type="button" data-v="persistent">{{msg-stellanova-toc-persistent}}</button>
+					<button type="button" data-v="inline">{{msg-stellanova-toc-inline}}</button>
+				</div>
+			</fieldset>
+			<label class="sn-pref sn-pref-row">
+				<span>{{msg-stellanova-pref-collapsible}}</span>
+				<input type="checkbox" class="sn-switch" data-sn-pref="collapsible">
+			</label>
+			<label class="sn-pref sn-pref-row">
+				<span>{{msg-stellanova-pref-motion}}<small>{{msg-stellanova-pref-motion-hint}}</small></span>
+				<input type="checkbox" class="sn-switch" data-sn-pref="motion">
+			</label>
+		</div>
+		<footer class="sn-prefs-foot">
+			<p class="sn-prefs-scope" data-sn-scope>
+				{{#sn-prefs}}
+				{{#is-registered}}{{msg-stellanova-prefs-scope-account}}{{/is-registered}}
+				{{^is-registered}}{{msg-stellanova-prefs-scope-browser}}{{/is-registered}}
+				{{/sn-prefs}}
+			</p>
+			<button type="button" class="sn-btn sn-btn-ghost" data-sn-prefs-reset disabled>{{msg-stellanova-reset}}</button>
+		</footer>
+	</form>
+</aside>
+{{/is-sn-fullscreen}}
+
 {{{html-after-content}}}
 {{{html-printtail}}}
+{{>SnIcons}}
 </body>
 </html>

@@ -1,0 +1,17 @@
+{{!
+	Una entrada del índice; recurre en sus sub-secciones mediante un
+	parcial autorreferente (Mustache admite recursión de parciales).
+}}
+<li class="sn-toc-item sn-toc-l{{toclevel}}">
+	<a class="sn-toc-link" href="#{{linkAnchor}}">
+		<span class="sn-toc-n">{{number}}</span>
+		<span class="sn-toc-t">{{{line}}}</span>
+	</a>
+	{{#is-parent-section}}
+	<ul class="sn-toc-list">
+		{{#array-sections}}
+		{{>TableOfContents__line}}
+		{{/array-sections}}
+	</ul>
+	{{/is-parent-section}}
+</li>

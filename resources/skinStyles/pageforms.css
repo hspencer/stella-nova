@@ -1,0 +1,104 @@
+/* Stella Nova · skinStyles → PageForms.
+ *
+ * Los formularios viven dentro de html-body-content; el skin no recorta su
+ * markup ni sus TemplateStyles. Solo armoniza inputs/botones con el papel.
+ * Carga junto a ext.pageforms*.styles .
+ */
+
+.pfForm, .pf-form-wrapper { font-size: var(--sn-fs-base); max-width: 100%; }
+
+/* La rejilla del formulario: respeta su tabla, suaviza el ritmo */
+.formtable, table.formtable {
+	border-collapse: separate; border-spacing: 0 var(--sn-s-3);
+	width: 100%;
+}
+.formtable > tbody > tr > td:first-child,
+.formtable th {
+	vertical-align: top; padding-right: var(--sn-s-4);
+	font-weight: 600; color: var(--sn-ink); white-space: normal;
+}
+.formtable td { padding-block: var(--sn-s-1); }
+
+/* Campos: misma materia que la búsqueda y los selects del panel */
+.pfForm :is(input[type="text"], input[type="number"], input[type="search"],
+	input[type="url"], input[type="email"], input[type="date"], textarea, select),
+.pf-form-wrapper :is(input[type="text"], textarea, select),
+input.createboxInput, .formInput input, textarea.createboxInput {
+	font: inherit; color: var(--sn-ink);
+	background: var(--sn-paper);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius);
+	padding: .5rem var(--sn-s-3);
+	max-width: 100%;
+}
+.pfForm textarea, textarea.createboxInput { width: 100%;
+	line-height: var(--sn-leading); }
+.pfForm :is(input, textarea, select):focus {
+	outline: none; border-color: var(--sn-nova);
+	box-shadow: 0 0 0 3px var(--sn-nova-wash);
+}
+.pfForm input::placeholder, .pf-form-wrapper input::placeholder {
+	color: var(--sn-ink-faint);
+}
+
+/* OOUI dentro de PageForms — solo acentos, sin romper su layout */
+.pfForm .oo-ui-inputWidget-input:focus,
+.oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input:focus {
+	border-color: var(--sn-nova);
+	box-shadow: 0 0 0 2px var(--sn-nova-wash);
+}
+.oo-ui-buttonElement-framed.oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button {
+	background: var(--sn-ink); border-color: var(--sn-ink); color: var(--sn-paper);
+}
+
+/* Plantillas múltiples (instancias repetibles): tarjetas en papel */
+.multipleTemplateList .multipleTemplate, .multipleTemplateInstance {
+	border: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius);
+	background: color-mix(in oklab, var(--sn-sunk) 45%, transparent);
+	padding: var(--sn-s-4); margin-bottom: var(--sn-s-3);
+}
+.multipleTemplateAdder, .pf-multipleTemplateAdder {
+	color: var(--sn-nova); cursor: pointer; font-weight: 600;
+}
+.removeTemplate, .multipleTemplateRemover { color: var(--sn-ink-faint); cursor: pointer; }
+.removeTemplate:hover, .multipleTemplateRemover:hover { color: var(--sn-danger); }
+
+/* Botones de envío / acciones del formulario */
+.pfForm .editButtons input[type="submit"],
+.pfForm .mw-htmlform-submit, .pfSubmitButton, input#wpSave,
+.pf_CreateBox input[type="submit"] {
+	background: var(--sn-ink); color: var(--sn-paper);
+	border: 0; border-radius: var(--sn-radius);
+	padding: .55rem var(--sn-s-5); font: inherit; font-weight: 500;
+	cursor: pointer; transition: background var(--sn-dur-1);
+}
+.pfForm .editButtons input[type="submit"]:hover, .pfSubmitButton:hover {
+	background: var(--sn-nova); color: var(--sn-nova-ink);
+}
+.pfForm .editButtons input[type="button"], #wpPreview, #wpDiff {
+	background: transparent; color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline); border-radius: var(--sn-radius);
+	padding: .5rem var(--sn-s-4); font: inherit; cursor: pointer;
+}
+.pf_CreateBox, .pfFormInput {
+	display: flex; flex-wrap: wrap; gap: var(--sn-s-2); align-items: center;
+}
+
+/* Autocompletado / fancybox / datepicker */
+.pacContainer, .pf-tokens-input, ul.ui-autocomplete {
+	background: var(--sn-paper); color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline); border-radius: var(--sn-radius);
+	box-shadow: var(--sn-lift); list-style: none; padding: var(--sn-s-1);
+}
+.pacContainer .pacItem:hover, ul.ui-autocomplete .ui-menu-item:hover {
+	background: var(--sn-nova-wash);
+}
+.pfFreeText, textarea#free_text {
+	width: 100%; min-height: 14rem;
+}
+
+/* Mensajes de validación del formulario */
+.pfFormValidationError, .errorMessage {
+	color: var(--sn-danger); font-size: var(--sn-fs-sm);
+}

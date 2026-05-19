@@ -20,14 +20,30 @@ Plan accionable. Principios en [`ARCHITECTURE.md`](ARCHITECTURE.md).
 - [x] **M0 — Skeleton**: `skin.json`, `SkinStellaNova` (extends `SkinMustache`),
   `skin.mustache` semántico, tokens/layout/print/JS, i18n en/es, repo git +
   remote (sin push). Renderiza sin errores PHP, seleccionable.
-- [ ] M1 — skinStyles SMW/SRF/PageForms
-- [ ] M2 — Layout real
-- [ ] M3 — Dark mode + tokens definitivos
-- [ ] M4 — Responsive + navegación
-- [ ] M5 — Accesibilidad WCAG 2.1 AA
-- [ ] M6 — JS progresivo
+- [x] **M1 — skinStyles SMW/SRF/PageForms**: `resources/skinStyles/{smw,srf,
+  pageforms}.css` inyectados vía `ResourceModuleSkinStyles` por módulo
+  (`ext.smw.*.styles`, `ext.srf*`, `ext.pageforms.*.styles`), skin-scoped,
+  refine-only. Verificado contra páginas reales: paridad de bytes del
+  `mw-parser-output` con vector-2022 (no se recorta HTML de extensiones).
+- [x] **M2 — Layout real**: "página de papel" — hoja centrada sobre campo
+  ahuesado; cabecera-horizonte con isotipo (SVG nova autocontenido,
+  theme-adaptive), búsqueda, herramientas tri-estado; **navegación en
+  dropdown desde la barra superior** (no riel; ver Decisiones); pie
+  compuesto (bloque gestionado + obligaciones core). Fidelidad: emite
+  todas las data keys de SkinMustache 1.43 (`SkinRenderFidelity`).
+- [x] **M3 — Tokens + tema**: `tokens.css` definitivo; **default claro**,
+  oscuro solo por elección explícita / `auto`+SO (ver Decisiones); fuentes
+  auto-alojadas (Work Sans + Fraunces, `fonts.css`, sin CDN runtime).
+- [~] **M4 — Responsive + navegación**: mobile-first; dropdown colapsable;
+  panel de preferencias (7, modal accesible) con persistencia híbrida
+  (cuenta/`localStorage`) + pre-pintado sin FOUC. Falta ronda móvil real.
+- [ ] M5 — Accesibilidad WCAG 2.1 AA (auditoría axe/WAVE + lector pantalla)
+- [~] M6 — JS progresivo (panel/dropdown/menús hechos; degradación sin JS ok)
 - [ ] M7 — Testing + CI
 - [ ] M8 — Verificación final y publicación
+
+`__PANTALLACOMPLETA__` operativo (behaviour switch, patrón NoTitle):
+fija page-property → `SkinStellaNova` suprime chrome salvo escape.
 
 ## Roadmap
 
@@ -84,6 +100,36 @@ Decidir herramienta (pendiente del PLAN del proyecto).
 - Remoto: **GitHub `eadpucv/stella-nova`** (`origin` configurado, **sin push**
   aún — empujar cuando M1+ esté presentable).
 - Testing/CI: herramienta por definir (M7).
+- **Tipografía** (rev. 2026-05-18): **solo Work Sans** (cuerpo/UI/títulos)
+  + monospace del sistema para código. Fraunces **descartado por ahora**
+  (no convencía en titulares); sus woff2 siguen vendoreados en
+  `resources/fonts/` pero `fonts.css` ya no los declara. Titulares
+  sobrios (sin escala exagerada). `--sn-font-display` es alias de Work
+  Sans: reintroducir un display luego es una línea. Sin `font-variation-
+  settings` (rompía el peso variable de Work Sans).
+- **Navegación: cabecera despejada + mapa del sitio en el pie** (rev.
+  2026-05-18, decisión del usuario): la barra superior queda *centrada en
+  la página actual* — isotipo · pestañas de página (espacios + Leer/
+  Editar/[Editar con formulario si PageForms asocia uno]/Historial) ·
+  buscador · herramientas de usuario. La **navegación del sitio**
+  (portlets del MediaWiki:Sidebar + toolbox + bloque institucional
+  gestionado) bajó al **pie**, como mapa del sitio en columnas. Sin riel,
+  sin hamburguesa, sin dropdowns de nivel superior en el header (las
+  pestañas no se truncan: hacen scroll horizontal en pantallas chicas).
+  Presentación, no comportamiento; `specs/stella-nova.allium` ya declara
+  riel/dropdown/posición fuera de alcance (regiones intactas).
+  ARCHITECTURE §4 ("sidebar persistente") = doctrina histórica supeditada.
+- **La hoja (`.sn-paper`)** (2026-05-18): radio mínimo
+  (`--sn-radius-paper` 3px) y sombra muy sutil (`--sn-lift-paper`), no
+  flotante; asentada sobre el campo.
+- **Tema: default claro, el SO no oscurece solo** (2026-05-18, decisión del
+  usuario): sin preferencia guardada → claro, aunque el SO esté en oscuro;
+  oscuro solo con elección explícita o `auto` (seguir al SO). **Reflejado
+  en `specs/stella-nova.allium`** (2026-05-18): `enum ThemeChoice {light|
+  dark|auto}`, `Preferences.theme: ThemeChoice?`, `ViewingSession.
+  active_theme` condicional (`auto → os_scheme ?? light`; `light|dark`
+  forzado; sin elección → `light`) y `@guarantee Precedence`. Ya no es
+  divergencia: es el spec. `allium check` limpio (0 errores).
 
 ## Convención de commits
 
