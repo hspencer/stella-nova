@@ -34,6 +34,11 @@ Probar sin cambiar el default: añadir `?useskin=stellanova` a cualquier URL.
   (SkinMustache, skinStyles para SMW/SRF, mobile-first, WCAG 2.1 AA).
 - [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) — plan de desarrollo: estado,
   roadmap M0–M8, workflow local, checklist de verificación, decisiones.
+- **Espécimen gráfico navegable:**
+  [hspencer.github.io/stella-nova/specimen/](https://hspencer.github.io/stella-nova/specimen/)
+  — tokens, componentes y layout en vivo, autogenerado desde `tokens.css`
+  ([fuente](docs/specimen/)). Ver sección [Para diseñadoras y
+  diseñadores](#para-diseñadoras-y-diseñadores) para el flujo de iteración.
 
 ## Para diseñadoras y diseñadores
 
@@ -73,6 +78,27 @@ externo es el token `--sn-ext-icon` (máscara) en
 campo en `--sn-ink*` / `--sn-field` / `--sn-paper`. Light/dark se
 resuelven en [`tokens.css`](resources/tokens.css) (`prefers-color-scheme`+ `[data-sn-theme]`).
 
+**Espécimen gráfico.** Mini-sitio estático autocontenido para iterar el
+sistema visual sin levantar la wiki ni tocar PHP — navegable en línea en
+**[hspencer.github.io/stella-nova/specimen/](https://hspencer.github.io/stella-nova/specimen/)**
+o localmente en [`docs/specimen/`](docs/specimen/) (también empaquetado como
+`stella-nova-specimen-v<version>.zip` listo para enviar al equipo de diseño).
+Tres páginas — `index.html` (tokens, escalas, sombras, auto-generadas desde
+`tokens.css`), `components.html` (botones, inputs, toolbar, washes, TOC…) y
+`layout.html` (página simulada completa) — cargan los CSS reales del skin,
+exponen un bloque `<style id="overrides">` para redefinir variables en vivo
+y un `notes.md` para anotar libremente.
+Regenerarlo tras cambiar tokens o componentes:
+
+```bash
+python3 scripts/build-specimen.py
+```
+
+Es idempotente y **preserva `notes.md`** entre rebuilds (los `overrides` en los
+HTML se reescriben — copialos al CSS fuente cuando los aceptes). Documentación
+completa del flujo diseñador ↔ mantenedor en
+[`docs/specimen/README.md`](docs/specimen/README.md).
+
 ## Compatibilidad con extensiones
 
 Stella Nova **absorbe** los estilos de las extensiones de MediaWiki en vez
@@ -100,7 +126,7 @@ módulos CSS de una extensión. Hay dos niveles de absorción:
 | [Semantic MediaWiki](https://www.semantic-mediawiki.org/) | [`smw.css`](resources/skinStyles/smw.css) | reescrita a mano |
 | [Semantic Result Formats](https://www.semantic-mediawiki.org/wiki/Extension:Semantic_Result_Formats) | [`srf.css`](resources/skinStyles/srf.css) | reescrita a mano |
 | [PageForms](https://www.mediawiki.org/wiki/Extension:Page_Forms) | [`pageforms.css`](resources/skinStyles/pageforms.css) | reescrita a mano |
-| OOUI (core MW) | [`oojs-ui.css`](resources/skinStyles/oojs-ui.css) | reescrita a mano |
+| OOUI (core MW, tema wikimediaui) | [`oojs-ui.css`](resources/skinStyles/oojs-ui.css) | snapshot tokenizado |
 | [MsUpload](https://www.mediawiki.org/wiki/Extension:MsUpload) | [`msupload.less`](resources/skinStyles/msupload.less) | snapshot tokenizado |
 | [SimpleBatchUpload](https://www.mediawiki.org/wiki/Extension:SimpleBatchUpload) | [`simplebatchupload.css`](resources/skinStyles/simplebatchupload.css) | snapshot tokenizado |
 | [ConfirmEdit](https://www.mediawiki.org/wiki/Extension:ConfirmEdit) (+ hCaptcha bundled) | [`confirmedit.css`](resources/skinStyles/confirmedit.css) | snapshot tokenizado |
@@ -132,6 +158,33 @@ tokenización.
 
 > Detalle completo del proceso, mapas de equivalencias y trazabilidad en
 > el [Plan de Migración Stella Nova](https://wiki.ead.pucv.cl/Stella_Nova)
+
+## Scripts
+
+Todos los scripts del repo viven en [`scripts/`](scripts/) y se ejecutan
+desde la raíz del skin (`cd skins/stella-nova/`). Son **idempotentes**:
+correrlos dos veces seguidas no rompe nada.
+
+| Script | Qué hace |
+|---|---|
+| [`scripts/build-specimen.py`](scripts/build-specimen.py) | Regenera el espécimen gráfico en [`docs/specimen/`](docs/specimen/) (tokens auto-extraídos de `tokens.css`, 3 páginas HTML autocontenidas, fuentes embebidas) y empaqueta `stella-nova-specimen-v<version>.zip`. Preserva `notes.md` entre rebuilds. |
+| [`scripts/snapshot-oojs-ui.py`](scripts/snapshot-oojs-ui.py) | Captura el CSS fuente de OOUI (core + widgets + windows, tema wikimediaui) desde `w/resources/lib/ooui/` y lo escribe como `resources/skinStyles/oojs-ui.css` con header de atribución (versión, fecha, módulos). Se corre cuando OOUI sube versión. |
+| [`scripts/apply-tokenization.py`](scripts/apply-tokenization.py) | Aplica las 3 pasadas de tokenización (hex → tokens, codex-vars → tokens, medidas → tokens) a las hojas snapshot de [`resources/skinStyles/`](resources/skinStyles/). Acepta argumento opcional para un solo archivo (`python3 scripts/apply-tokenization.py oojs-ui.css`). Crea backup `.pre-tok-<timestamp>` antes de escribir. |
+
+**Comandos típicos:**
+
+```bash
+# Regenerar el espécimen gráfico (tras cambios en tokens o componentes)
+python3 scripts/build-specimen.py
+
+# Recapturar OOUI cuando suba versión en el wiki local
+python3 scripts/snapshot-oojs-ui.py
+python3 scripts/apply-tokenization.py oojs-ui.css
+
+# Re-tokenizar todos los snapshots (raro; suele bastar al añadir un mapeo nuevo
+# de hex/medida → token en apply-tokenization.py)
+python3 scripts/apply-tokenization.py
+```
 
 ## Licencia
 

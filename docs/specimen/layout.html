@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es" data-sn-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layout — Stella Nova v0.0.4</title>
+<link rel="icon" href="assets/icons/casiopea-icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/stella-nova.css">
+<link rel="stylesheet" href="assets/specimen.css">
+<!-- ── overrides ────────────────────────────────────────────────────────────
+     El equipo de diseño pega aquí redefiniciones de tokens para proponer
+     cambios. Sobreescriben tokens.css sin tocar el archivo fuente. Ejemplo:
+       :root { --sn-nova: #c33; --sn-fs-display: 2.4rem; }
+     ─────────────────────────────────────────────────────────────────── -->
+<style id="overrides">
+/* :root { --sn-nova: #cc3344; } */
+</style>
+</head>
+<body class="spec">
+<svg xmlns="http://www.w3.org/2000/svg" class="sn-iconsprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden" width="0" height="0">
+	<symbol id="sn-i-menu" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+	<symbol id="sn-i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+	<symbol id="sn-i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+	<symbol id="sn-i-sliders" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
+	<symbol id="sn-i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+	<symbol id="sn-i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></symbol>
+	<symbol id="sn-i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+	<symbol id="sn-i-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+	<symbol id="sn-i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+	<symbol id="sn-i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+	<symbol id="sn-i-edit" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></symbol>
+	<symbol id="sn-i-file-plus" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></symbol>
+	<symbol id="sn-i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+	<symbol id="sn-i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+	<symbol id="sn-i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+	<symbol id="sn-i-external-link" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+</svg>
+<header class="spec-top">
+  <a class="spec-brand" href="index.html" aria-label="Stella Nova — Inicio">
+    <img src="assets/icons/casiopea-icon.svg" alt="" width="28" height="28">
+    <span class="spec-brand-name">Stella Nova</span>
+    <span class="spec-brand-ver">v0.0.4</span>
+  </a>
+  <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html">Fundamentos</a><a href="components.html">Componentes</a><a href="layout.html" aria-current="page">Layout</a></nav>
+  <div class="spec-controls">
+    <fieldset class="spec-seg" aria-label="Tema">
+      <legend class="vh">Tema</legend>
+      <button type="button" data-theme="light" aria-pressed="true">Claro</button>
+      <button type="button" data-theme="dark">Oscuro</button>
+      <button type="button" data-theme="auto">Auto</button>
+    </fieldset>
+    <fieldset class="spec-seg" aria-label="Ancho">
+      <legend class="vh">Ancho</legend>
+      <button type="button" data-width="narrow">Angosto</button>
+      <button type="button" data-width="standard" aria-pressed="true">Estándar</button>
+      <button type="button" data-width="wide">Ancho</button>
+    </fieldset>
+  </div>
+</header>
+<main class="spec-main">
+
+<div class="sn-app demo-app">
+  <header class="sn-header" role="banner">
+    <div class="sn-header-bar">
+      <div class="sn-brandnav">
+        <a class="sn-isotype" href="#" aria-label="Casiopea — Inicio">
+          <img src="assets/icons/casiopea.svg" alt="" class="sn-isotype-img">
+        </a>
+        <div class="sn-md sn-sitenav">
+          <button type="button" class="sn-md-trigger sn-md-icononly"
+                  aria-expanded="false" aria-haspopup="true" aria-label="Navegación">
+            <svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-menu"/></svg>
+          </button>
+        </div>
+      </div>
+      <form class="sn-search" role="search" action="#">
+        <input type="search" placeholder="Buscar en Casiopea…">
+        <button type="submit" class="sn-search-go" aria-label="Buscar">
+          <svg class="sn-i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><use href="#sn-i-search"/></svg>
+        </button>
+      </form>
+      <div class="sn-pagecluster">
+        <a class="sn-iconbtn" href="#" aria-label="Editar">
+          <svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-edit"/></svg>
+        </a>
+        <a class="sn-iconbtn" href="#" aria-label="Historial">
+          <svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-clock"/></svg>
+        </a>
+      </div>
+      <div class="sn-usertools">
+        <button type="button" class="sn-usermenu-trigger" aria-haspopup="menu" aria-expanded="false" aria-label="Usuaria">
+          <svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-user"/></svg>
+        </button>
+        <button type="button" class="sn-prefs-trigger" aria-haspopup="dialog" aria-label="Preferencias">
+          <svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-sliders"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="sn-shell">
+    <div class="sn-paper-wrap">
+      <article class="sn-paper mw-body">
+        <aside class="sn-notice" role="note">
+          <strong>Simulacro.</strong> Layout de Stella Nova con texto
+          simulado (<em>lorem ipsum</em>) — referencia visual para diseño.
+        </aside>
+        <div id="contentSub" class="sn-subtitle">Subtítulo del artículo · metadato</div>
+        <div class="sn-body mw-body-content">
+          <h1 id="firstHeading" class="firstHeading">Título del artículo · display editorial</h1>
+
+          <nav class="sn-toc" aria-label="Tabla de contenidos">
+            <h3 class="sn-toc-h">Contenidos</h3>
+            <ol>
+              <li><a href="#sec-1"><span class="num">1</span> Sección primera</a></li>
+              <li><a href="#sec-2" class="active"><span class="num">2</span> Sección segunda</a></li>
+              <li><a href="#sec-3"><span class="num">3</span> Sección tercera</a></li>
+              <li><a href="#sec-4"><span class="num">4</span> Sección cuarta</a></li>
+            </ol>
+          </nav>
+
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+          enim ad minim veniam, quis nostrud <a href="#">exercitation
+          ullamco</a> laboris nisi ut aliquip ex ea commodo consequat. Duis
+          aute irure dolor in reprehenderit in voluptate velit esse cillum
+          dolore eu fugiat <strong>nulla pariatur</strong>.</p>
+
+          <h2 id="sec-1">Sección primera</h2>
+          <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa
+          qui officia deserunt mollit anim id est laborum. <a href="#"
+          class="external">Sed ut perspiciatis</a> unde omnis iste natus
+          error sit voluptatem accusantium doloremque laudantium, totam rem
+          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+          architecto beatae vitae dicta sunt explicabo.</p>
+
+          <blockquote>
+            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
+            odit aut fugit, sed quia consequuntur magni dolores eos qui
+            ratione voluptatem sequi nesciunt.</p>
+            <footer>— Autoría · <cite>Obra de referencia</cite> (año)</footer>
+          </blockquote>
+
+          <h2 id="sec-2">Sección segunda</h2>
+          <p>Neque porro quisquam est, qui dolorem ipsum quia dolor sit
+          amet, consectetur, adipisci velit, sed quia non numquam eius modi
+          tempora incidunt ut labore et dolore magnam aliquam quaerat
+          voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
+          ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi
+          consequatur.</p>
+
+          <table class="wikitable">
+            <caption>Tabla de muestra · datos simulados</caption>
+            <thead>
+              <tr><th>Columna A</th><th>Columna B</th><th>Año</th><th>Columna D</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Valor lorem</td><td>Valor ipsum</td><td>0000</td><td>Valor dolor</td></tr>
+              <tr><td>Valor sit</td><td>Valor amet</td><td>0000</td><td>Valor elit</td></tr>
+              <tr><td>Valor sed</td><td>Valor eiusmod</td><td>0000</td><td>Valor tempor</td></tr>
+              <tr><td>Valor incididunt</td><td>Valor labore</td><td>0000</td><td>Valor magna</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="sec-3">Sección tercera</h2>
+          <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit
+          esse quam nihil molestiae consequatur, vel illum qui dolorem eum
+          fugiat quo voluptas nulla pariatur.</p>
+          <pre><code>// Bloque de código · familia --sn-font-mono
+function loremIpsum(arg1, arg2) {
+    return arg1 + arg2;
+}</code></pre>
+
+          <h2 id="sec-4">Sección cuarta</h2>
+          <ul>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Consectetur adipiscing elit.</li>
+            <li>Sed do <a href="#">eiusmod tempor</a> incididunt.</li>
+            <li>Ut labore et <a href="#" class="new">dolore magna</a> aliqua.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <footer class="sn-footer" role="contentinfo">
+    <div class="sn-footer-inner">
+      <div class="sn-footer-col sn-footer-legal">
+        <p>Pie de página · <a href="#">licencia</a> · última edición · fecha</p>
+      </div>
+      <nav class="sn-footer-col sn-footer-tools" aria-label="Herramientas">
+        <ul>
+          <li><a href="#">Enlace de pie</a></li>
+          <li><a href="#">Enlace de pie</a></li>
+          <li><a href="#">Enlace de pie</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+</div>
+
+</main>
+<footer class="spec-foot">
+  <p>
+    Espécimen generado por <code>scripts/build-specimen.py</code> ·
+    Stella Nova v0.0.4 ·
+    <a href="notes.md">notes.md</a> (notas del equipo de diseño) ·
+    <a href="https://wiki.ead.pucv.cl">wiki.ead.pucv.cl</a>
+  </p>
+</footer>
+<script>
+  // Mínimo: aplica preferencias en <html> y persiste en localStorage. El skin
+  // real las resuelve server-side (registrados) o pre-paint (anónimos); aquí
+  // basta el toggle visual para que el diseñador compare temas.
+  (function () {
+    var html = document.documentElement;
+    var apply = function (kind, value) {
+      html.setAttribute('data-sn-' + kind, value);
+      localStorage.setItem('sn-spec-' + kind, value);
+      document.querySelectorAll('[data-' + kind + ']').forEach(function (b) {
+        b.setAttribute('aria-pressed', b.dataset[kind] === value ? 'true' : 'false');
+      });
+    };
+    ['theme', 'width'].forEach(function (k) {
+      var saved = localStorage.getItem('sn-spec-' + k);
+      if (saved) apply(k, saved);
+      document.querySelectorAll('[data-' + k + ']').forEach(function (b) {
+        b.addEventListener('click', function () { apply(k, b.dataset[k]); });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

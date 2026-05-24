@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="es" data-sn-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fundamentos — Stella Nova v0.0.4</title>
+<link rel="icon" href="assets/icons/casiopea-icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/stella-nova.css">
+<link rel="stylesheet" href="assets/specimen.css">
+<!-- ── overrides ────────────────────────────────────────────────────────────
+     El equipo de diseño pega aquí redefiniciones de tokens para proponer
+     cambios. Sobreescriben tokens.css sin tocar el archivo fuente. Ejemplo:
+       :root { --sn-nova: #c33; --sn-fs-display: 2.4rem; }
+     ─────────────────────────────────────────────────────────────────── -->
+<style id="overrides">
+/* :root { --sn-nova: #cc3344; } */
+</style>
+</head>
+<body class="spec">
+<svg xmlns="http://www.w3.org/2000/svg" class="sn-iconsprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden" width="0" height="0">
+	<symbol id="sn-i-menu" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+	<symbol id="sn-i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+	<symbol id="sn-i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+	<symbol id="sn-i-sliders" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
+	<symbol id="sn-i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+	<symbol id="sn-i-corner-up-left" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></symbol>
+	<symbol id="sn-i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+	<symbol id="sn-i-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+	<symbol id="sn-i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+	<symbol id="sn-i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+	<symbol id="sn-i-edit" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></symbol>
+	<symbol id="sn-i-file-plus" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></symbol>
+	<symbol id="sn-i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+	<symbol id="sn-i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+	<symbol id="sn-i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+	<symbol id="sn-i-external-link" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+</svg>
+<header class="spec-top">
+  <a class="spec-brand" href="index.html" aria-label="Stella Nova — Inicio">
+    <img src="assets/icons/casiopea-icon.svg" alt="" width="28" height="28">
+    <span class="spec-brand-name">Stella Nova</span>
+    <span class="spec-brand-ver">v0.0.4</span>
+  </a>
+  <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html" aria-current="page">Fundamentos</a><a href="components.html">Componentes</a><a href="layout.html">Layout</a></nav>
+  <div class="spec-controls">
+    <fieldset class="spec-seg" aria-label="Tema">
+      <legend class="vh">Tema</legend>
+      <button type="button" data-theme="light" aria-pressed="true">Claro</button>
+      <button type="button" data-theme="dark">Oscuro</button>
+      <button type="button" data-theme="auto">Auto</button>
+    </fieldset>
+    <fieldset class="spec-seg" aria-label="Ancho">
+      <legend class="vh">Ancho</legend>
+      <button type="button" data-width="narrow">Angosto</button>
+      <button type="button" data-width="standard" aria-pressed="true">Estándar</button>
+      <button type="button" data-width="wide">Ancho</button>
+    </fieldset>
+  </div>
+</header>
+<main class="spec-main">
+<section class="intro">
+  <h1 class="display">Stella Nova · fundamentos</h1>
+  <p class="lede">Tokens del sistema visual: color, tipografía, escala,
+  forma, movimiento. Cada valor proviene de
+  <code>resources/tokens.css</code> y se refleja aquí en vivo.</p>
+  <p class="lede-sub">Para proponer cambios, redefiní variables en el bloque
+  <code>&lt;style id="overrides"&gt;</code> al inicio del documento — la página
+  entera los toma. Anotaciones libres en <a href="notes.md">notes.md</a>.</p>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Campo y papel</h2>
+  <div class="tokgrp-body grid-color">
+    <figure class="sw" style="--sw-c: var(--sn-field);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-field</code>
+    <span class="sw-val">#e8e4da</span>
+    <span class="sw-note">gris ahuesado: el escritorio/atelier</span>
+  </figcaption>
+</figure><div class="kv">
+  <code class="kv-var">--sn-field-grain</code>
+  <span class="kv-val">0.035</span>
+  <span class="kv-note">opacidad del grano de papel sobre field</span>
+</div><figure class="sw" style="--sw-c: var(--sn-paper);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-paper</code>
+    <span class="sw-val">#fcfbf7</span>
+    <span class="sw-note">la hoja: superficie del contenido</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-paper-edge);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-paper-edge</code>
+    <span class="sw-val">#f3f0e7</span>
+    <span class="sw-note">borde/sombra interna de la hoja</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-sunk);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-sunk</code>
+    <span class="sw-val">#efece2</span>
+    <span class="sw-note">hundido: inputs, code, celdas alternas</span>
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Tinta</h2>
+  <div class="tokgrp-body grid-color">
+    <figure class="sw" style="--sw-c: var(--sn-ink);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-ink</code>
+    <span class="sw-val">#221f1a</span>
+    <span class="sw-note">texto: negro cálido, no #000</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-ink-soft);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-ink-soft</code>
+    <span class="sw-val">#6b6357</span>
+    <span class="sw-note">secundario, metadatos, captions</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-ink-faint);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-ink-faint</code>
+    <span class="sw-val">#968c7c</span>
+    <span class="sw-note">terciario, placeholders, deshabilitado</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-hairline);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-hairline</code>
+    <span class="sw-val">#ddd6c7</span>
+    <span class="sw-note">filete: bordes de 1px, separadores</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-hairline-soft);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-hairline-soft</code>
+    <span class="sw-val">#e7e1d3</span>
+    <span class="sw-note">filete aún más tenue</span>
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">La nova</h2>
+  <div class="tokgrp-body grid-color">
+    <figure class="sw" style="--sw-c: var(--sn-nova);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-nova</code>
+    <span class="sw-val">#b22f1e</span>
+    <span class="sw-note">carmín: foco, activo, marca de posición</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-nova-ink);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-nova-ink</code>
+    <span class="sw-val">#ffffff</span>
+    <span class="sw-note">texto sobre nova</span>
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-nova-wash);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-nova-wash</code>
+    <span class="sw-val">#f7e9e6</span>
+    <span class="sw-note">lavado tenue: selección, fondo activo</span>
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Enlaces</h2>
+  <div class="tokgrp-body grid-color">
+    <figure class="sw" style="--sw-c: var(--sn-link);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-link</code>
+    <span class="sw-val">#ae2d13</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-link-hover);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-link-hover</code>
+    <span class="sw-val">#962c08</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-link-visited);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-link-visited</code>
+    <span class="sw-val">#612403</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-icon);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-icon</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-ink) 55%, transparent)</span>
+    
+  </figcaption>
+</figure><div class="kv">
+  <code class="kv-var">--sn-icon-active</code>
+  <span class="kv-val">var(--sn-ink)</span>
+  
+</div>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Señales</h2>
+  <div class="tokgrp-body grid-color">
+    <figure class="sw" style="--sw-c: var(--sn-ok);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-ok</code>
+    <span class="sw-val">#2f6f43</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-warn);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-warn</code>
+    <span class="sw-val">#8a5a12</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-danger);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-danger</code>
+    <span class="sw-val">#b21e33</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-ok-wash);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-ok-wash</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-ok) 14%, var(--sn-paper))</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-warn-wash);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-warn-wash</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-warn) 14%, var(--sn-paper))</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-danger-wash);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-danger-wash</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-danger) 12%, var(--sn-paper))</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-info-wash);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-info-wash</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-warn) 8%, var(--sn-paper))</span>
+    
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Controles / formularios</h2>
+  <div class="tokgrp-body grid-color">
+    <div class="kv">
+  <code class="kv-var">--sn-btn-bg</code>
+  <span class="kv-val">var(--sn-sunk)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-bg-hover</code>
+  <span class="kv-val">var(--sn-paper)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-fg</code>
+  <span class="kv-val">var(--sn-ink)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-border</code>
+  <span class="kv-val">var(--sn-hairline)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-border-hover</code>
+  <span class="kv-val">var(--sn-ink-faint)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-primary-bg</code>
+  <span class="kv-val">var(--sn-ink)</span>
+  
+</div><figure class="sw" style="--sw-c: var(--sn-btn-primary-bg-hover);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-btn-primary-bg-hover</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-ink) 86%, var(--sn-paper))</span>
+    
+  </figcaption>
+</figure><div class="kv">
+  <code class="kv-var">--sn-btn-primary-fg</code>
+  <span class="kv-val">var(--sn-paper)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-danger-bg</code>
+  <span class="kv-val">var(--sn-danger)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-btn-danger-fg</code>
+  <span class="kv-val">var(--sn-nova-ink)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-field-bg</code>
+  <span class="kv-val">var(--sn-paper)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-field-bg-disabled</code>
+  <span class="kv-val">var(--sn-sunk)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-field-fg</code>
+  <span class="kv-val">var(--sn-ink)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-field-border</code>
+  <span class="kv-val">var(--sn-hairline)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-field-placeholder</code>
+  <span class="kv-val">var(--sn-ink-faint)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-on-bg</code>
+  <span class="kv-val">var(--sn-ink)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-on-fg</code>
+  <span class="kv-val">var(--sn-paper)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-opt-hover-bg</code>
+  <span class="kv-val">var(--sn-sunk)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-opt-sel-bg</code>
+  <span class="kv-val">var(--sn-nova-wash)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-opt-fg</code>
+  <span class="kv-val">var(--sn-ink)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-focus-border</code>
+  <span class="kv-val">var(--sn-nova)</span>
+  
+</div><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-focus-ring);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-focus-ring</code>
+    <span class="sz-val">0 0 0 2px var(--sn-nova-wash)</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-scrim);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-scrim</code>
+    <span class="sw-val">color-mix(in oklab, var(--sn-ink) 45%, transparent)</span>
+    
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Tipografía</h2>
+  <div class="tokgrp-body grid-size">
+    <div class="kv">
+  <code class="kv-var">--sn-font-text</code>
+  <span class="kv-val">'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-font-display</code>
+  <span class="kv-val">'Newsreader', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-font-mono</code>
+  <span class="kv-val">'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-font-scale</code>
+  <span class="kv-val">1</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-leading</code>
+  <span class="kv-val">1.65</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-leading-tight</code>
+  <span class="kv-val">1.22</span>
+  
+</div><figure class="ts" style="font-size: var(--sn-fs-root);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-root</code>
+    <span class="ts-val">calc(1rem * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-xs);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-xs</code>
+    <span class="ts-val">clamp(.72rem, .70rem + .10vw, .78rem)</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-sm);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-sm</code>
+    <span class="ts-val">clamp(.82rem, .79rem + .14vw, .90rem)</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-base);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-base</code>
+    <span class="ts-val">calc(clamp(1rem, .97rem + .16vw, 1.05rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-md);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-md</code>
+    <span class="ts-val">calc(clamp(1.05rem, 1.01rem + .22vw, 1.18rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-lg);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-lg</code>
+    <span class="ts-val">calc(clamp(1.2rem, 1.12rem + .40vw, 1.42rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-xl);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-xl</code>
+    <span class="ts-val">calc(clamp(1.35rem, 1.22rem + .55vw, 1.62rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-display);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-display</code>
+    <span class="ts-val">calc(clamp(1.5rem, 1.32rem + .85vw, 2rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Ritmo espacial</h2>
+  <div class="tokgrp-body grid-size">
+    <figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-1);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-1</code>
+    <span class="sz-val">.25rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-2);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-2</code>
+    <span class="sz-val">.5rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-3);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-3</code>
+    <span class="sz-val">.75rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-4);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-4</code>
+    <span class="sz-val">1rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-5);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-5</code>
+    <span class="sz-val">1.5rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-6);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-6</code>
+    <span class="sz-val">2.25rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-7);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-7</code>
+    <span class="sz-val">3.5rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-s-8);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-s-8</code>
+    <span class="sz-val">5.25rem</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-measure);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-measure</code>
+    <span class="sz-val">58rem</span>
+    <span class="sz-note">= standard (default)</span>
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-rail);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-rail</code>
+    <span class="sz-val">15.5rem</span>
+    <span class="sz-note">(sin uso; reservado)</span>
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-shell);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-shell</code>
+    <span class="sz-val">82rem</span>
+    <span class="sz-note">ancho máximo del conjunto (header/pie)</span>
+  </figcaption>
+</figure><div class="kv">
+  <code class="kv-var">--sn-ext-icon</code>
+  <span class="kv-val">url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E&quot;)</span>
+  
+</div><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-ctl);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-ctl</code>
+    <span class="sz-val">2.4rem</span>
+    
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Forma y materia</h2>
+  <div class="tokgrp-body grid-other">
+    <figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-radius-s);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-radius-s</code>
+    <span class="sz-val">2px</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-radius);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-radius</code>
+    <span class="sz-val">4px</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-radius-l);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-radius-l</code>
+    <span class="sz-val">8px</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-radius-paper);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-radius-paper</code>
+    <span class="sz-val">3px</span>
+    <span class="sz-note">la hoja: esquinas apenas redondeadas</span>
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-radius-pill);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-radius-pill</code>
+    <span class="sz-val">999px</span>
+    <span class="sz-note">badges, chips, contadores</span>
+  </figcaption>
+</figure><div class="kv">
+  <code class="kv-var">--sn-hair</code>
+  <span class="kv-val">1px solid var(--sn-hairline)</span>
+  
+</div><figure class="sh">
+  <span class="sh-box" style="box-shadow: var(--sn-lift-paper);"></span>
+  <figcaption>
+    <code class="sh-var">--sn-lift-paper</code>
+    <span class="sh-val">0 1px 1px rgba(40, 33, 20, .03), 0 3px 8px rgba(40, 33, 20, .04)</span>
+    
+  </figcaption>
+</figure><figure class="sh">
+  <span class="sh-box" style="box-shadow: var(--sn-lift);"></span>
+  <figcaption>
+    <code class="sh-var">--sn-lift</code>
+    <span class="sh-val">0 1px 2px rgba(40, 33, 20, .05), 0 8px 24px rgba(40, 33, 20, .08)</span>
+    
+  </figcaption>
+</figure><figure class="sh">
+  <span class="sh-box" style="box-shadow: var(--sn-lift-soft);"></span>
+  <figcaption>
+    <code class="sh-var">--sn-lift-soft</code>
+    <span class="sh-val">0 2px 8px rgba(40, 33, 20, .05)</span>
+    
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Movimiento</h2>
+  <div class="tokgrp-body grid-other">
+    <div class="kv">
+  <code class="kv-var">--sn-motion</code>
+  <span class="kv-val">1</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-dur-1</code>
+  <span class="kv-val">calc(120ms * var(--sn-motion))</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-dur-2</code>
+  <span class="kv-val">calc(220ms * var(--sn-motion))</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-dur-3</code>
+  <span class="kv-val">calc(420ms * var(--sn-motion))</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-ease</code>
+  <span class="kv-val">cubic-bezier(.22, 1, .36, 1)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-z-rail</code>
+  <span class="kv-val">10</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-z-header</code>
+  <span class="kv-val">20</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-z-panel</code>
+  <span class="kv-val">40</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-z-skip</code>
+  <span class="kv-val">60</span>
+  
+</div>
+  </div>
+</section>
+</main>
+<footer class="spec-foot">
+  <p>
+    Espécimen generado por <code>scripts/build-specimen.py</code> ·
+    Stella Nova v0.0.4 ·
+    <a href="notes.md">notes.md</a> (notas del equipo de diseño) ·
+    <a href="https://wiki.ead.pucv.cl">wiki.ead.pucv.cl</a>
+  </p>
+</footer>
+<script>
+  // Mínimo: aplica preferencias en <html> y persiste en localStorage. El skin
+  // real las resuelve server-side (registrados) o pre-paint (anónimos); aquí
+  // basta el toggle visual para que el diseñador compare temas.
+  (function () {
+    var html = document.documentElement;
+    var apply = function (kind, value) {
+      html.setAttribute('data-sn-' + kind, value);
+      localStorage.setItem('sn-spec-' + kind, value);
+      document.querySelectorAll('[data-' + kind + ']').forEach(function (b) {
+        b.setAttribute('aria-pressed', b.dataset[kind] === value ? 'true' : 'false');
+      });
+    };
+    ['theme', 'width'].forEach(function (k) {
+      var saved = localStorage.getItem('sn-spec-' + k);
+      if (saved) apply(k, saved);
+      document.querySelectorAll('[data-' + k + ']').forEach(function (b) {
+        b.addEventListener('click', function () { apply(k, b.dataset[k]); });
+      });
+    });
+  })();
+</script>
+</body>
+</html>

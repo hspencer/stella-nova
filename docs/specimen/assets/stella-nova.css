@@ -1,0 +1,1119 @@
+/* Stella Nova — layout y componentes.
+ *
+ * "Página de papel": una hoja cálida (la-sn-paper) flota sobre el campo
+ * gris ahuesado (el atelier). El contenido es el protagonista; el chrome
+ * se retira a un filete. Mobile-first. Tokens en tokens.css; tipos en
+ * fonts.css. No reestructura el DOM de extensiones (ver skinStyles).
+ */
+
+/* ───────────────────────── Base ───────────────────────── */
+html { box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+*, *::before, *::after { box-sizing: inherit; }
+
+body {
+	margin: 0;
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-base);
+	font-weight: 400;
+	line-height: var(--sn-leading);
+	color: var(--sn-ink);
+	background-color: var(--sn-field);
+	/* Grano de papel: ruido fractal SVG a muy baja opacidad, solo en el
+	   campo. Da atmósfera sin coste de imagen ni daño al contraste. */
+	background-image:
+		radial-gradient(circle at 15% 0%, rgba(255,255,255,.5), transparent 55%),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+	background-blend-mode: soft-light;
+	background-attachment: fixed;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	font-feature-settings: "kern", "liga", "calt";
+}
+body::before { /* fija la opacidad del grano vía token sin tocar el bg */
+	content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+	background: var(--sn-field); opacity: calc(1 - var(--sn-field-grain) * 6);
+	mix-blend-mode: normal;
+}
+
+a { color: var(--sn-link); text-underline-offset: .14em;
+	text-decoration-thickness: .06em; }
+a:hover { color: var(--sn-link-hover); }
+a:visited { color: var(--sn-link-visited); }
+
+::selection { background: var(--sn-nova-wash); color: var(--sn-ink); }
+
+/* Foco: el anillo es la nova. Nunca solo color. */
+:where(a, button, input, select, textarea, summary, [tabindex], [contenteditable]):focus-visible {
+	outline: 2px solid var(--sn-nova);
+	outline-offset: 2px;
+	border-radius: var(--sn-radius-s);
+}
+:focus:not(:focus-visible) { outline: none; }
+
+.sn-vh {
+	position: absolute !important; width: 1px; height: 1px;
+	padding: 0; margin: -1px; overflow: hidden;
+	clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Política global de íconos: nunca negro pleno ni carmín. Tinta al ~70%
+   en reposo; tinta plena al hover/foco/activo del control que los
+   contiene. Color propio (no heredan del texto: aunque el enlace se
+   ponga en acento, el ícono no). */
+.sn-i { display: inline-block; flex: none; vertical-align: middle;
+	fill: none; stroke: currentColor; stroke-width: 1.75;
+	stroke-linecap: round; stroke-linejoin: round;
+	color: var(--sn-icon); transition: color var(--sn-dur-1); }
+.sn-i use { fill: inherit; stroke: inherit; }
+:is(a, button, summary, label, [role="button"]):hover > .sn-i,
+:is(a, button, summary, label, [role="button"]):hover .sn-i,
+:is(a, button, summary, label, [role="button"]):focus-visible .sn-i,
+[data-sn-menu][aria-expanded="true"] .sn-i,
+.sn-tabs li.selected a .sn-i, .sn-tabs li.active a .sn-i {
+	color: var(--sn-icon-active);
+}
+
+/* ─────────────────────── Skip links ─────────────────────── */
+.sn-skip {
+	position: fixed; top: var(--sn-s-3); left: var(--sn-s-3);
+	z-index: var(--sn-z-skip);
+	transform: translateY(-180%);
+	background: var(--sn-ink); color: var(--sn-paper);
+	padding: var(--sn-s-2) var(--sn-s-4);
+	border-radius: var(--sn-radius); font-weight: 500;
+	text-decoration: none;
+	transition: transform var(--sn-dur-2) var(--sn-ease);
+}
+.sn-skip:focus { transform: translateY(0); color: var(--sn-paper); }
+.sn-skip + .sn-skip:focus { left: calc(var(--sn-s-3) + 11rem); }
+
+/* ─────────────────────── App / shell ─────────────────────── */
+.sn-app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.sn-header {
+	position: sticky; top: 0; z-index: var(--sn-z-header);
+	background: color-mix(in oklab, var(--sn-field) 86%, transparent);
+	-webkit-backdrop-filter: saturate(1.4) blur(10px);
+	backdrop-filter: saturate(1.4) blur(10px);
+	border-bottom: 1px solid var(--sn-hairline-soft);
+}
+/* Cabecera despejada: isotipo · pestañas de página · buscador · usuario.
+   La navegación del sitio vive en el pie. */
+.sn-header-bar {
+	display: flex; align-items: center;
+	justify-content: space-between;       /* repartidos de forma homogénea */
+	gap: var(--sn-s-5);
+	max-width: var(--sn-shell); margin-inline: auto;
+	padding: var(--sn-s-3) var(--sn-s-4);
+}
+
+/* Marca + navegación juntas a la izquierda (iso pegado a la hamburguesa). */
+.sn-brandnav {
+	display: flex; align-items: center; gap: var(--sn-s-2); flex: none;
+}
+
+/* — Isotipo: logotipo "Casiopea" + constelación (SVG colorizable). El
+   wordmark va EN el SVG; sin texto aparte. Monocromo currentColor →
+   tematizable (tinta en claro/oscuro; acento sutil al hover). */
+/* Mismo color que el resto de íconos/enlaces del toolbar (nunca rojo):
+   semitransparente en reposo, opaco al hover. */
+/* :visited/:link explícitos para ganarle a `a:visited` (que si no, tiñe
+   el isotipo con el color de enlace visitado — el "rojo"). */
+.sn-isotype, .sn-isotype:link, .sn-isotype:visited {
+	display: inline-flex; align-items: center;
+	text-decoration: none; color: var(--sn-icon);
+	flex: none; padding: var(--sn-s-1);
+	border-radius: var(--sn-radius);
+	transition: color var(--sn-dur-1);
+}
+.sn-isotype:hover, .sn-isotype:focus-visible, .sn-isotype:active {
+	color: var(--sn-icon-active);
+}
+.sn-isotype svg {
+	display: block; height: 2rem; width: auto; max-width: 100%;
+	color: inherit;
+}
+.sn-isotype :is(img, .sn-isotype-img) { display: block; height: 2rem; width: auto; max-width: 12em; }
+
+/* — Búsqueda — En reposo: fondo transparente, sin borde visible (borde
+   transparente para no descuadrar al enfocar). Al enfocar: fondo papel
+   + borde del filete normal (sin rojo, sin halo). */
+.sn-search {
+	flex: 0 1 24rem; max-width: 32rem;
+	height: var(--sn-ctl); box-sizing: border-box;
+	display: flex; align-items: center; gap: var(--sn-s-1);
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	padding: 0 var(--sn-s-1) 0 var(--sn-s-4);
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
+}
+.sn-search:focus-within {
+	background: var(--sn-paper);
+	border-color: var(--sn-hairline);
+}
+.sn-search :is(input[type="search"], #searchInput, .mw-searchInput) {
+	flex: 1; min-width: 0; border: 0; background: transparent;
+	font: inherit; color: var(--sn-ink); padding: 0; line-height: 1.2;
+}
+.sn-search input::placeholder { color: var(--sn-ink-faint); }
+.sn-search :is(input):focus { outline: none; }
+/* "Buscar" ahora es el ícono (texto → tooltip/aria-label). Botón-ícono
+   discreto; el ícono hereda el color del texto, acento al activar. */
+.sn-search-go {
+	flex: none; cursor: pointer; display: grid; place-items: center;
+	width: 2rem; height: 2rem; padding: 0; margin: 0;
+	background: none; border: 0; border-radius: 999px;
+	color: var(--sn-ink-soft);
+	transition: background var(--sn-dur-1), color var(--sn-dur-1);
+}
+.sn-search-go:hover, .sn-search-go:focus-visible {
+	background: var(--sn-sunk); color: var(--sn-icon-active);
+}
+
+/* — Zona 5 · Herramientas del usuario — */
+.sn-usertools {
+	display: flex; align-items: center; gap: var(--sn-s-1);
+	flex: none; margin-left: var(--sn-s-2);
+}
+.sn-tempbadge {
+	display: grid; place-items: center; width: 2rem; height: 2rem;
+	color: var(--sn-warn); border-radius: 999px;
+	background: color-mix(in oklab, var(--sn-warn) 14%, transparent);
+}
+.sn-notif :is(a) { color: var(--sn-ink-soft); }
+
+.sn-prefs-trigger, .sn-usermenu-trigger {
+	display: inline-grid; place-items: center;
+	width: var(--sn-ctl); height: var(--sn-ctl); padding: 0;
+	box-sizing: border-box;
+	background: transparent; color: var(--sn-ink);
+	border: 1px solid transparent; border-radius: var(--sn-radius);
+	cursor: pointer; transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
+}
+.sn-prefs-trigger:hover, .sn-usermenu-trigger:hover,
+.sn-usermenu-trigger[aria-expanded="true"] {
+	background: var(--sn-paper); border-color: var(--sn-hairline);
+}
+
+/* — Menús colapsables del header: Navegación · Página · Usuario — */
+.sn-md { position: relative; }
+.sn-md-trigger {
+	display: inline-flex; align-items: center; gap: var(--sn-s-2);
+	height: var(--sn-ctl); box-sizing: border-box;
+	background: none; border: 1px solid transparent;
+	padding: 0 var(--sn-s-3);
+	font-family: var(--sn-font-text); font-size: var(--sn-fs-sm);
+	font-weight: 500; line-height: 1.2; color: var(--sn-ink);
+	text-decoration: none; cursor: pointer; white-space: nowrap;
+	border-radius: var(--sn-radius);
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
+}
+.sn-md-trigger:hover,
+.sn-md-trigger[aria-expanded="true"] {
+	background: var(--sn-paper); border-color: var(--sn-hairline);
+}
+/* Disparador solo-ícono (Navegación / Página): el texto pasa a
+   tooltip/aria-label; compacto, con cheurón pegado al ícono. */
+.sn-md-icononly { gap: .15rem; padding: 0 var(--sn-s-2); }
+
+/* Bloque "Página": acciones de edición (solo-ícono) + menú, agrupadas
+   como una sola zona de la barra. */
+.sn-pagecluster {
+	display: flex; align-items: center; gap: var(--sn-s-1); flex: none;
+}
+.sn-iconbtn {
+	display: inline-grid; place-items: center;
+	width: var(--sn-ctl); height: var(--sn-ctl); flex: none;
+	box-sizing: border-box;
+	color: var(--sn-ink); text-decoration: none;
+	border: 1px solid transparent; border-radius: var(--sn-radius);
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);
+}
+.sn-iconbtn:hover, .sn-iconbtn:focus-visible {
+	background: var(--sn-paper); border-color: var(--sn-hairline);
+	color: var(--sn-icon-active);
+}
+/* Íconos del MISMO color que el texto (heredan currentColor del botón);
+   nunca acento. El cheurón solo rota. */
+.sn-md-caret { transition: transform var(--sn-dur-1) var(--sn-ease); }
+.sn-md-trigger[aria-expanded="true"] .sn-md-caret { transform: rotate(180deg); }
+.sn-md .sn-menu-list { left: 0; right: auto; }
+.sn-usermenu .sn-menu-list, .sn-pagemenu .sn-menu-list { right: 0; left: auto; }
+
+/* Popover base */
+.sn-menu-list {
+	list-style: none; margin: 0; padding: var(--sn-s-2);
+	position: absolute; right: 0; top: calc(100% + .4rem);
+	min-width: 14rem; z-index: var(--sn-z-panel);
+	background: var(--sn-paper); color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius-l);
+	box-shadow: var(--sn-lift);
+	opacity: 0; visibility: hidden; transform: translateY(-.4rem);
+	transition: opacity var(--sn-dur-1), transform var(--sn-dur-1), visibility var(--sn-dur-1);
+}
+[data-sn-menu][aria-expanded="true"] + .sn-menu-list {
+	opacity: 1; visibility: visible; transform: translateY(0);
+}
+.sn-menu-list li { margin: 0; list-style: none; }
+.sn-menu-list ul { list-style: none; margin: 0; padding: 0; }
+.sn-menu-list :is(a, .sn-menu-list-item) {
+	display: flex; align-items: center; gap: var(--sn-s-2);
+	padding: var(--sn-s-2) var(--sn-s-3);
+	border-radius: var(--sn-radius); text-decoration: none;
+	color: var(--sn-ink); font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-sm); font-weight: 400;
+}
+.sn-menu-list :is(a:hover, a:focus-visible) { background: var(--sn-sunk); color: var(--sn-nova); }
+.sn-menu-list li.selected a, .sn-menu-list li.active a {
+	color: var(--sn-ink); font-weight: 600;
+}
+.sn-menu-list li.new a { color: var(--sn-link); }
+
+/* Página: grupos (espacios · vistas · acciones · variantes) con filete */
+.sn-mm-grp { padding: var(--sn-s-1) 0; }
+.sn-mm-grp + .sn-mm-grp {
+	border-top: 1px solid var(--sn-hairline-soft); margin-top: var(--sn-s-1);
+}
+
+/* Navegación: megamenú en secciones, varias columnas si caben */
+.sn-megamenu {
+	min-width: min(34rem, calc(100vw - 2 * var(--sn-s-4)));
+	max-height: min(72vh, 32rem); overflow-y: auto;
+	columns: 2; column-gap: var(--sn-s-5); padding: var(--sn-s-4);
+}
+.sn-mm-sec { break-inside: avoid; margin-bottom: var(--sn-s-4); }
+.sn-mm-sec:last-child { margin-bottom: 0; }
+.sn-mm-h {
+	margin: 0 0 var(--sn-s-1); font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .08em;
+	color: var(--sn-ink-faint);
+}
+@media (max-width: 34rem) { .sn-megamenu { columns: 1; } }
+
+/* ───────────── Shell: una sola columna centrada ───────────── */
+/* Sin riel: la hoja queda centrada y más ancha sobre el campo. */
+.sn-shell {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	margin-inline: auto;
+	padding: clamp(var(--sn-s-5), 5vw, var(--sn-s-7)) var(--sn-s-4);
+}
+/* La preferencia ContentWidth controla el ancho de la HOJA (no el texto):
+   --sn-measure ahora es el tope de la hoja. El contenido va al 100%. */
+.sn-paper-wrap {
+	width: 100%;
+	max-width: var(--sn-measure);
+	min-width: 0;
+}
+:root[data-sn-width="full"] .sn-paper-wrap { max-width: none; }
+
+.sn-portlet-h {
+	margin: 0 0 var(--sn-s-2);
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .09em;
+	color: var(--sn-ink-faint);
+}
+.sn-portlet-b ul, .sn-portlet ul, .sn-managed ul {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; flex-direction: column; gap: .15rem;
+}
+.sn-portlet-b li a, .sn-portlet li a, .sn-managed a {
+	display: block; padding: .3rem var(--sn-s-3) .3rem var(--sn-s-2);
+	margin-left: calc(-1 * var(--sn-s-2));
+	color: var(--sn-ink-soft); text-decoration: none;
+	border-left: 2px solid transparent;
+	border-radius: 0 var(--sn-radius-s) var(--sn-radius-s) 0;
+	transition: color var(--sn-dur-1), border-color var(--sn-dur-1), background var(--sn-dur-1);
+}
+.sn-portlet-b li a:hover, .sn-portlet li a:hover, .sn-managed a:hover {
+	color: var(--sn-ink); border-left-color: var(--sn-nova);
+	background: var(--sn-nova-wash);
+}
+.sn-portlet-b li.selected a, .sn-portlet li.active a {
+	color: var(--sn-ink); border-left-color: var(--sn-nova);
+}
+
+/* ─────────────────────── La hoja (paper) ─────────────────── */
+.sn-paper-wrap { min-width: 0; }
+.sn-paper {
+	/* --sn-paper-px / --sn-paper-py exponen como contrato el padding del
+	   paper. Cualquier hijo que quiera reventar (p.ej. .full-width) lo
+	   niega con margin-inline / margin-block: calc(-1 * var(--…)). */
+	--sn-paper-px: clamp(var(--sn-s-4), 4vw, var(--sn-s-7));
+	--sn-paper-py: clamp(var(--sn-s-5), 4vw, var(--sn-s-7));
+	background: var(--sn-paper);
+	border: 1px solid var(--sn-paper-edge);
+	border-radius: var(--sn-radius-paper);
+	box-shadow: var(--sn-lift-paper);
+	padding: var(--sn-paper-py) var(--sn-paper-px);
+	min-width: 0;
+}
+@media (min-width: 90rem) {
+	:root:not([data-sn-width="full"]) .sn-paper {
+		--sn-paper-px: clamp(var(--sn-s-7), 6vw, var(--sn-s-8));
+	}
+}
+
+/* .sn-indicators y #contentSub son metadata (badges/loaders por página y
+   avisos contextuales como "Redirigido desde X") que MW inyecta dentro del
+   <article>. Visualmente NO son contenido editorial — se tratan como
+   marcadores adheridos al borde de la hoja: chips arriba a la derecha
+   asomando del paper, y un kicker line proyectado por encima.
+
+   El DOM no se mueve (mantenemos el contrato de fidelidad con MW: gadgets
+   y scripts core esperan estos contenedores como anchors estables); el
+   efecto es 100% CSS via position:absolute con el paper como coordinate
+   system. overflow:visible (default del paper) deja que protruyan. */
+.sn-paper { position: relative; }
+
+/* Indicators: chip-stickers asomando del borde superior-derecho del paper.
+   translateY(-50%) los pone mitad sobre la hoja, mitad afuera — el efecto
+   "marcador adherido". El SMW entity-examiner u otros loaders que viven
+   acá heredan el estilo de chip. */
+.sn-indicators {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-end: clamp(var(--sn-s-4), 4vw, var(--sn-s-6));
+	transform: translateY(-50%);
+	display: flex; flex-wrap: nowrap; gap: var(--sn-s-2);
+	margin: 0;
+	z-index: 2;
+	pointer-events: none;
+}
+.sn-indicators:empty { display: none; }
+/* Ocultar indicadores "muertos" — los que vienen como wrapper con hijo
+   vacío (caso del smw-entity-examiner loader que viene <div></div>
+   adentro). Mismo patrón que ya aplica a #contentSub. */
+.sn-indicators > .mw-indicator:empty,
+.sn-indicators > .mw-indicator:has(> *:only-child:empty),
+/* También ocultar el SMW entity examiner loader específicamente — es un
+   indicador técnico de background que el lector no necesita ver. */
+.sn-indicators > .mw-indicator:has(> .smw-entity-examiner) {
+	display: none;
+}
+.sn-indicators > .mw-indicator {
+	pointer-events: auto;
+	background: var(--sn-paper);
+	border: 1px solid var(--sn-paper-edge);
+	border-radius: var(--sn-radius-s);
+	padding: .25rem .55rem;
+	font-size: var(--sn-fs-xs);
+	line-height: 1.2;
+	color: var(--sn-ink-soft);
+	box-shadow: 0 2px 6px rgb(0 0 0 / .07), 0 1px 2px rgb(0 0 0 / .04);
+}
+@media (max-width: 36rem) {
+	/* En móvil vuelve al flujo dentro del paper para no chocar con la chrome
+	   ni quedar comido por el header. */
+	.sn-indicators {
+		position: static; transform: none;
+		justify-content: flex-end;
+		margin-block-end: var(--sn-s-3);
+	}
+	.sn-indicators > .mw-indicator {
+		background: transparent; border: 0; box-shadow: none; padding: 0;
+	}
+}
+
+.sn-notice, .mw-body-content .sitedir-ltr > .sn-notice {
+	margin: 0 0 var(--sn-s-5);
+	padding: var(--sn-s-3) var(--sn-s-4);
+	border-left: 3px solid var(--sn-nova);
+	background: var(--sn-nova-wash);
+	border-radius: 0 var(--sn-radius) var(--sn-radius) 0;
+	font-size: var(--sn-fs-sm);
+}
+
+/* — firstHeading: titular en Work Sans (serif en títulos: aún no) — */
+.sn-paper :is(h1#firstHeading, .firstHeading, .mw-first-heading) {
+	font-family: var(--sn-font-text);
+	font-weight: 680;
+	font-size: var(--sn-fs-display);
+	line-height: var(--sn-leading-tight);
+	letter-spacing: -.018em;
+	color: var(--sn-ink);
+	margin: 0 0 var(--sn-s-2);
+	max-width: 34ch;
+	text-wrap: balance;
+}
+/* Solo inyecciones core (subtítulo/redirección, restaurar). Sin caja ni
+   filete: cuando hay contenido es una línea sobria; vacío no inserta nada. */
+.sn-subtitle {
+	color: var(--sn-ink-soft); font-size: var(--sn-fs-sm); margin: 0;
+}
+/* Vacío (caso normal, p. ej. portada: solo el #mw-content-subtitle hueco)
+   → cero altura, ninguna inserción visible. Solo cuando trae algo real
+   (aviso de redirección, enlace de restaurar) reserva un respiro.
+   ":empty" estricto NO cubre el caso de #contentSub, que MW emite con un
+   <div id="mw-content-subtitle"> dentro (hijo vacío). Se añade el caso
+   ":has(> *:only-child:empty)" para esa estructura. */
+.sn-subtitle:empty,
+.sn-subtitle:has(> *:only-child:empty) { display: none; }
+
+/* #contentSub (avisos de redirección / contexto) cuando aporta contenido:
+   se proyecta arriba del paper como kicker line — sticker editorial, no
+   compite con el cuerpo. inset-inline limitado al padding lateral del
+   paper alinea el kicker con el ancho de la columna interna.
+   #contentSub2 (undelete admin) queda con la regla del flujo normal. */
+.sn-paper > #contentSub:has(a),
+.sn-paper > #contentSub:has(*:not(:empty)) {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: var(--sn-paper-px);
+	transform: translateY(-100%);
+	padding-block-end: var(--sn-s-2);
+	margin: 0;
+	font-size: var(--sn-fs-xs);
+	line-height: 1.4;
+	color: var(--sn-ink-soft);
+	z-index: 1;
+}
+.sn-paper > #contentSub2:has(a),
+.sn-paper > #contentSub2:has(*:not(:empty)) {
+	margin: 0 0 var(--sn-s-3);
+}
+@media (max-width: 36rem) {
+	/* Móvil: kicker vuelve al flujo */
+	.sn-paper > #contentSub:has(a),
+	.sn-paper > #contentSub:has(*:not(:empty)) {
+		position: static; transform: none;
+		padding: 0; margin: 0 0 var(--sn-s-3);
+		font-size: var(--sn-fs-sm);
+	}
+}
+.sn-subtitle a { color: var(--sn-ink-soft); }
+
+/* ─────────────── Cuerpo: ritmo editorial ─────────────── */
+.sn-body { min-width: 0; }
+/* El contenido usa el 100% del ancho de la hoja. NO se constriñe el texto
+   a una medida de lectura: el ancho lo gobierna la preferencia
+   ContentWidth a nivel de la HOJA (.sn-paper-wrap), no por elemento. */
+
+/* Títulos en Work Sans (serif en títulos: aún no). */
+.sn-body :is(h2, h3) {
+	font-family: var(--sn-font-text);
+	font-weight: 680; line-height: 1.25;
+	letter-spacing: -.012em; color: var(--sn-ink);
+}
+.sn-body :is(h4, h5, h6) {
+	font-family: var(--sn-font-text); line-height: 1.3; color: var(--sn-ink);
+}
+.sn-body h2 {
+	font-size: var(--sn-fs-lg);
+	margin: var(--sn-s-6) 0 var(--sn-s-3);
+	padding-bottom: var(--sn-s-2);
+	border-bottom: 1px solid var(--sn-hairline-soft);
+}
+.sn-body h3 { font-size: var(--sn-fs-md); margin: var(--sn-s-5) 0 var(--sn-s-2); }
+.sn-body h4 { font-size: calc(var(--sn-fs-base) * 1.02);
+	margin: var(--sn-s-5) 0 var(--sn-s-2); font-weight: 700;
+	letter-spacing: 0; }
+.sn-body h5, .sn-body h6 {
+	font-size: var(--sn-fs-sm); text-transform: uppercase;
+	letter-spacing: .06em; color: var(--sn-ink-soft);
+	margin: var(--sn-s-4) 0 var(--sn-s-2);
+}
+.sn-body :is(h2,h3,h4,h5,h6):first-child { margin-top: 0; }
+.sn-body p { margin: 0 0 var(--sn-s-4); }
+.sn-body :is(ul, ol) { margin: 0 0 var(--sn-s-4); padding-left: var(--sn-s-5); }
+.sn-body li { margin: .2rem 0; }
+.sn-body li::marker { color: var(--sn-ink-faint); }
+/* Enlaces del contenido: el token manda. Especificidad .sn-body a*
+   (0,0,2,x) para vencer a MediaWiki:Common.css `a:visited{...}`, que
+   carga después del skin (módulo `site`) con igual especificidad. */
+.sn-body a { color: var(--sn-link); }
+.sn-body a:hover { color: var(--sn-link-hover); }
+.sn-body a:visited { color: var(--sn-link-visited); }
+.sn-body a:visited:hover { color: var(--sn-link-hover); }
+
+/* Enlaces externos: el ÍCONO lo define el skin (Feather external-link),
+   no el de core. Se anula el background de la feature content-links y se
+   pinta el glifo como ::after con mask → hereda el color del enlace
+   (tinta/azul, carmín al hover; coherente en claro/oscuro). */
+.sn-body a.external,
+.sn-body .mw-parser-output a.external {
+	background: none !important; padding-right: 0 !important;
+}
+.sn-body a.external::after {
+	content: ""; display: inline-block;
+	width: .68em; height: .68em; margin-left: .28em;
+	vertical-align: -.02em;
+	background-color: currentColor;
+	-webkit-mask: var(--sn-ext-icon) center / contain no-repeat;
+	mask: var(--sn-ext-icon) center / contain no-repeat;
+	opacity: .75;
+}
+.sn-body a.external:hover::after { opacity: 1; }
+.sn-body a.external:is(.image, .no-icon)::after,
+.sn-body a.external:has(img)::after { content: none; }
+
+/* Citas y poemas: serif editorial (Newsreader). El <poem> de la
+   extensión Poem se renderiza como .poem dentro de mw-parser-output. */
+.sn-body blockquote {
+	margin: var(--sn-s-5) 0;
+	padding: var(--sn-s-1) 0 var(--sn-s-1) var(--sn-s-5);
+	border-left: 2px solid var(--sn-nova);
+	font-family: var(--sn-font-display); font-optical-sizing: auto;
+	font-size: var(--sn-fs-md);
+	color: var(--sn-ink-soft); line-height: 1.55;
+}
+.sn-body blockquote p:last-child { margin-bottom: 0; }
+.sn-body .poem {
+	font-family: var(--sn-font-display); font-optical-sizing: auto;
+	font-size: var(--sn-fs-md); line-height: 1.7;
+	color: var(--sn-ink);
+}
+.sn-body .poem p { margin: 0 0 var(--sn-s-4); }
+.sn-body :is(code, kbd, samp) {
+	font-family: var(--sn-font-mono); font-size: .9em;
+	background: var(--sn-sunk); padding: .12em .38em;
+	border-radius: var(--sn-radius-s);
+}
+.sn-body pre {
+	background: var(--sn-sunk); color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius);
+	padding: var(--sn-s-4); overflow-x: auto;
+	font-family: var(--sn-font-mono); font-size: var(--sn-fs-sm); line-height: 1.5;
+}
+.sn-body pre code { background: none; padding: 0; }
+.sn-body hr {
+	border: 0; height: 1px; background: var(--sn-hairline);
+	margin: var(--sn-s-7) 0;
+}
+.sn-body :is(img, video) { max-width: 100%; height: auto; }
+.sn-body figure { margin: var(--sn-s-5) 0; }
+
+/* .img-circle: override de MediaWiki:Common.css.
+   En Common.css la regla aplica clip-path:circle() al <figure>, NO al <img>.
+   Cuando el figure contiene <figcaption> el bounding box mide imagen+caption,
+   el centro de circle() cae más abajo que el centro de la imagen, y el
+   círculo recorta los px superiores de la imagen y devora la caption.
+
+   Lo movemos al elemento real (la imagen): clip-path al <img> directamente
+   sobre su propio cuadrado, sin contaminación del caption. La caption se
+   oculta dentro de .img-circle porque en .vcard el nombre ya aparece
+   abajo como .person-name (duplicación no aporta). */
+.sn-body .img-circle { clip-path: none; }
+.sn-body .img-circle :is(img, .mw-file-element) {
+	clip-path: circle();
+	display: block;
+}
+.sn-body .img-circle > figcaption { display: none; }
+
+/* Full-bleed: imagen/figura/wrapper con class="full-width" se revienta del
+   padding lateral del .sn-paper para ir borde-a-borde del <article>.
+   Funciona para tres patrones de wikitexto:
+     [[Archivo:foo.jpg|class=full-width]]                → clase en <img>
+     [[Archivo:foo.jpg|frameless|class=full-width]]      → en <a class="image">
+     <div class="full-width">[[Archivo:foo.jpg]]</div>   → wrapper manual
+   El truco: width:auto + max-width:none + margin-inline negativo igual al
+   padding lateral del paper (expuesto como --sn-paper-px). La imagen interna
+   se estira al 100% del nuevo ancho. Si está dentro de un .thumb la caja
+   thumb también se revienta — la leyenda queda alineada al nuevo ancho. */
+.sn-paper :is(.full-width, .thumb.full-width, figure.full-width) {
+	display: block;
+	width: auto;
+	max-width: none;
+	margin-inline: calc(-1 * var(--sn-paper-px));
+	margin-block: var(--sn-s-5);
+	float: none;  /* anula el float que ponen thumb-left/right de core */
+}
+.sn-paper :is(.full-width, .thumb.full-width, figure.full-width) :is(img, video),
+.sn-paper :is(img, video).full-width {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-width: 100%;
+	margin-inline: 0;
+}
+/* Si el .full-width es un <img> o un <a class="image"> directo (no envuelto
+   en .thumb), aplicar la misma regla — class va al elemento mismo. */
+.sn-paper :is(a.image.full-width, img.full-width, video.full-width) {
+	display: block;
+	width: auto;
+	max-width: none;
+	margin-inline: calc(-1 * var(--sn-paper-px));
+	margin-block: var(--sn-s-5);
+}
+.sn-paper a.image.full-width img { width: 100%; height: auto; display: block; }
+/* La leyenda dentro de un .thumb full-width vuelve al ancho del cuerpo para
+   no quedar pegada al borde del paper. */
+.sn-paper .thumb.full-width .thumbcaption {
+	padding-inline: var(--sn-paper-px);
+	text-align: start;
+}
+
+/* Bleed vertical de borde: cuando .full-width es el PRIMER o ÚLTIMO elemento
+   del cuerpo (.sn-body), también revienta el padding vertical del paper
+   y redondea las esquinas para alinearse con el border-radius del <article>.
+
+   La cadena de wrappers desde .sn-body hasta el <span class="full-width"> que
+   emite MW es típicamente:
+     .sn-body > #mw-content-text > .mw-parser-output > <p> > .full-width
+   El bleed solo aplica si .full-width es :first-child (o :last-child) en
+   cada nivel — así no se dispara para imágenes que están a media página
+   dentro del primer <p> después de texto. Se enumeran los 4 niveles de
+   anidamiento típicos; basta con que uno matchee.
+
+   El colapso de margen propaga el margin-block negativo a través de los
+   wrappers (ninguno tiene padding/border vertical) hasta detenerse en
+   .sn-paper (que sí tiene padding-block). overflow:hidden clipea el <img>
+   interno al radio del paper en las esquinas tocadas.
+
+   Caveat: en páginas con <h1#firstHeading> visible, el bleed-top tira la
+   imagen hacia arriba y la superpone al título. Usar __NOTITLE__ en páginas
+   diseñadas con hero al tope, o no marcar la primera imagen como full-width.
+   .sn-indicators está ahora position:absolute (ver más arriba) y no ocupa
+   flujo, por lo que .sn-body es siempre el primer elemento de flujo dentro
+   del paper en páginas con __NOTITLE__. */
+.sn-body > .full-width:first-child,
+.sn-body > *:first-child > .full-width:first-child,
+.sn-body > *:first-child > *:first-child > .full-width:first-child,
+.sn-body > *:first-child > *:first-child > *:first-child > .full-width:first-child {
+	margin-block-start: calc(-1 * var(--sn-paper-py));
+	border-start-start-radius: var(--sn-radius-paper);
+	border-start-end-radius:   var(--sn-radius-paper);
+	overflow: hidden;
+}
+.sn-body > .full-width:last-child,
+.sn-body > *:last-child > .full-width:last-child,
+.sn-body > *:last-child > *:last-child > .full-width:last-child,
+.sn-body > *:last-child > *:last-child > *:last-child > .full-width:last-child {
+	margin-block-end: calc(-1 * var(--sn-paper-py));
+	border-end-start-radius: var(--sn-radius-paper);
+	border-end-end-radius:   var(--sn-radius-paper);
+	overflow: hidden;
+}
+
+/* El skin DECRETA que <canvas> e <iframe> embebidos (p5.js, widgets como
+   {{#widget:P5js}} que incrustan un sitio externo, lienzos experimentales)
+   NO llevan borde, outline NI box-shadow — ni en foco. Se neutraliza
+   también el box-shadow porque el del widget (inline, hex de 8 dígitos)
+   Firefox lo renderiza como una raya negra gruesa (causa real del bug).
+   El skin se hace dueño de esto pase lo que pase en el estilo inline del
+   widget. !important por si Common.css (módulo `site`, carga tras el
+   skin) o el UA intentan imponerlo. */
+canvas, iframe,
+.mw-body-content :is(canvas, iframe),
+.p5m-sketch, .p5m-sketch canvas,
+.sn-canvas canvas {
+	border: 0 !important;
+	outline: 0 !important;
+	box-shadow: none !important;
+}
+:is(canvas, iframe):focus, :is(canvas, iframe):focus-visible,
+.p5m-sketch:focus, .p5m-sketch:focus-visible { outline: 0 !important; }
+.p5m-sketch { background: transparent; }
+.sn-body figcaption, .sn-body .thumbcaption {
+	font-size: var(--sn-fs-sm); color: var(--sn-ink-soft);
+	font-style: italic; margin-top: var(--sn-s-2);
+}
+
+/* — Categorías — */
+.catlinks, .mw-normal-catlinks {
+	margin-top: var(--sn-s-7);
+	padding-top: var(--sn-s-4);
+	border-top: 1px solid var(--sn-hairline-soft);
+	font-size: var(--sn-fs-sm); color: var(--sn-ink-soft);
+}
+.catlinks ul { display: inline-flex; flex-wrap: wrap; gap: var(--sn-s-2);
+	list-style: none; margin: 0; padding: 0; }
+.catlinks li { padding: .1rem .55rem; background: var(--sn-sunk);
+	border-radius: 999px; }
+.catlinks.catlinks-allhidden { display: none; }
+
+/* ──────────────── Índice (ToC NATIVO, en su sitio) ────────────────
+   No se relocaliza ni se duplica: MediaWiki lo inyecta donde marca
+   __TOC__ (o en su posición automática) y el skin solo lo VISTE para
+   que tenga el lenguaje de diseño del resto. */
+.sn-body .toc, .mw-parser-output .toc {
+	display: table;            /* se ajusta al contenido, no full-width */
+	max-width: 100%;
+	margin: var(--sn-s-4) 0 var(--sn-s-6);
+	border: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius);
+	background: color-mix(in oklab, var(--sn-sunk) 60%, transparent);
+	padding: 0 0 var(--sn-s-3);
+	font-size: var(--sn-fs-sm);
+}
+.sn-body .toc .toctitle {
+	display: flex; align-items: center; justify-content: space-between;
+	gap: var(--sn-s-3);
+	padding: var(--sn-s-3) var(--sn-s-4) var(--sn-s-2);
+	text-align: left;
+}
+.sn-body .toc .toctitle :is(h2, h3) {
+	margin: 0; padding: 0; border: 0; font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .08em;
+	color: var(--sn-ink-faint);
+}
+/* Colapsable: el checkbox nativo se oculta visualmente pero queda
+   enfocable por teclado; el label es un cheurón que rota y, al marcar,
+   oculta la lista (mecanismo CSS puro de MediaWiki). */
+.sn-body .toc .toctogglecheckbox {
+	position: absolute; width: 1px; height: 1px;
+	opacity: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+.sn-body .toc .toctogglespan { display: flex; flex: none; }
+/* Minimal: SOLO el cheurón que gira. Se suprime cualquier texto y los
+   corchetes "[ocultar]/[mostrar]" que MediaWiki pinta vía CSS (en el
+   label o en el span); font-size:0 mata texto y el cheurón se mide en
+   rem (independiente del tamaño de fuente). */
+.sn-body .toc .toctogglelabel {
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 1.7rem; height: 1.7rem; margin: -.3rem -.3rem -.3rem 0;
+	font-size: 0; line-height: 0;
+	cursor: pointer; color: var(--sn-ink-faint);
+	border-radius: var(--sn-radius-s);
+	transition: color var(--sn-dur-1);
+}
+.sn-body .toc .toctogglelabel:hover { color: var(--sn-ink); }
+.sn-body .toc .toctogglelabel::before,
+.sn-body .toc .toctogglespan::before,
+.sn-body .toc .toctogglespan::after { content: none !important; }
+.sn-body .toc .toctogglelabel::after {
+	content: "" !important; display: block;
+	width: .42rem; height: .42rem; margin-top: -.16rem;
+	border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+	transform: rotate(45deg);
+	transition: transform var(--sn-dur-1) var(--sn-ease);
+}
+.sn-body .toc .toctogglecheckbox:checked ~ .toctitle .toctogglelabel::after {
+	transform: rotate(-45deg); margin-top: .1rem;
+}
+.sn-body .toc .toctogglecheckbox:checked ~ ul { display: none; }
+.sn-body .toc:has(.toctogglecheckbox:checked) { padding-bottom: 0; }
+.sn-body .toc .toctogglecheckbox:focus-visible ~ .toctitle .toctogglelabel {
+	outline: 2px solid var(--sn-nova); outline-offset: 2px;
+}
+.sn-body .toc ul {
+	list-style: none; margin: 0; padding: 0 var(--sn-s-4);
+}
+.sn-body .toc ul ul {
+	margin-left: var(--sn-s-3); padding: 0 0 0 var(--sn-s-3);
+	border-left: 1px solid var(--sn-hairline-soft);
+}
+.sn-body .toc li { margin: 0; }
+.sn-body .toc li a {
+	display: flex; gap: var(--sn-s-2); padding: .24rem 0;
+	color: var(--sn-ink-soft); text-decoration: none;
+}
+.sn-body .toc li a:hover { color: var(--sn-ink); }
+.sn-body .toc .tocnumber {
+	color: var(--sn-ink-faint); font-variant-numeric: tabular-nums; flex: none;
+}
+.sn-body .toc .toctext { min-width: 0; }
+
+/* "Más" (acciones) y Variantes: bloque compacto al final de las pestañas. */
+/* ───── Pie a 3 columnas: Stella-Nova:Pie · legal · herramientas ───── */
+.sn-footer {
+	border-top: 1px solid var(--sn-hairline);
+	background: color-mix(in oklab, var(--sn-field) 62%, var(--sn-paper));
+	font-size: var(--sn-fs-sm); color: var(--sn-ink-soft);
+	margin-top: var(--sn-s-7);
+}
+.sn-footer-inner {
+	max-width: var(--sn-shell); margin-inline: auto;
+	padding: var(--sn-s-6) var(--sn-s-4);
+	display: grid; gap: var(--sn-s-6) var(--sn-s-7);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: start;
+}
+.sn-footer-col { min-width: 0; }
+
+/* Col 1 — bloque institucional gestionado (Stella-Nova:Pie). */
+.sn-footer-managed { color: var(--sn-ink); }
+.sn-footer-managed :is(h1,h2,h3,h4) {
+	font-family: var(--sn-font-text); color: var(--sn-ink);
+	font-weight: 680; letter-spacing: -.012em;
+	font-size: var(--sn-fs-md); margin: 0 0 var(--sn-s-2);
+}
+.sn-footer-managed a { color: var(--sn-link); }
+.sn-footer-managed :is(p, ul, ol) { margin: 0 0 var(--sn-s-3); }
+.sn-footer-managed > :last-child { margin-bottom: 0; }
+
+/* Col 2 — última modificación + licencia (data-info) y enlaces de sitio
+   privacidad/acerca/descargos (data-places). Sin logos enlazados. */
+.sn-footer-legal { display: flex; flex-direction: column; gap: var(--sn-s-3); }
+.sn-foot-info, .sn-foot-places {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; flex-direction: column; gap: .3rem;
+}
+.sn-foot-info a, .sn-foot-places a { color: var(--sn-ink-soft); }
+.sn-foot-info a:hover, .sn-foot-places a:hover { color: var(--sn-nova); }
+
+/* Col 3 — "Herramientas y más" (con ícono) en columna, lista vertical. */
+.sn-footer-h {
+	display: flex; align-items: center; gap: var(--sn-s-2);
+	margin: 0 0 var(--sn-s-3); font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .08em;
+	color: var(--sn-ink-faint);
+}
+.sn-footer-toollist {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; flex-direction: column; gap: .2rem;
+}
+.sn-footer-toollist li { margin: 0; list-style: none; }
+.sn-footer-toollist li a {
+	display: inline-block; padding: .15rem 0;
+	color: var(--sn-ink-soft); text-decoration: none;
+}
+.sn-footer-toollist li a:hover { color: var(--sn-nova); }
+
+/* ─────────────────── PreferencesPanel (diálogo) ─────────────────── */
+.sn-prefs-scrim {
+	position: fixed; inset: 0; z-index: var(--sn-z-panel);
+	background: rgba(20, 16, 9, .42);
+	-webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+	opacity: 0; transition: opacity var(--sn-dur-2);
+}
+.sn-prefs-scrim.is-open { opacity: 1; }
+.sn-prefs {
+	position: fixed; z-index: calc(var(--sn-z-panel) + 1);
+	top: 0; right: 0; height: 100dvh; width: min(26rem, 92vw);
+	display: flex; flex-direction: column;
+	background: var(--sn-paper); color: var(--sn-ink);
+	border-left: 1px solid var(--sn-hairline);
+	box-shadow: var(--sn-lift);
+	transform: translateX(101%);
+	transition: transform var(--sn-dur-3) var(--sn-ease);
+}
+.sn-prefs.is-open { transform: translateX(0); }
+.sn-prefs[hidden] { display: flex; } /* JS controla visibilidad vía .is-open */
+.sn-prefs-form { display: flex; flex-direction: column; height: 100%; }
+.sn-prefs-head {
+	display: flex; align-items: center; justify-content: space-between;
+	padding: var(--sn-s-5) var(--sn-s-5) var(--sn-s-4);
+	border-bottom: 1px solid var(--sn-hairline-soft);
+}
+.sn-prefs-head h2 {
+	margin: 0; font-family: var(--sn-font-display);
+	font-size: var(--sn-fs-md); font-weight: 680;
+	letter-spacing: -.012em;
+}
+.sn-prefs-x {
+	background: transparent; border: 0; color: var(--sn-ink-soft);
+	cursor: pointer; padding: var(--sn-s-1); border-radius: var(--sn-radius);
+	display: grid; place-items: center;
+}
+.sn-prefs-x:hover { background: var(--sn-sunk); color: var(--sn-ink); }
+.sn-prefs-body {
+	flex: 1; overflow-y: auto;
+	padding: var(--sn-s-5);
+	display: flex; flex-direction: column; gap: var(--sn-s-5);
+}
+.sn-pref { border: 0; margin: 0; padding: 0; min-width: 0; }
+.sn-pref legend, .sn-pref-row > span {
+	padding: 0 0 var(--sn-s-2); font-size: var(--sn-fs-sm);
+	font-weight: 600; color: var(--sn-ink);
+}
+.sn-pref-row > span small { display: block; font-weight: 400;
+	color: var(--sn-ink-faint); font-size: var(--sn-fs-xs); margin-top: .1rem; }
+.sn-pref-row {
+	display: flex; align-items: center; justify-content: space-between;
+	gap: var(--sn-s-4); padding-top: var(--sn-s-4);
+	border-top: 1px solid var(--sn-hairline-soft);
+}
+
+/* Control segmentado */
+.sn-seg {
+	display: flex; gap: 2px; padding: 3px;
+	background: var(--sn-sunk);
+	border-radius: var(--sn-radius);
+}
+.sn-seg button {
+	flex: 1; min-width: 0; cursor: pointer;
+	background: transparent; border: 0; color: var(--sn-ink-soft);
+	font: inherit; font-size: var(--sn-fs-sm);
+	padding: .4rem .5rem; border-radius: calc(var(--sn-radius) - 2px);
+	transition: background var(--sn-dur-1), color var(--sn-dur-1);
+}
+.sn-seg button:hover { color: var(--sn-ink); }
+.sn-seg button[aria-pressed="true"], .sn-seg button.is-on {
+	background: var(--sn-paper); color: var(--sn-ink); font-weight: 600;
+	box-shadow: var(--sn-lift-soft);
+}
+
+/* Interruptor */
+.sn-switch {
+	appearance: none; -webkit-appearance: none;
+	flex: none; width: 2.6rem; height: 1.5rem; margin: 0;
+	background: var(--sn-hairline); border-radius: 999px;
+	position: relative; cursor: pointer;
+	transition: background var(--sn-dur-1);
+}
+.sn-switch::after {
+	content: ""; position: absolute; top: 2px; left: 2px;
+	width: calc(1.5rem - 4px); height: calc(1.5rem - 4px);
+	background: var(--sn-paper); border-radius: 50%;
+	box-shadow: var(--sn-lift-soft);
+	transition: transform var(--sn-dur-2) var(--sn-ease);
+}
+.sn-switch:checked { background: var(--sn-nova); }
+.sn-switch:checked::after { transform: translateX(1.1rem); }
+
+.sn-prefs-foot {
+	display: flex; align-items: center; justify-content: space-between;
+	gap: var(--sn-s-4); padding: var(--sn-s-4) var(--sn-s-5);
+	border-top: 1px solid var(--sn-hairline-soft);
+}
+.sn-prefs-scope { margin: 0; font-size: var(--sn-fs-xs);
+	color: var(--sn-ink-faint); }
+.sn-btn {
+	font: inherit; font-size: var(--sn-fs-sm); cursor: pointer;
+	padding: .45rem var(--sn-s-4); border-radius: var(--sn-radius);
+	border: 1px solid var(--sn-hairline); background: transparent;
+	color: var(--sn-ink);
+}
+.sn-btn-ghost:hover:not(:disabled) { border-color: var(--sn-nova);
+	color: var(--sn-nova); }
+.sn-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ─────────── ExperimentalCanvas + EscapeAffordance ─────────── */
+.sn-canvas { display: block; min-height: 100vh; }
+.sn-escape {
+	position: fixed; left: var(--sn-s-4); bottom: var(--sn-s-4);
+	z-index: var(--sn-z-skip);
+	display: inline-flex; align-items: center; gap: var(--sn-s-2);
+	padding: var(--sn-s-2) var(--sn-s-4);
+	background: var(--sn-ink); color: var(--sn-paper);
+	border-radius: 999px; text-decoration: none;
+	font-size: var(--sn-fs-sm); font-weight: 500;
+	box-shadow: var(--sn-lift);
+	opacity: .55; transition: opacity var(--sn-dur-1), transform var(--sn-dur-1);
+}
+.sn-escape:hover, .sn-escape:focus-visible {
+	opacity: 1; color: var(--sn-paper); transform: translateY(-1px);
+}
+
+/* ─────────────────────── Responsive ─────────────────────── */
+/* Cabecera despejada: marca + usuario en la fila superior; buscador a lo
+   ancho; los menús Navegación/Página debajo. */
+@media (max-width: 64rem) {
+	.sn-footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 56rem) {
+	.sn-header-bar { flex-wrap: wrap; row-gap: var(--sn-s-3); }
+	.sn-brandnav   { order: 1; }
+	.sn-usertools  { order: 2; margin-left: auto; }
+	.sn-search     { order: 3; flex-basis: 100%; max-width: none; }
+	.sn-pagecluster { order: 4; }
+}
+@media (max-width: 40rem) {
+	.sn-paper {
+		border-radius: 0;
+		margin-inline: calc(-1 * var(--sn-s-4));
+		border-left: 0; border-right: 0;
+	}
+	.sn-footer-inner { grid-template-columns: 1fr; gap: var(--sn-s-5); }
+}
+
+/* ─────────────── Entrada orquestada (una sola) ─────────────── */
+@media (prefers-reduced-motion: no-preference) {
+	:root:not([data-sn-motion="reduced"]) .sn-paper {
+		animation: sn-rise calc(640ms * var(--sn-motion)) var(--sn-ease) both;
+	}
+	:root:not([data-sn-motion="reduced"]) .sn-header {
+		animation: sn-fade calc(520ms * var(--sn-motion)) var(--sn-ease) both;
+	}
+}
+@keyframes sn-rise {
+	from { opacity: 0; transform: translateY(14px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sn-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Pequeñas verdades de MediaWiki que conviene respetar */
+/* Editar (junto a títulos): nav-pill sin corchetes, distanciado del título. */
+.mw-editsection {
+	display: inline-flex; align-items: center; gap: var(--sn-s-2);
+	margin-inline-start: var(--sn-s-4);
+	font-family: var(--sn-font-text); font-size: var(--sn-fs-xs);
+	font-weight: 400; vertical-align: middle;
+}
+.mw-editsection-bracket,
+.mw-editsection-divider { display: none; }
+.mw-editsection a {
+	display: inline-flex; align-items: center;
+	padding: .15rem var(--sn-s-3);
+	border: 1px solid transparent; border-radius: 999px;
+	color: var(--sn-ink-faint); text-decoration: none;
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);
+}
+.mw-editsection a:hover, .mw-editsection a:focus-visible {
+	background: var(--sn-paper); border-color: var(--sn-hairline);
+	color: var(--sn-nova);
+}
+.mw-redirectedfrom, .mw-revision { color: var(--sn-ink-soft);
+	font-size: var(--sn-fs-sm); }
+.error, .mw-message-box-error { color: var(--sn-danger); }
+.mw-message-box, .cdx-message {
+	border-left: 3px solid var(--sn-ink-faint);
+	background: var(--sn-sunk); padding: var(--sn-s-3) var(--sn-s-4);
+	border-radius: 0 var(--sn-radius) var(--sn-radius) 0; margin: var(--sn-s-4) 0;
+}
+
+/* ─── Superficies de contenido de MediaWiki: enrutadas por tokens para
+   que sean coherentes en claro Y oscuro (core las trae con fondo claro y
+   texto casi negro hardcodeados → "islas" ilegibles en modo oscuro). No
+   se tocan tablas/cajas con estilos inline propios del usuario. ─── */
+.sn-body :is(table.wikitable, .toccolours) {
+	background: var(--sn-paper); color: var(--sn-ink);
+	border-color: var(--sn-hairline);
+}
+.sn-body table.wikitable > :is(thead, tbody, tfoot) > tr > :is(th, td),
+.sn-body table.wikitable > tr > :is(th, td),
+.sn-body .toccolours :is(th, td) {
+	border-color: var(--sn-hairline-soft); color: var(--sn-ink);
+}
+.sn-body table.wikitable > :is(thead, tbody) > tr > th,
+.sn-body table.wikitable > tr > th {
+	background: var(--sn-sunk); color: var(--sn-ink);
+}
+.sn-body table.wikitable > caption { color: var(--sn-ink-soft); }
+.sn-body :is(.thumbinner, .mw-default-size, figure.mw-default-size) {
+	background: color-mix(in oklab, var(--sn-sunk) 60%, transparent);
+	border-color: var(--sn-hairline);
+}
+.sn-body :is(.thumbimage, figure img, .mw-image-border img) {
+	border-color: var(--sn-hairline);
+}
+/* Bordes/fondos genéricos de wikitexto de uso común. */
+.sn-body hr { border-color: var(--sn-hairline); }
+.sn-body :is(.mw-references-wrap, .reflist, .references) {
+	color: var(--sn-ink-soft);
+}
+
+/* ─── Editor: tipografía monoespaciada recién instalada (IBM Plex Mono),
+   un pelo más grande, padding 1ex; legible también en modo oscuro. ─── */
+/* Sin borde ni radio: el textarea va envuelto por el chrome de
+   WikiEditor, que ya aporta borde/redondez (si los duplicamos se ve
+   doble). El skin solo aporta tipografía/espacio/color. */
+#wpTextbox1,
+.mw-editfont-monospace,
+.wikiEditor-ui-text textarea,
+textarea.mw-editfont-monospace {
+	font-family: var(--sn-font-mono) !important;
+	font-size: var(--sn-fs-base);
+	line-height: 1.65;
+	padding: 1ex !important;
+	color: var(--sn-ink);
+	background: var(--sn-paper);
+	border: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+#wpTextbox1:focus, .wikiEditor-ui-text textarea:focus { outline: none; }
+/* Los componentes OOUI (botones, campos, casillas, diálogos) del editor
+   y de todo el wiki se reskinea de forma centralizada y token-driven en
+   resources/skinStyles/oojs-ui.css (registrado contra los módulos
+   oojs-ui-* en skin.json). Aquí no se parchea OOUI. */

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 148" fill="currentColor" aria-hidden="true" focusable="false">
+  <g transform="matrix(0.891997, 0, 0, 0.891997, 7.40905, 23.327954)" style="">
+    <rect x="-9.07" y="-25.943" width="168.162" height="168.162" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 0);"/>
+    <g style="" transform="matrix(1.117234, 0, 0, 1.117234, -8.918372, -3.718342)">
+      <path fill="none" d="M 22.676 21.837 L 45.501 59.142 L 77.973 52.747 C 77.973 52.747 98.206 93.357 97.975 93.357 C 97.744 93.357 130.013 63.639 130.013 63.639" style="fill-rule: nonzero; stroke-width: 2.24216px; stroke: rgba(255, 255, 255, 0.525);"/>
+      <ellipse cx="22.613" cy="21.911" rx="7.848" ry="7.848" style="stroke-width: 5.6054px; fill-rule: nonzero; stroke-miterlimit: 1; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);"/>
+      <ellipse cx="45.826" cy="57.671" rx="7.848" ry="7.848" style="stroke-width: 5.6054px; fill-rule: nonzero; stroke-miterlimit: 1; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);"/>
+      <ellipse cx="77.438" cy="52.751" rx="7.848" ry="7.848" style="stroke-width: 5.6054px; fill-rule: nonzero; stroke-miterlimit: 1; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);"/>
+      <ellipse cx="97.134" cy="92.888" rx="7.848" ry="7.848" style="stroke-width: 5.6054px; fill-rule: nonzero; stroke-miterlimit: 1; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);"/>
+      <ellipse cx="129.396" cy="63.714" rx="7.848" ry="7.848" style="stroke-width: 5.6054px; fill-rule: nonzero; stroke-miterlimit: 1; stroke-linecap: round; stroke-linejoin: round; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);"/>
+    </g>
+  </g>
+</svg>
