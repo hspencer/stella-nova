@@ -47,11 +47,11 @@ Probar sin cambiar el default: añadir `?useskin=stellanova` a cualquier URL.
 Dónde tocar los elementos gráficos:
 
  - Todo está en `resources/`, salvo plantillas e
-i18n). 
- - Si estás modificando la CCS y quieres ver los cambios reflejados, recarga con `?debug=true` en la URL o pon
+i18n (traducciones). 
+ - Si estás modificando la CCS y quieres ver los cambios reflejados, recarga con `?debug=true` en la URL (recomendado, porque es lo más fácil y rápido) o pon
 `$wgResourceLoaderDebug = true;` en `LocalSettings.php` para ver los cambios al instante (ResourceLoader cachea agresivamente).
 
-| Quiero cambiar… | Archivo |
+| Quiero cambiar… | En qué archivo está |
 |---|---|
 | **Variables / tokens** (color, espaciado, tipografía, sombras, radios, movimiento; claro/oscuro; las 7 preferencias por `data-attribute`) | [`resources/tokens.css`](resources/tokens.css) |
 | **Layout y componentes** (cabecera, pie, menús, panel de preferencias, "página de papel"…) | [`resources/stella-nova.css`](resources/stella-nova.css) |
