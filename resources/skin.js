@@ -241,9 +241,14 @@
 		}
 		function onKey( e ) {
 			if ( e.key === 'Escape' ) { e.preventDefault(); closeAll(); return; }
-			if ( e.key === 'Tab' && activeMenu && isCompact() ) {
+			if ( e.key === 'Tab' && activeMenu ) {
 				var md = activeMenu.closest( '.sn-md' );
-				if ( md ) { trapTab( md, e ); }
+				if ( !md ) { return; }
+				// Atrapa Tab tanto en compact como en el modal fullscreen
+				// dedicado (`.sn-md-fs`), donde no hay "fuera".
+				if ( isCompact() || md.classList.contains( 'sn-md-fs' ) ) {
+					trapTab( md, e );
+				}
 			}
 		}
 
@@ -258,7 +263,12 @@
 				var panel = panelOf( t );
 				if ( !md || !panel ) { return; }
 				activeMenu = panel;
-				if ( isCompact() ) {
+				// `.sn-md-fs` (modal único de __PANTALLACOMPLETA__) siempre
+				// se presenta como modal a pantalla completa, sin importar
+				// viewport: en fullscreen no hay cabecera donde anclar un
+				// popover desktop.
+				var forceModal = md.classList.contains( 'sn-md-fs' );
+				if ( isCompact() || forceModal ) {
 					md.setAttribute( 'data-sn-open', '' );
 					modalOpened();
 					lastFocus = t;
@@ -281,11 +291,13 @@
 			}
 		} );
 		// Click fuera del panel (sólo aplica en desktop, donde es popover;
-		// en compact el modal es fullscreen y no hay "fuera"). En compact
-		// el cierre se hace por X o por ESC.
+		// en compact y en `.sn-md-fs` el modal es fullscreen y no hay
+		// "fuera"). El cierre se hace por X o por ESC.
 		doc.addEventListener( 'click', function ( e ) {
 			if ( !activeMenu ) { return; }
 			if ( isCompact() ) { return; }
+			var md = activeMenu.closest( '.sn-md' );
+			if ( md && md.classList.contains( 'sn-md-fs' ) ) { return; }
 			if ( activeMenu.contains( e.target ) ) { return; }
 			if ( e.target.closest && e.target.closest( '[data-sn-menu]' ) ) { return; }
 			closeAll();

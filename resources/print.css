@@ -1,6 +1,6 @@
 /* Stella Nova — impresión. La hoja se vuelve papel real: sin cromo, sin
    sombra, tinta sobre blanco, enlaces legibles. */
-.sn-header, .sn-skip, .sn-escape,
+.sn-header, .sn-skip, .sn-fs-bar,
 .sn-prefs, .sn-prefs-scrim, .sn-toc,
 .sn-footer-tools, .sn-foot-icons, .sn-iconsprite, .noprint {
 	display: none !important;

@@ -44,7 +44,7 @@
 	/* — Señales — */
 	--sn-ok:           #2f6f43;
 	--sn-warn:         #8a5a12;
-	--sn-danger:       #b21e33;
+	--sn-danger:       #b21e3e;
 
 	/* Washes de señales: fondos suaves para badges, banners, drop-targets,
 	   bloques de información y aviso. Derivados con color-mix para que

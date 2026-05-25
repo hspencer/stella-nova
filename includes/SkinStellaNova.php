@@ -93,12 +93,11 @@ class SkinStellaNova extends SkinMustache {
 		$out = $this->getOutput();
 		$user = $this->getUser();
 
-		// — PageRender.mode: standard | fullscreen (__PANTALLACOMPLETA__) —
+		// — PageRender.mode: standard | fullscreen (__PANTALLACOMPLETA__).
+		// En fullscreen no se emite afordancia "salir": la única salida son
+		// los enlaces de Portada/Navegación dentro del modal único.
 		$fullscreen = (bool)$out->getProperty( 'stellanova-fullscreen' );
 		$data['is-sn-fullscreen'] = $fullscreen;
-		$data['sn-escape-href'] = $this->getTitle()
-			? $this->getTitle()->getLocalURL()
-			: ( $data['link-mainpage'] ?? '/' );
 
 		// — UserTools: identidad tri-estado (spec UserIdentity) —
 		$isNamed = method_exists( $user, 'isNamed' ) ? $user->isNamed() : $user->isRegistered();

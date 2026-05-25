@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	Stella Nova — isotipo compacto (viewport estrecho).
-	Cuadrado en `currentColor` (= tinta del tema) con la constelación
-	"perforada" en `var(--sn-paper, #fff)` (= papel del tema). Pensado
-	para inline-injection en el chrome: hereda CSS vars del padre.
-	Como <img> degrada a cuadrado-tinta con líneas papel sobre fallback
-	blanco.
+	Stella Nova — isotipo compacto.
+	Fondo transparente. Estrellas y líneas en `currentColor` (= tinta del
+	tema): en modo claro lucen oscuras sobre papel; en modo oscuro lucen
+	claras sobre tinta. Las líneas conectoras llevan opacidad reducida
+	para que las estrellas dominen visualmente.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 148" fill="currentColor" aria-hidden="true" focusable="false">
 	<style>
-		.sn-i-bg   { fill: currentColor; }
-		.sn-i-line { stroke: var(--sn-paper, #fff); fill: none; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
-		.sn-i-star { fill: var(--sn-paper, #fff); }
+		.sn-i-line { stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; opacity: .45; }
+		.sn-i-star { fill: currentColor; }
 	</style>
-	<rect class="sn-i-bg" x="0" y="0" width="148" height="148" rx="16"/>
 	<g transform="matrix(0.892, 0, 0, 0.892, 7.41, 23.33)">
 		<g transform="matrix(1.1172, 0, 0, 1.1172, -8.92, -3.72)">
 			<path class="sn-i-line" d="M 22.676 21.837 L 45.501 59.142 L 77.973 52.747 C 77.973 52.747 98.206 93.357 97.975 93.357 C 97.744 93.357 130.013 63.639 130.013 63.639"/>

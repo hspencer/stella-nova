@@ -419,12 +419,26 @@ a:visited { color: var(--sn-link-visited); }
 	pointer-events: auto;
 	background: var(--sn-paper);
 	border: 1px solid var(--sn-paper-edge);
-	border-radius: var(--sn-radius-s);
-	padding: .25rem .55rem;
+	/* Pill: mismas esquinas que el input del buscador (border-radius: 999px). */
+	border-radius: 999px;
+	padding: .25rem .7rem;
 	font-size: var(--sn-fs-xs);
 	line-height: 1.2;
 	color: var(--sn-ink-soft);
 	box-shadow: 0 2px 6px rgb(0 0 0 / .07), 0 1px 2px rgb(0 0 0 / .04);
+}
+/* Indicators con ícono (#mw-indicator-mw-helplink y variantes que core u
+   otras extensiones puedan registrar siguiendo el patrón de un span con
+   sufijo `-icon` a la izquierda del texto): le da aire al ícono para
+   que no se pegue al texto, vía `margin-right`. Anulamos el
+   `padding-right: 10px` que core fija en `.mw-helplink-icon` para que
+   el espacio quede limpio (no se acumula con el margin). El selector
+   replica el ID para empatar especificidad core (1,1,1) y ganar por
+   orden de cascada (este archivo se carga después del módulo core). */
+#mw-indicator-mw-helplink a .mw-helplink-icon,
+.sn-indicators > [id^="mw-indicator-"] a [class$="-icon"] {
+	padding-right: 0;
+	margin-right: var(--sn-s-2);
 }
 @media (max-width: 36rem) {
 	/* En móvil vuelve al flujo dentro del paper para no chocar con la chrome
@@ -519,14 +533,39 @@ a:visited { color: var(--sn-link-visited); }
    homologado a --sn-leading-tight (1.22), igual que el firstHeading: ritmo
    vertical coherente entre todos los niveles. Sin filetes ni reglas
    horizontales — la jerarquía la hacen tamaño, peso y color. */
-.sn-body h2 {
-	font-family: var(--sn-font-text);
-	font-weight: 680; line-height: var(--sn-leading-tight);
+/* Reset cascada de core: `mediawiki.skinning.interface` impone sobre h*
+   y .mw-heading* lo siguiente, que rompe la doctrina del skin:
+     · border-bottom: 1px solid #aaa  (filete bajo h1/h2 — NO va)
+     · padding: 0.5em/0.17em           (offset que descuadra el ritmo)
+     · display: flow-root              (innecesario, vuelve a block)
+   Neutralizamos para AMBAS formas: <hN> directo (markup legacy y el
+   propio firstHeading) y `.mw-headingN` que Parsoid (MW ≥ 1.39)
+   envuelve alrededor del <hN>. */
+.sn-body :is(h1, h2, h3, h4, h5, h6),
+.sn-body :is(.mw-heading, .mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6) {
+	border: 0;
+	padding: 0;
+	display: block;
+}
+/* Cuando Parsoid envuelve el heading: el wrapper carga la tipografía y
+   el <hN> interno hereda. Sin esto, la margin del <hN> se suma a la del
+   wrapper y aparecen dobles separaciones. */
+.sn-body :is(.mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6) > :is(h1, h2, h3, h4, h5, h6) {
+	margin: 0;
+	font: inherit;
+	color: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+}
+
+.sn-body :is(h2, .mw-heading2) {
+	font-family: var(--sn-font-display);
+	font-weight: 400; line-height: var(--sn-leading-tight);
 	letter-spacing: -.012em; color: var(--sn-ink);
-	font-size: var(--sn-fs-lg);
+	font-size: var(--sn-fs-xl);
 	margin: var(--sn-s-6) 0 var(--sn-s-3);
 }
-.sn-body h3 {
+.sn-body :is(h3, .mw-heading3) {
 	font-family: var(--sn-font-text);
 	font-weight: 470; line-height: var(--sn-leading-tight);
 	letter-spacing: .035ex; color: var(--sn-nova);
@@ -534,19 +573,25 @@ a:visited { color: var(--sn-link-visited); }
 	font-size: var(--sn-fs-md);
 	margin: var(--sn-s-5) 0 var(--sn-s-2);
 }
-.sn-body :is(h4, h5, h6) {
+.sn-body :is(h4, h5, h6, .mw-heading4, .mw-heading5, .mw-heading6) {
 	font-family: var(--sn-font-text); line-height: var(--sn-leading-tight);
 	color: var(--sn-ink);
 }
-.sn-body h4 { font-size: calc(var(--sn-fs-base) * 1.02);
+.sn-body :is(h4, .mw-heading4) {
+	font-size: calc(var(--sn-fs-base) * 1.02);
 	margin: var(--sn-s-5) 0 var(--sn-s-2); font-weight: 620;
-	letter-spacing: 0; }
-.sn-body h5, .sn-body h6 {
+	letter-spacing: 0;
+}
+.sn-body :is(h5, h6, .mw-heading5, .mw-heading6) {
 	font-size: var(--sn-fs-sm); text-transform: uppercase;
 	letter-spacing: .06em; color: var(--sn-ink-soft);
 	margin: var(--sn-s-4) 0 var(--sn-s-2);
 }
-.sn-body :is(h2,h3,h4,h5,h6):first-child { margin-top: 0; }
+.sn-body :is(h5, .mw-heading5) { font-weight: 600; }
+.sn-body :is(h6, .mw-heading6) { font-weight: 400; }
+.sn-body :is(h2, h3, h4, h5, h6, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):first-child {
+	margin-top: 0;
+}
 .sn-body p { margin: 0 0 var(--sn-s-4); }
 .sn-body :is(ul, ol) { margin: 0 0 var(--sn-s-4); padding-left: var(--sn-s-5); }
 .sn-body li { margin: .2rem 0; }
@@ -657,7 +702,15 @@ a:visited { color: var(--sn-link-visited); }
    padding lateral del paper (expuesto como --sn-paper-px). La imagen interna
    se estira al 100% del nuevo ancho. Si está dentro de un .thumb la caja
    thumb también se revienta — la leyenda queda alineada al nuevo ancho. */
-.sn-paper :is(.full-width, .thumb.full-width, figure.full-width) {
+/* Match defensivo: además de `.full-width`, aceptamos el token
+   `'full-width'` (con apóstrofes) que MediaWiki preserva cuando el
+   wikitexto se escribe como `[[Imagen:foo|class='full-width']]`. El
+   selector de atributo `[class~="'full-width'"]` matchea ese token
+   tal cual. El canónico sigue siendo `class=full-width` sin comillas. */
+:is(.sn-paper, .sn-canvas) :is(
+	.full-width, .thumb.full-width, figure.full-width,
+	[class~="'full-width'"], .thumb[class~="'full-width'"], figure[class~="'full-width'"]
+) {
 	display: block;
 	width: auto;
 	max-width: none;
@@ -665,8 +718,11 @@ a:visited { color: var(--sn-link-visited); }
 	margin-block: var(--sn-s-5);
 	float: none;  /* anula el float que ponen thumb-left/right de core */
 }
-.sn-paper :is(.full-width, .thumb.full-width, figure.full-width) :is(img, video),
-.sn-paper :is(img, video).full-width {
+:is(.sn-paper, .sn-canvas) :is(
+	.full-width, .thumb.full-width, figure.full-width,
+	[class~="'full-width'"], .thumb[class~="'full-width'"], figure[class~="'full-width'"]
+) :is(img, video),
+:is(.sn-paper, .sn-canvas) :is(img, video):is(.full-width, [class~="'full-width'"]) {
 	display: block;
 	width: 100%;
 	height: auto;
@@ -675,17 +731,22 @@ a:visited { color: var(--sn-link-visited); }
 }
 /* Si el .full-width es un <img> o un <a class="image"> directo (no envuelto
    en .thumb), aplicar la misma regla — class va al elemento mismo. */
-.sn-paper :is(a.image.full-width, img.full-width, video.full-width) {
+:is(.sn-paper, .sn-canvas) :is(
+	a.image.full-width, img.full-width, video.full-width,
+	a.image[class~="'full-width'"], img[class~="'full-width'"], video[class~="'full-width'"]
+) {
 	display: block;
 	width: auto;
 	max-width: none;
 	margin-inline: calc(-1 * var(--sn-paper-px));
 	margin-block: var(--sn-s-5);
 }
-.sn-paper a.image.full-width img { width: 100%; height: auto; display: block; }
+:is(.sn-paper, .sn-canvas) :is(a.image.full-width, a.image[class~="'full-width'"]) img {
+	width: 100%; height: auto; display: block;
+}
 /* La leyenda dentro de un .thumb full-width vuelve al ancho del cuerpo para
    no quedar pegada al borde del paper. */
-.sn-paper .thumb.full-width .thumbcaption {
+:is(.sn-paper, .sn-canvas) :is(.thumb.full-width, .thumb[class~="'full-width'"]) .thumbcaption {
 	padding-inline: var(--sn-paper-px);
 	text-align: start;
 }
@@ -713,23 +774,40 @@ a:visited { color: var(--sn-link-visited); }
    .sn-indicators está ahora position:absolute (ver más arriba) y no ocupa
    flujo, por lo que .sn-body es siempre el primer elemento de flujo dentro
    del paper en páginas con __NOTITLE__. */
-.sn-body > .full-width:first-child,
-.sn-body > *:first-child > .full-width:first-child,
-.sn-body > *:first-child > *:first-child > .full-width:first-child,
-.sn-body > *:first-child > *:first-child > *:first-child > .full-width:first-child {
+.sn-body > :is(.full-width, [class~="'full-width'"]):first-child,
+.sn-body > *:first-child > :is(.full-width, [class~="'full-width'"]):first-child,
+.sn-body > *:first-child > *:first-child > :is(.full-width, [class~="'full-width'"]):first-child,
+.sn-body > *:first-child > *:first-child > *:first-child > :is(.full-width, [class~="'full-width'"]):first-child {
 	margin-block-start: calc(-1 * var(--sn-paper-py));
 	border-start-start-radius: var(--sn-radius-paper);
 	border-start-end-radius:   var(--sn-radius-paper);
 	overflow: hidden;
 }
-.sn-body > .full-width:last-child,
-.sn-body > *:last-child > .full-width:last-child,
-.sn-body > *:last-child > *:last-child > .full-width:last-child,
-.sn-body > *:last-child > *:last-child > *:last-child > .full-width:last-child {
+.sn-body > :is(.full-width, [class~="'full-width'"]):last-child,
+.sn-body > *:last-child > :is(.full-width, [class~="'full-width'"]):last-child,
+.sn-body > *:last-child > *:last-child > :is(.full-width, [class~="'full-width'"]):last-child,
+.sn-body > *:last-child > *:last-child > *:last-child > :is(.full-width, [class~="'full-width'"]):last-child {
 	margin-block-end: calc(-1 * var(--sn-paper-py));
 	border-end-start-radius: var(--sn-radius-paper);
 	border-end-end-radius:   var(--sn-radius-paper);
 	overflow: hidden;
+}
+
+/* Override fullscreen: como `.sn-canvas-body` está centrado con
+   `max-width: --sn-shell`, las imágenes `.full-width` necesitan
+   trascender el cuerpo hasta el borde REAL del viewport. La técnica
+   `width: 100vw` + `margin-inline: calc((100% - 100vw) / 2)` posiciona
+   el elemento extendiendo a ambos lados del cuerpo centrado, alcanzando
+   los bordes del viewport sin importar lo angosto que sea el shell.
+   Wins por orden de cascada (misma especificidad que la regla
+   `:is(.sn-paper, .sn-canvas) :is(.full-width, …)` de arriba). */
+.sn-canvas :is(
+	.full-width, .thumb.full-width, figure.full-width,
+	[class~="'full-width'"], .thumb[class~="'full-width'"], figure[class~="'full-width'"]
+) {
+	width: 100vw;
+	max-width: 100vw;
+	margin-inline: calc((100% - 100vw) / 2);
 }
 
 /* El skin DECRETA que <canvas> e <iframe> embebidos (p5.js, widgets como
@@ -830,7 +908,13 @@ canvas, iframe,
 	transform: rotate(-45deg); margin-top: .1rem;
 }
 .sn-body .toc .toctogglecheckbox:checked ~ ul { display: none; }
+/* Colapsado: el contenedor `.toc` deja de aportar su `padding-bottom`
+   (no hay lista que separar) y el `.toctitle` iguala su padding inferior
+   al superior para que la caja quede simétrica arriba/abajo. */
 .sn-body .toc:has(.toctogglecheckbox:checked) { padding-bottom: 0; }
+.sn-body .toc:has(.toctogglecheckbox:checked) .toctitle {
+	padding-bottom: var(--sn-s-3);
+}
 .sn-body .toc .toctogglecheckbox:focus-visible ~ .toctitle .toctogglelabel {
 	outline: 2px solid var(--sn-nova); outline-offset: 2px;
 }
@@ -941,8 +1025,10 @@ canvas, iframe,
 	border-bottom: 1px solid var(--sn-hairline-soft);
 }
 .sn-prefs-head h2 {
-	margin: 0; font-family: var(--sn-font-display);
-	font-size: var(--sn-fs-md); font-weight: 680;
+	margin: 0;
+	font-family: var(--sn-font-text); /* sans-serif del skin */
+	font-size: var(--sn-fs-md);
+	font-weight: 400;
 	letter-spacing: -.012em;
 }
 .sn-prefs-x {
@@ -1023,21 +1109,266 @@ canvas, iframe,
 	color: var(--sn-nova); }
 .sn-btn:disabled { opacity: .45; cursor: not-allowed; }
 
-/* ─────────── ExperimentalCanvas + EscapeAffordance ─────────── */
-.sn-canvas { display: block; min-height: 100vh; }
-.sn-escape {
-	position: fixed; left: var(--sn-s-4); bottom: var(--sn-s-4);
-	z-index: var(--sn-z-skip);
-	display: inline-flex; align-items: center; gap: var(--sn-s-2);
-	padding: var(--sn-s-2) var(--sn-s-4);
-	background: var(--sn-ink); color: var(--sn-paper);
-	border-radius: 999px; text-decoration: none;
-	font-size: var(--sn-fs-sm); font-weight: 500;
-	box-shadow: var(--sn-lift);
-	opacity: .55; transition: opacity var(--sn-dur-1), transform var(--sn-dur-1);
+/* ─────────── ExperimentalCanvas + UnifiedMenuAffordance ───────────
+   Pantalla completa (__PANTALLACOMPLETA__): la página POSEE el viewport.
+   El esqueleto se reduce a:
+     · una barra mínima (.sn-fs-bar) con el isotipo cuadrado de Casiopea
+       como único disparador → abre un modal único segmentado.
+     · el contenido del wiki (.sn-canvas-body) con padding equivalente al
+       de .sn-paper para que tipografía y márgenes vivan como en cualquier
+       otra página.
+   No hay botón "salir de pantalla completa": la salida vive en el modal
+   (Portada / Navegación). */
+.sn-canvas {
+	/* Pantalla completa: el papel cubre el viewport entero —de lado a
+	   lado y de arriba a abajo. El `.sn-canvas` NO se centra ni limita;
+	   son `.sn-canvas-body` y `.sn-fs-bar` quienes cargan la `max-width`
+	   del shell y `margin-inline: auto` para mantener el contenido en
+	   una columna legible. Así el campo (con grano) NO se asoma por los
+	   lados y la atmósfera es la de una hoja única.
+
+	   Contrato de tokens: aliasamos `--sn-paper-px/py` al `--sn-canvas-px/py`
+	   para que reglas legacy de `.sn-paper :is(.full-width, …)` operen
+	   aquí sin duplicarse. */
+	--sn-canvas-px: clamp(var(--sn-s-4), 4vw, var(--sn-s-7));
+	--sn-canvas-py: clamp(var(--sn-s-5), 4vw, var(--sn-s-7));
+	--sn-paper-px: var(--sn-canvas-px);
+	--sn-paper-py: var(--sn-canvas-py);
+	display: block;
+	min-height: 100vh;
+	padding: var(--sn-canvas-py) var(--sn-canvas-px);
+	background: var(--sn-paper);
+	color: var(--sn-ink);
+	/* `.full-width` usa `width: 100vw` con margenes negativos calculados
+	   en `vw`. Sin `clip`, micro-desfases sub-pixel pueden disparar scroll
+	   horizontal en algún viewport. `clip` no crea contexto propio (a
+	   diferencia de `hidden`, que rompería sticky/fixed). */
+	overflow-x: clip;
 }
-.sn-escape:hover, .sn-escape:focus-visible {
-	opacity: 1; color: var(--sn-paper); transform: translateY(-1px);
+.sn-fs-bar {
+	/* Alinea el trigger con el ancho de lectura para que no quede pegado
+	   al borde absoluto del viewport. */
+	display: flex; align-items: center; justify-content: flex-start;
+	max-width: var(--sn-shell);
+	margin: 0 auto var(--sn-s-5);
+}
+.sn-canvas-body {
+	max-width: var(--sn-shell);
+	margin-inline: auto;
+}
+.sn-fs-md { position: relative; }
+.sn-fs-trigger {
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 2.5rem; height: 2.5rem; padding: 0;
+	background: transparent; border: 0; cursor: pointer;
+	color: var(--sn-ink);                /* el rect SVG usa currentColor */
+	border-radius: var(--sn-radius);
+	transition: color var(--sn-dur-1), transform var(--sn-dur-1);
+}
+.sn-fs-trigger:hover, .sn-fs-trigger:focus-visible {
+	color: var(--sn-nova);
+}
+.sn-fs-trigger:focus-visible {
+	outline: 2px solid var(--sn-nova); outline-offset: 2px;
+}
+.sn-fs-glyph, .sn-fs-glyph svg {
+	display: block; width: 2.5rem; height: 2.5rem;
+}
+.sn-fs-glyph svg { border-radius: var(--sn-radius); }
+
+/* — Modal único de pantalla completa — replica el patrón modal unificado
+   (mismo look que la búsqueda/nav/prefs en compact), pero forzado a
+   presentarse fullscreen INCLUSO en desktop, porque vivimos dentro de
+   __PANTALLACOMPLETA__ y no hay cabecera donde anclar un popover. */
+.sn-md.sn-md-fs[data-sn-open] .sn-menu-list {
+	position: fixed; inset: 0;
+	width: 100%; height: 100dvh;
+	max-width: none; min-width: 0;
+	display: flex; flex-direction: column;
+	background: var(--sn-paper); color: var(--sn-ink);
+	border: 0; border-radius: 0; box-shadow: none;
+	margin: 0; padding: 0;
+	z-index: 1000;
+	overflow: hidden;
+	opacity: 1; visibility: visible; transform: none;
+	top: 0; right: auto; bottom: auto; left: 0;
+	animation: sn-modal-in var(--sn-dur-2) var(--sn-ease) both;
+}
+/* Cabecera del modal fullscreen — mínima: SOLO el botón X flotando
+   arriba a la derecha. Sin barra, sin filete, sin título visible (el
+   contexto del modal es obvio: las propias secciones lo nombran). */
+.sn-md.sn-md-fs .sn-modal-head {
+	display: contents;
+}
+.sn-md.sn-md-fs .sn-modal-title {
+	position: absolute; width: 1px; height: 1px;
+	margin: -1px; padding: 0; overflow: hidden;
+	clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.sn-md.sn-md-fs .sn-modal-x {
+	position: absolute; top: var(--sn-s-3); right: var(--sn-s-3);
+	z-index: 2;
+	display: grid; place-items: center;
+	background: transparent; border: 0; padding: 0;
+	width: 2.5rem; height: 2.5rem;
+	color: var(--sn-ink-soft); cursor: pointer;
+	border-radius: var(--sn-radius);
+}
+.sn-md.sn-md-fs .sn-modal-x:hover,
+.sn-md.sn-md-fs .sn-modal-x:focus-visible {
+	background: var(--sn-sunk); color: var(--sn-ink);
+}
+/* Cuerpo del modal — CSS Grid con breakpoints explícitos: 1 columna por
+   defecto, 2 a ≥ 48rem, 3 a ≥ 64rem (pantallas grandes). El scroll
+   vertical funciona porque con grid (a diferencia de multicol) los
+   items se apilan en filas nuevas en lugar de desbordar lateralmente.
+   `align-content: start` evita que los items se estiren verticalmente.
+   El padding superior reserva sitio bajo la X flotante. */
+.sn-md.sn-md-fs .sn-modal-body {
+	display: grid;
+	grid-template-columns: 1fr;
+	align-content: start;
+	gap: var(--sn-s-6);
+	flex: 1; min-height: 0;
+	overflow-y: auto; overscroll-behavior: contain;
+	padding: calc(var(--sn-s-7) + var(--sn-s-2)) var(--sn-s-5) calc(var(--sn-s-6) + env(safe-area-inset-bottom));
+	max-width: var(--sn-shell);
+	margin-inline: auto;
+	width: 100%;
+}
+@media (min-width: 48rem) {
+	.sn-md.sn-md-fs .sn-modal-body { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 64rem) {
+	.sn-md.sn-md-fs .sn-modal-body { grid-template-columns: repeat(3, 1fr); }
+}
+/* La sección del buscador atraviesa todas las columnas y centra el form
+   con `max-width: 30em`: lectura cómoda sin estirarse de lado a lado
+   en grids amplios. */
+.sn-md.sn-md-fs .sn-fs-sec--search {
+	grid-column: 1 / -1;
+}
+.sn-md.sn-md-fs .sn-fs-sec--search .sn-fs-search {
+	max-width: 30em;
+}
+/* Secciones — bloques discretos. Sin filete horizontal: la separación
+   la dan el grid-gap y los encabezados. */
+.sn-fs-sec {
+	display: flex; flex-direction: column;
+	gap: var(--sn-s-3);
+	margin: 0;
+}
+.sn-fs-h {
+	margin: 0;
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .08em;
+	color: var(--sn-ink-faint);
+}
+/* Subgrupos dentro de Navegación: cada portlet trae su label como h4. */
+.sn-fs-group {
+	display: flex; flex-direction: column; gap: var(--sn-s-2);
+}
+.sn-fs-group + .sn-fs-group { margin-top: var(--sn-s-3); }
+.sn-fs-subh {
+	margin: 0;
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	color: var(--sn-ink-soft);
+	letter-spacing: 0;
+}
+
+/* — Reset cascada: la regla genérica `.sn-menu-list :is(a, …) {
+   display: flex; padding: …; … }` (los enlaces del menú-popover del
+   chrome normal) tiene especificidad (0,2,0) y sobreescribe a nuestras
+   reglas de pills/links. Anidamos bajo `.sn-fs-menu` para subir a
+   (0,2,1)+ y devolver el control. Aplica a links comunes y a botones. */
+
+/* Lista inline de enlaces separados por coma — usada en la sección
+   Navegación: lectura corrida, sin afordancia de "botón". Cada <li> es
+   inline; `::before` inserta la coma entre items (no antes del primero
+   ni después del último). El link se ve como texto del cuerpo en
+   `--sn-link` (carmín). */
+.sn-fs-menu .sn-fs-links {
+	list-style: none; margin: 0; padding: 0;
+	display: block;
+	line-height: var(--sn-leading-normal);
+}
+.sn-fs-menu .sn-fs-links li {
+	display: inline; margin: 0; padding: 0;
+}
+.sn-fs-menu .sn-fs-links li + li::before {
+	content: ", ";
+	color: var(--sn-ink-faint);
+}
+.sn-fs-menu .sn-fs-links a {
+	display: inline;                  /* anula display:flex del .sn-menu-list a */
+	padding: 0;                       /* anula padding del .sn-menu-list a */
+	background: transparent;
+	color: var(--sn-link);            /* carmín del skin */
+	text-decoration: none;
+	border: 0;
+	border-radius: 0;
+	font: inherit;
+	transition: color var(--sn-dur-1);
+}
+.sn-fs-menu .sn-fs-links a:hover,
+.sn-fs-menu .sn-fs-links a:focus-visible {
+	color: var(--sn-link-hover);
+	background: transparent;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+.sn-fs-menu .sn-fs-links li.new a { color: var(--sn-link); opacity: .7; }
+
+/* Nav-pills — el lenguaje secundario del modal (acciones). Cada ítem
+   es una cápsula compacta; los grupos se acomodan con flex-wrap y gap. */
+.sn-fs-menu .sn-fs-pills {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; flex-wrap: wrap; gap: var(--sn-s-2);
+}
+.sn-fs-menu .sn-fs-pills li { margin: 0; padding: 0; }
+.sn-fs-menu .sn-fs-pills :is(a, button) {
+	display: inline-flex; align-items: center; gap: var(--sn-s-2);
+	padding: var(--sn-s-1) var(--sn-s-3);
+	background: var(--sn-sunk);
+	color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline);
+	border-radius: 999px;
+	font: inherit; font-size: var(--sn-fs-sm);
+	text-decoration: none; cursor: pointer;
+	transition: background var(--sn-dur-1), color var(--sn-dur-1),
+		border-color var(--sn-dur-1);
+}
+.sn-fs-menu .sn-fs-pills :is(a, button):hover,
+.sn-fs-menu .sn-fs-pills :is(a, button):focus-visible {
+	background: var(--sn-paper);
+	border-color: var(--sn-ink-faint);
+	color: var(--sn-nova);
+}
+.sn-fs-menu .sn-fs-pills li.selected a,
+.sn-fs-menu .sn-fs-pills li.active a {
+	background: var(--sn-paper);
+	border-color: var(--sn-ink-faint);
+	color: var(--sn-nova);
+}
+/* MediaWiki marca enlaces "rojos" (a páginas inexistentes) con .new. */
+.sn-fs-menu .sn-fs-pills li.new a { color: var(--sn-link); }
+
+/* — Form de búsqueda dentro del modal — papel + filete + lupa a la
+   derecha. Sin estilo de pill (el form es una caja distinta). */
+.sn-fs-search {
+	display: flex; align-items: center; gap: var(--sn-s-2);
+	padding: var(--sn-s-2) var(--sn-s-3);
+	background: var(--sn-paper);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius);
+}
+.sn-fs-search:focus-within { border-color: var(--sn-ink-faint); }
+.sn-fs-search :is(input[type="search"], #searchInput, .mw-searchInput) {
+	flex: 1; min-width: 0;
+	background: transparent; border: 0; outline: none;
+	color: var(--sn-ink); font: inherit;
 }
 
 /* ─────────────────────── Responsive ─────────────────────── */
@@ -1238,8 +1569,8 @@ canvas, iframe,
 		min-height: var(--sn-ctl);
 	}
 	.sn-prefs-head h2 {
-		font-size: var(--sn-fs-md); font-weight: 600;
-		font-family: var(--sn-font-text); letter-spacing: -.008em;
+		font-size: var(--sn-fs-md); font-weight: 400;
+		font-family: var(--sn-font-text); letter-spacing: -.012em;
 	}
 	.sn-prefs-body { padding: var(--sn-s-4); gap: var(--sn-s-4); }
 	.sn-prefs-foot { flex: none; padding: var(--sn-s-3) var(--sn-s-4); }
@@ -1276,12 +1607,30 @@ canvas, iframe,
 @keyframes sn-fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* Pequeñas verdades de MediaWiki que conviene respetar */
-/* Editar (junto a títulos): nav-pill sin corchetes, distanciado del título. */
+/* Editar (junto a títulos): nav-pill sin corchetes, distanciado del
+   título. Invisible por defecto; aparece al pasar el cursor sobre el
+   heading o al recibir foco por teclado dentro de éste. Mantiene su
+   espacio reservado (`opacity`, no `display`/`visibility`) para que el
+   heading no salte al revelarse, y para no sacar el link del tab order
+   (accesibilidad). Cubre AMBAS formas: <hN> directo (markup legacy, el
+   .mw-editsection vive como hijo del hN) y .mw-headingN (Parsoid, el
+   .mw-editsection es hermano del hN dentro del wrapper). */
 .mw-editsection {
 	display: inline-flex; align-items: center; gap: var(--sn-s-2);
 	margin-inline-start: var(--sn-s-4);
 	font-family: var(--sn-font-text); font-size: var(--sn-fs-xs);
 	font-weight: 400; vertical-align: middle;
+	/* Look consistente sin importar el heading que lo contiene: anula
+	   `text-transform` y `letter-spacing` que h3/h5/h6 imponen
+	   (uppercase + spaciado) y se transmiten por herencia al botón. */
+	text-transform: lowercase;
+	letter-spacing: normal;
+	opacity: 0;
+	transition: opacity var(--sn-dur-1);
+}
+:is(h1, h2, h3, h4, h5, h6, .mw-heading, .mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):hover .mw-editsection,
+:is(h1, h2, h3, h4, h5, h6, .mw-heading, .mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):focus-within .mw-editsection {
+	opacity: 1;
 }
 .mw-editsection-bracket,
 .mw-editsection-divider { display: none; }
@@ -1323,6 +1672,17 @@ canvas, iframe,
 	background: var(--sn-sunk); color: var(--sn-ink);
 }
 .sn-body table.wikitable > caption { color: var(--sn-ink-soft); }
+/* Tablas marcadas como `.plantilla` (fichas de plantillas Casiopea):
+   sin bordes entre celdas y sin fondo en los th. Solo conservan el
+   contorno exterior heredado del wikitable. */
+.sn-body table.plantilla > :is(thead, tbody, tfoot) > tr > :is(th, td),
+.sn-body table.plantilla > tr > :is(th, td) {
+	border: 0;
+}
+.sn-body table.plantilla > :is(thead, tbody) > tr > th,
+.sn-body table.plantilla > tr > th {
+	background: transparent;
+}
 .sn-body :is(.thumbinner, .mw-default-size, figure.mw-default-size) {
 	background: color-mix(in oklab, var(--sn-sunk) 60%, transparent);
 	border-color: var(--sn-hairline);
@@ -1334,6 +1694,75 @@ canvas, iframe,
 .sn-body hr { border-color: var(--sn-hairline); }
 .sn-body :is(.mw-references-wrap, .reflist, .references) {
 	color: var(--sn-ink-soft);
+}
+
+/* Cajas auxiliares de páginas especiales (leyenda de "Cambios recientes",
+   notas de "Páginas especiales", etc.) — `.mw-specialpages-notes` viene
+   pegada a `.mw-changeslist-legend` en el mismo elemento, así que un solo
+   selector las cubre. Se homologan al lenguaje visual de la TOC:
+   fondo papel, filete `--sn-hairline-soft` casi imperceptible, esquinas
+   `--sn-radius` y mismo ritmo de padding/margen. El `float: right` que
+   trae core en `.mw-changeslist-legend` se respeta (es el patrón
+   esperado en Cambios Recientes); aquí solo cambia su vestimenta. */
+.sn-body :is(.mw-changeslist-legend, .mw-specialpages-notes) {
+	margin: var(--sn-s-4) 0 var(--sn-s-6);
+	padding: var(--sn-s-3) var(--sn-s-4);
+	border: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius);
+	background: var(--sn-paper);
+	color: var(--sn-ink);
+	font-size: var(--sn-fs-sm);
+	line-height: var(--sn-leading-normal);
+}
+/* Cuando va flotada (cambios recientes), respeta la separación lateral
+   del bloque editorial sin pegarse al texto. */
+.sn-body .mw-changeslist-legend {
+	margin-left: var(--sn-s-4);
+	max-width: 26rem;
+}
+.sn-body :is(.mw-changeslist-legend, .mw-specialpages-notes) summary {
+	cursor: pointer;
+	font-weight: 600;
+	color: var(--sn-ink);
+}
+.sn-body :is(.mw-changeslist-legend, .mw-specialpages-notes) dl {
+	margin: var(--sn-s-2) 0 0;
+}
+
+/* ─── Grilla utilitaria para wikitexto: reemplaza el patrón
+   `.row > .col-md-*` del skin Bootstrap anterior. Uso esperado:
+
+       <div class="grilla cols-2"> … </div>
+       <div class="grilla cols-3"> … </div>
+       <div class="grilla cols-6"> … </div>
+
+   Funciona tanto en chrome normal como en __PANTALLACOMPLETA__: ambos
+   wrappers de contenido llevan `.sn-body`. `minmax(0, 1fr)` evita
+   desbordes cuando una celda lleva contenido sin wrap (URLs, código).
+   Degradación: en pantallas medias (≤ 64rem) las grillas más densas
+   (cols-4/5/6) reducen el número de columnas; por debajo de 48rem
+   (tablet vertical) todas caen a una sola columna. */
+.sn-body .grilla {
+	display: grid;
+	gap: var(--sn-s-4);
+	margin: var(--sn-s-4) 0;
+}
+.sn-body .grilla.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sn-body .grilla.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sn-body .grilla.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sn-body .grilla.cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.sn-body .grilla.cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 64rem) {
+	.sn-body .grilla.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.sn-body .grilla.cols-5,
+	.sn-body .grilla.cols-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 48rem) {
+	.sn-body .grilla.cols-2,
+	.sn-body .grilla.cols-3,
+	.sn-body .grilla.cols-4,
+	.sn-body .grilla.cols-5,
+	.sn-body .grilla.cols-6 { grid-template-columns: 1fr; }
 }
 
 /* ─── Editor: tipografía monoespaciada recién instalada (IBM Plex Mono),
@@ -1360,3 +1789,10 @@ textarea.mw-editfont-monospace {
    y de todo el wiki se reskinea de forma centralizada y token-driven en
    resources/skinStyles/oojs-ui.css (registrado contra los módulos
    oojs-ui-* en skin.json). Aquí no se parchea OOUI. */
+
+/* ajustes específicos para Casiopea */
+
+/* Desplegables */
+.mw-customtoggle{
+	color: var(--sn-nova);
+}
