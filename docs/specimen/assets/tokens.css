@@ -2,10 +2,12 @@
  *
  * Metáfora rectora: "página de papel". Una hoja cálida flota sobre un campo
  * gris ahuesado (el atelier de la e[ad]); un único punto de luz carmín es la
- * nova. Editorial, sobrio, cálido. Work Sans (cuerpo/UI) · Newsreader
- * (titulares, citas, poemas) · IBM Plex Mono (código).
+ * nova. Editorial, sobrio, cálido. Alegreya Sans (cuerpo · UI · cabeceras) ·
+ * Alegreya (citas, poemas — único uso editorial) · IBM Plex Mono (código).
+ * Ritmo vertical sobre la interlínea del cuerpo: la unidad es
+ * `--sn-baseline`, todo line-height/margen vertical de bloque es un múltiplo.
  *
- * Tema: prefers-color-scheme + override [data-sn-theme]. Las 7 preferencias
+ * Tema: prefers-color-scheme + override [data-sn-theme]. Las 5 preferencias
  * del spec se enchufan por data-attributes en <html> (resueltas server-side
  * para registrados, pre-paint para anónimo/temporal). Aquí solo los valores;
  * el contrato de resolución (explícito > SO > default) vive en el spec.
@@ -35,6 +37,11 @@
 	--sn-link:         #ae2d13;
 	--sn-link-hover:   #962c08;
 	--sn-link-visited: #612403;
+	/* Enlace a página inexistente (redlink). En claro: tinta muy
+	   apagada (replica el aire de producción, faded-grey sobre cream).
+	   En oscuro se redefine al final con un coral cálido que sí cumple
+	   contraste sobre paper/sunk. */
+	--sn-link-new:     rgba(34, 31, 26, .42);
 
 	/* Íconos de UI: nunca negro pleno ni acento; tinta al ~70% en reposo,
 	   tinta plena al hover/activo. Nunca carmín. */
@@ -93,18 +100,23 @@
 	/* Velo de diálogos modales */
 	--sn-scrim:             color-mix(in oklab, var(--sn-ink) 45%, transparent);
 
-	/* — Tipografía — Work Sans (cuerpo/UI), Newsreader (display: titulares,
-	   citas, <poem> — serif editorial con eje óptico), IBM Plex Mono
-	   (código). Auto-alojadas (fonts.css). */
-	--sn-font-text: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-	--sn-font-display: 'Newsreader', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
+	/* — Tipografía — Alegreya Sans (cuerpo, UI y TODAS las cabeceras; pesos
+	   300/400/500/700/900), Alegreya (variable wght 400–900, único uso
+	   editorial: citas y <poem>), IBM Plex Mono (código). Auto-alojadas
+	   (fonts.css). `--sn-font-display` queda como alias de `--sn-font-text`:
+	   la doctrina del skin es "todo sans en cabeceras"; el alias permite
+	   reintroducir un display distinto tocando solo el token. */
+	--sn-font-text: 'Alegreya Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--sn-font-display: var(--sn-font-text);
+	--sn-font-serif: 'Alegreya', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
 	--sn-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
 
 	/* Escala fluida sobria (sin titulares exagerados). --sn-font-scale lo
-	   modula la preferencia tamaño-de-fuente; --sn-leading el interlineado. */
+	   modula la preferencia tamaño-de-fuente. --sn-leading es FIJO (no es
+	   preferencia de usuario): cambiarlo desparametriza el ajuste al
+	   baseline grid. */
 	--sn-font-scale: 1;
 	--sn-leading: 1.65;
-	--sn-leading-tight: 1.22;
 
 	--sn-fs-root:  calc(1rem * var(--sn-font-scale));
 	--sn-fs-xs:    clamp(.72rem, .70rem + .10vw, .78rem);
@@ -114,6 +126,27 @@
 	--sn-fs-lg:    calc(clamp(1.2rem, 1.12rem + .40vw, 1.42rem) * var(--sn-font-scale));
 	--sn-fs-xl:    calc(clamp(1.35rem, 1.22rem + .55vw, 1.62rem) * var(--sn-font-scale));
 	--sn-fs-display: calc(clamp(1.5rem, 1.32rem + .85vw, 2rem) * var(--sn-font-scale));
+	/* Título de página (h1#firstHeading): un escalón por encima del display
+	   — la voz editorial del documento debe leerse mayor que cualquier h1
+	   del cuerpo. */
+	--sn-fs-page-title: calc(clamp(1.85rem, 1.55rem + 1.3vw, 2.5rem) * var(--sn-font-scale));
+
+	/* — Baseline grid — la unidad del ritmo vertical es la interlínea del
+	   cuerpo: `--sn-baseline` = fs-base × leading. Escala SOLO con la
+	   preferencia FontSize del usuario (leading y ancho de hoja son fijos),
+	   para que el cálculo del ajuste al baseline grid no se desparametrice.
+	   Reglas:
+	     1. body usa `--sn-leading` (unitless) como line-height, para que
+	        las cajas inline (sub, sup, code) hereden proporción.
+	     2. Headings y bloques (p, ul/ol, blockquote, poem) usan
+	        line-height ABSOLUTO en rem (= 1 o 2 baselines), garantizando
+	        que la altura por línea cae siempre en la retícula.
+	     3. Márgenes verticales de bloque (margin-top / margin-bottom) son
+	        múltiplos enteros de --sn-baseline. El colapso vertical de MW
+	        sigue funcionando porque NO usamos padding-top de compensación. */
+	--sn-baseline:    calc(var(--sn-fs-base) * var(--sn-leading));
+	--sn-baseline-2:  calc(var(--sn-baseline) * 2);
+	--sn-baseline-3:  calc(var(--sn-baseline) * 3);
 
 	/* — Ritmo espacial (escala 1.5) — */
 	--sn-s-1: .25rem;  --sn-s-2: .5rem;   --sn-s-3: .75rem;
@@ -121,8 +154,8 @@
 	--sn-s-7: 3.5rem;  --sn-s-8: 5.25rem;
 
 	/* Ancho máximo de la HOJA (no del texto: el contenido va al 100%).
-	   Lo modula la preferencia ContentWidth. */
-	--sn-measure: 58rem;          /* = standard (default)                   */
+	   Fijo, no es preferencia de usuario. */
+	--sn-measure: 58rem;
 	--sn-rail: 15.5rem;           /* (sin uso; reservado)                   */
 	--sn-shell: 82rem;            /* ancho máximo del conjunto (header/pie) */
 
@@ -166,6 +199,113 @@
 	color-scheme: light;
 }
 
+/* ── Capa de compatibilidad Codex / WikimediaUI ─────────────────────
+ *
+ * OOUI (oojs-ui-core/widgets/windows) y algunas extensiones consumen
+ * variables del design system Codex de Wikimedia con la forma
+ *   var(--color-base, #202122)
+ *   var(--background-color-progressive--active, #233566)
+ *   …etc.
+ *
+ * Si la variable Codex no está definida en el documento, el var() cae
+ * al hex hardcodeado — y esos hex NO respetan el tema (vienen del tema
+ * claro Codex). Resultado en modo oscuro: texto #202122 sobre fondo
+ * #181610 (contraste <1.1:1, ilegible), fondos #eaf3ff dentro de
+ * controles oscuros, etc.
+ *
+ * Aquí declaramos las variables Codex como ALIAS a los tokens del
+ * skin (--sn-*). Como --sn-* ya voltea entre claro/oscuro, los alias
+ * Codex voltean con él automáticamente — sin duplicar este bloque por
+ * tema. Estas reglas no tocan nada que YA defina explícitamente cada
+ * --codex-* (si el día de mañana añadimos Codex completo, gana lo más
+ * específico). */
+:root {
+	/* Texto */
+	--color-base:           var(--sn-ink);
+	--color-base--hover:    var(--sn-ink);
+	--color-base--subtle:   var(--sn-ink-soft);
+	--color-subtle:         var(--sn-ink-soft);
+	--color-emphasized:     var(--sn-ink);
+	--color-placeholder:    var(--sn-ink-faint);
+	--color-disabled:       var(--sn-ink-faint);
+	/* `inverted` = el color que contrasta contra los fondos saturados
+	   del propio tema (botón primario, scrim, etc.). En claro es el
+	   papel; en oscuro también — porque `--sn-paper` voltea. */
+	--color-inverted:       var(--sn-paper);
+	--color-inverted-fixed: var(--sn-paper);
+
+	/* Acento progresivo (en Stella Nova: carmín en claro, azul en
+	   oscuro — el flip vive en --sn-link). Hover/active derivados con
+	   color-mix hacia la tinta del tema, así "presionado" siempre
+	   significa "intensificado" en ambos esquemas. */
+	--color-progressive:           var(--sn-link);
+	--color-progressive--hover:    color-mix(in oklab, var(--sn-link) 80%, var(--sn-ink));
+	--color-progressive--active:   color-mix(in oklab, var(--sn-link) 65%, var(--sn-ink));
+	--color-progressive--focus:    var(--sn-link);
+
+	/* Destructivo: misma lógica, ahora atado a --sn-danger. */
+	--color-destructive:           var(--sn-danger);
+	--color-destructive--hover:    color-mix(in oklab, var(--sn-danger) 80%, var(--sn-ink));
+	--color-destructive--active:   color-mix(in oklab, var(--sn-danger) 65%, var(--sn-ink));
+	--color-destructive--focus:    var(--sn-danger);
+
+	--color-error:    var(--sn-danger);
+	--color-success:  var(--sn-ok);
+
+	/* Fondos */
+	--background-color-base:                 var(--sn-paper);
+	--background-color-base-fixed:           var(--sn-paper);
+	--background-color-interactive:          var(--sn-sunk);
+	--background-color-interactive-subtle:   var(--sn-sunk);
+	--background-color-neutral-subtle:       var(--sn-sunk);
+	--background-color-disabled:             var(--sn-sunk);
+	--background-color-disabled-subtle:      var(--sn-sunk);
+
+	--background-color-progressive:           var(--sn-link);
+	--background-color-progressive--hover:    color-mix(in oklab, var(--sn-link) 80%, var(--sn-ink));
+	--background-color-progressive--active:   color-mix(in oklab, var(--sn-link) 65%, var(--sn-ink));
+	--background-color-progressive--focus:    var(--sn-link);
+	--background-color-progressive-subtle:    var(--sn-nova-wash);
+
+	--background-color-error:              var(--sn-danger);
+	--background-color-error-subtle:       var(--sn-danger-wash);
+	--background-color-destructive-subtle: var(--sn-danger-wash);
+	--background-color-warning-subtle:     var(--sn-warn-wash);
+	--background-color-success-subtle:     var(--sn-ok-wash);
+	--background-color-notice-subtle:      var(--sn-sunk);
+	--background-color-backdrop-light:     var(--sn-scrim);
+
+	/* "Quiet" buttons: lavados de tinta translúcidos — voltean con el
+	   tema porque --sn-ink lo hace. */
+	--background-color-button-quiet--hover:  color-mix(in oklab, var(--sn-ink) 5%, transparent);
+	--background-color-button-quiet--active: color-mix(in oklab, var(--sn-ink) 12%, transparent);
+
+	/* Bordes */
+	--border-color-base:                var(--sn-ink-faint);
+	--border-color-subtle:              var(--sn-hairline);
+	--border-color-interactive:         var(--sn-ink-faint);
+	--border-color-disabled:            var(--sn-hairline);
+	--border-color-inverted:            var(--sn-paper);
+	--border-color-notice:              var(--sn-ink-faint);
+	--border-color-warning:             var(--sn-warn);
+	--border-color-error:               var(--sn-danger);
+	--border-color-success:             var(--sn-ok);
+	--border-color-destructive--hover:  color-mix(in oklab, var(--sn-danger) 80%, var(--sn-ink));
+
+	--border-color-input--hover:         var(--sn-ink-faint);
+	--border-color-input-binary:         var(--sn-ink-faint);
+	--border-color-input-binary--active: var(--sn-link);
+	--border-color-input-binary--checked: var(--sn-link);
+	--border-color-progressive--hover:   color-mix(in oklab, var(--sn-link) 80%, var(--sn-ink));
+	--border-color-progressive--focus:   var(--sn-link);
+
+	/* Sombras de foco */
+	--box-shadow-color-progressive--focus:  var(--sn-link);
+	--box-shadow-color-progressive--active: color-mix(in oklab, var(--sn-link) 65%, var(--sn-ink));
+	--box-shadow-color-destructive--focus:  var(--sn-danger);
+	--box-shadow-color-inverted:            var(--sn-paper);
+}
+
 /* ── Tema oscuro: la noche que Tycho miró. La hoja sigue siendo la luz. ──
  *
  * DEFAULT = CLARO. El esquema del SO NO oscurece por sí solo: solo se
@@ -181,6 +321,7 @@
 	--sn-hairline:#353123; --sn-hairline-soft:#2a2719;
 	--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
 	--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
+	--sn-link-new:#c8a89a;
 	--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-danger:#ff6b7e;
 	--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
 	--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
@@ -195,6 +336,7 @@
 		--sn-hairline:#353123; --sn-hairline-soft:#2a2719;
 		--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
 		--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
+		--sn-link-new:#c8a89a;
 		--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-danger:#ff6b7e;
 		--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
 		--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
@@ -203,23 +345,13 @@
 	}
 }
 
-/* ── Preferencia: ancho de contenido (spec ContentWidth) ── */
-/* Escala recalibrada: el más angosto = el "mediano" anterior (42rem),
-   y de ahí hacia arriba. La hoja ya no constriñe el texto (va al 100%). */
-:root[data-sn-width="narrow"]   { --sn-measure: 42rem; }
-:root[data-sn-width="standard"] { --sn-measure: 58rem; }
-:root[data-sn-width="wide"]     { --sn-measure: 76rem; }
-:root[data-sn-width="full"]     { --sn-measure: none; --sn-shell: 100%; }
-
-/* ── Preferencia: tamaño de fuente (spec FontSize) ── */
+/* ── Preferencia: tamaño de fuente (spec FontSize) ──
+   Única preferencia tipográfica modulable por el usuario. Ancho de hoja
+   e interlineado son fijos: cambiarlos desparametriza el ajuste al
+   baseline grid. */
 :root[data-sn-font="small"]  { --sn-font-scale: .92; }
 :root[data-sn-font="medium"] { --sn-font-scale: 1; }
 :root[data-sn-font="large"]  { --sn-font-scale: 1.14; }
-
-/* ── Preferencia: interlineado (spec LineHeight) ── */
-:root[data-sn-leading="compact"] { --sn-leading: 1.45; }
-:root[data-sn-leading="normal"]  { --sn-leading: 1.65; }
-:root[data-sn-leading="relaxed"] { --sn-leading: 1.9; }
 
 /* ── Movimiento: SO + override (spec Motion; reduced-motion 1ª clase) ── */
 @media (prefers-reduced-motion: reduce) {

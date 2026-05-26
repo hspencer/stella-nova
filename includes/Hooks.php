@@ -4,11 +4,12 @@
  * el comportamiento del spec exige y que no puede vivir en CSS/JS.
  *
  *  · __PANTALLACOMPLETA__  → behaviour switch (spec PageRender.mode).
- *  · Persistencia híbrida  → las 7 preferencias como opciones de cuenta
- *    (api): para `registered` siguen al usuario entre dispositivos
- *    (spec PreferencesPanel.CrossDeviceForRegistered). Anónimo/temporal
- *    persisten por-navegador en el cliente (skin.js).
- *  · Pre-pintado sin FOUC  → resuelve el tema antes del primer paint.
+ *  · Persistencia híbrida  → las 5 preferencias del skin como opciones
+ *    de cuenta (api): para `registered` siguen al usuario entre
+ *    dispositivos (spec PreferencesPanel.CrossDeviceForRegistered).
+ *    Anónimo/temporal persisten por-navegador (skin.js → localStorage).
+ *  · Pre-pintado sin FOUC  → resuelve el tema antes del primer paint
+ *    (eludir el "parpadeo" de color al recargar).
  *
  * @license GPL-2.0-or-later
  */
@@ -25,9 +26,7 @@ class Hooks {
 	/** Opción de cuenta → valor por defecto ('' = sin elección explícita). */
 	private const PREFS = [
 		'stellanova-theme'       => '',
-		'stellanova-width'       => '',
 		'stellanova-font'        => '',
-		'stellanova-leading'     => '',
 		'stellanova-toc'         => '',
 		'stellanova-collapsible' => '',
 		'stellanova-motion'      => '',
@@ -61,10 +60,14 @@ class Hooks {
 	}
 
 	/**
-	 * Las 7 preferencias como opciones `api`: persisten en la cuenta
+	 * Las 5 preferencias como opciones `api`: persisten en la cuenta
 	 * (cross-device para registrados) sin recargar Especial:Preferencias;
-	 * el panel del skin es su UI. Cuentas temporales 1.43 no llegan aquí
-	 * con identidad nombrada → su persistencia es por-navegador.
+	 * el panel del skin es su UI. El tipo `api` significa "opción válida
+	 * para guardar vía API, pero no expuesta en Especial:Preferencias" —
+	 * el formulario lo provee el panel del skin, no MW.
+	 *
+	 * Cuentas temporales (MW 1.43) no llegan aquí con identidad nombrada
+	 * → su persistencia es por-navegador (skin.js + localStorage).
 	 *
 	 * @param User $user
 	 * @param array &$prefs
@@ -86,9 +89,17 @@ class Hooks {
 
 	/**
 	 * Pre-pintado: resuelve tema/preferencias antes del primer paint para
-	 * eludir el FOUC, y expone a skin.js dónde persistir (cuenta vs.
-	 * navegador). Para registrados siembra los valores de servidor; para
-	 * anónimo/temporal el cliente lee su almacenamiento local.
+	 * eludir el FOUC ("flash of unstyled content" — parpadeo claro→oscuro
+	 * cuando el usuario tiene preferencia oscura pero el navegador pinta
+	 * con el default antes de que llegue el CSS/JS). El truco: emitir un
+	 * <script> inline en <head> que lee la pref y fija data-sn-theme en
+	 * <html> ANTES de que el navegador haga el primer paint del body.
+	 *
+	 * También expone a skin.js dónde persistir (cuenta vs. navegador):
+	 *   · `identity` = anonymous | temporary | registered (tri-estado MW 1.43)
+	 *   · `persist`  = account (registrados, BBDD) | browser (resto, localStorage)
+	 *   · `server`   = seed de las opciones de cuenta para registrados;
+	 *                  vacío para anónimo/temporal (el cliente lee local).
 	 *
 	 * @param OutputPage $out
 	 * @param Skin $skin
@@ -133,7 +144,7 @@ class Hooks {
 		);
 		$script = '<script>(function(){try{' .
 			'var C=' . $cfgJson . ';' .
-			'var d=document.documentElement,K=["theme","width","font","leading","toc","collapsible","motion"];' .
+			'var d=document.documentElement,K=["theme","font","toc","collapsible","motion"];' .
 			'function g(k){if(C.identity==="registered"){return (C.server&&C.server[k])||"";}' .
 			'try{return localStorage.getItem("sn-pref-"+k)||"";}catch(e){return "";}}' .
 			'K.forEach(function(k){var v=g(k);if(!v)return;' .

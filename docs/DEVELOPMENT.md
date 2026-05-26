@@ -35,7 +35,7 @@ Plan accionable. Principios en [`ARCHITECTURE.md`](ARCHITECTURE.md).
   oscuro solo por elección explícita / `auto`+SO (ver Decisiones); fuentes
   auto-alojadas (Work Sans + Fraunces, `fonts.css`, sin CDN runtime).
 - [~] **M4 — Responsive + navegación**: mobile-first; dropdown colapsable;
-  panel de preferencias (7, modal accesible) con persistencia híbrida
+  panel de preferencias (5, modal accesible) con persistencia híbrida
   (cuenta/`localStorage`) + pre-pintado sin FOUC. Falta ronda móvil real.
 - [ ] M5 — Accesibilidad WCAG 2.1 AA (auditoría axe/WAVE + lector pantalla)
 - [~] M6 — JS progresivo (panel/dropdown/menús hechos; degradación sin JS ok)

@@ -37,7 +37,7 @@ ASSETS    = OUT_DIR / "assets"
 # ── token parser ───────────────────────────────────────────────────────────
 # Cabecera de sección: comentario que empieza con `/* — ` y captura el título
 # hasta el primer separador (—, (, :, , , o cierre */). Tolera headers
-# multilínea como `/* — Tipografía — Work Sans (cuerpo/UI)... */`.
+# multilínea como `/* — Tipografía — Alegreya Sans (cuerpo/UI)... */`.
 SECTION_RE = re.compile(r"/\*\s*—\s*([^—(:,\n]+?)\s*(?:[—(:,]|\*/)")
 # Captura --sn-<nombre>: <valor>;  (valor puede ser multilínea), nota opcional /* ... */
 TOKEN_RE = re.compile(
@@ -269,12 +269,6 @@ def page_shell(title, body, version, current_page):
       <button type="button" data-theme="dark">Oscuro</button>
       <button type="button" data-theme="auto">Auto</button>
     </fieldset>
-    <fieldset class="spec-seg" aria-label="Ancho">
-      <legend class="vh">Ancho</legend>
-      <button type="button" data-width="narrow">Angosto</button>
-      <button type="button" data-width="standard" aria-pressed="true">Estándar</button>
-      <button type="button" data-width="wide">Ancho</button>
-    </fieldset>
   </div>
 </header>
 <main class="spec-main">
@@ -301,7 +295,7 @@ def page_shell(title, body, version, current_page):
         b.setAttribute('aria-pressed', b.dataset[kind] === value ? 'true' : 'false');
       }});
     }};
-    ['theme', 'width'].forEach(function (k) {{
+    ['theme'].forEach(function (k) {{
       var saved = localStorage.getItem('sn-spec-' + k);
       if (saved) apply(k, saved);
       document.querySelectorAll('[data-' + k + ']').forEach(function (b) {{
@@ -351,26 +345,27 @@ def body_components():
   <div class="demo">
     <div class="colophon">
       <div class="colophon-row">
-        <div class="colophon-name" style="font-family: var(--sn-font-display);">Aa Bb Cc · 0123</div>
+        <div class="colophon-name" style="font-family: var(--sn-font-text);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>Newsreader</strong> · serif editorial con eje óptico<br>
-          Token <code>--sn-font-display</code> · pesos 400 / 700 + italic<br>
-          Uso: H1–H2, <code>blockquote</code>, <code>&lt;poem&gt;</code>
+          <strong>Alegreya Sans</strong> · humanista, pesos 300/400/500/700/900<br>
+          Token <code>--sn-font-text</code> · cuerpo, UI y TODAS las cabeceras<br>
+          (<code>--sn-font-display</code> es alias de <code>--sn-font-text</code>:
+          la doctrina del skin es "todo sans en cabeceras")
         </div>
       </div>
       <div class="colophon-row">
-        <div class="colophon-name" style="font-family: var(--sn-font-text);">Aa Bb Cc · 0123</div>
+        <div class="colophon-name" style="font-family: var(--sn-font-serif);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>Work Sans</strong> · sans humanista, variable 300–700<br>
-          Token <code>--sn-font-text</code> · normal e italic<br>
-          Uso: cuerpo, UI, H3–H6
+          <strong>Alegreya</strong> · serif editorial, variable wght 400–900<br>
+          Token <code>--sn-font-serif</code> · único uso editorial<br>
+          Uso: <code>&lt;blockquote&gt;</code>, <code>&lt;poem&gt;</code>
         </div>
       </div>
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-mono);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
           <strong>IBM Plex Mono</strong> · monospace técnico<br>
-          Token <code>--sn-font-mono</code> · pesos 400 / 600 + italic<br>
+          Token <code>--sn-font-mono</code><br>
           Uso: código, valores numéricos, identificadores
         </div>
       </div>
@@ -380,26 +375,28 @@ def body_components():
 
 <section class="comp">
   <h2>Cabeceras</h2>
-  <p class="meta">H1–H2 en <code>--sn-font-display</code>
-  (<code>--sn-fs-display</code> → 1.5–2.0 rem, <code>--sn-fs-xl</code> →
-  1.35–1.62 rem), interlínea <code>--sn-leading-tight</code> (1.22).
-  H3–H6 en <code>--sn-font-text</code>, escala
-  <code>--sn-fs-lg</code> → <code>--sn-fs-base</code>.</p>
-  <div class="sn-paper sn-body demo">
-    <h1 id="firstHeading" class="firstHeading">Heading 1 · display editorial</h1>
-    <h2>Heading 2 · sección principal</h2>
-    <h3>Heading 3 · sub-sección</h3>
-    <h4>Heading 4 · agrupación menor</h4>
-    <h5>Heading 5 · apostilla</h5>
-    <h6>Heading 6 · referencia inline</h6>
-  </div>
-  <details class="howto">
-    <summary>Cómo escribirlo en wikitexto</summary>
+  <p class="meta">Todas las cabeceras (H1–H6) en <code>--sn-font-text</code>
+  — Alegreya Sans, familia única. Sus alturas de línea son múltiplos enteros
+  de <code>--sn-baseline</code> (la interlínea del cuerpo): H1/H2 ocupan
+  2 baselines, H3–H6 uno. Escala: <code>--sn-fs-display</code>
+  (1.5–2.0 rem) → <code>--sn-fs-sm</code> (0.82–0.90 rem). El acento de
+  color (carmín <code>--sn-nova</code>) sólo aparece en H3.</p>
+  <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">== Sección principal ==
 === Sub-sección ===
 ==== Agrupación menor ====
 ===== Apostilla =====
 ====== Referencia inline ======</pre>
+    <div class="sn-paper sn-body demo">
+      <h1 id="firstHeading" class="firstHeading">Heading 1 · display editorial</h1>
+      <h2>Heading 2 · sección principal</h2>
+      <h3>Heading 3 · sub-sección</h3>
+      <h4>Heading 4 · agrupación menor</h4>
+      <h5>Heading 5 · apostilla</h5>
+      <h6>Heading 6 · referencia inline</h6>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>El <strong>H1</strong> del artículo se genera automáticamente desde
     el título de la página — no se escribe en el cuerpo. La jerarquía
     editable empieza en <code>==</code> (dos signos igual a cada lado).
@@ -409,92 +406,59 @@ def body_components():
     <p>Con tres o más cabeceras, MediaWiki inserta automáticamente la
     tabla de contenidos. Se puede forzar con <code>__TOC__</code> o
     desactivar con <code>__NOTOC__</code>.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
   <h2>Cuerpo de texto</h2>
   <p class="meta">Familia <code>--sn-font-text</code> · cuerpo
-  <code>--sn-fs-base</code> (1.0–1.05 rem fluido) · interlínea
-  <code>--sn-leading</code> (1.65 default; compact 1.45 · relaxed 1.9) ·
-  medida <code>--sn-measure</code> (58 rem default; narrow 42 · wide 76 ·
-  full sin tope).</p>
-  <div class="sn-paper sn-body demo">
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-    ad minim veniam, quis nostrud <a href="#">exercitation ullamco</a>
-    laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-    dolor in <strong>reprehenderit</strong> in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur.</p>
-    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-    officia deserunt mollit anim id est laborum. <a href="#" class="external">Sed
-    ut perspiciatis</a> unde omnis iste natus error sit voluptatem
-    accusantium doloremque <a href="#" class="new">laudantium</a>, totam
-    rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-    architecto beatae vitae dicta sunt explicabo.</p>
-    <p class="meta">Enlaces: interno (azul·carmín según tema) · externo
-    (con ícono <code>--sn-ext-icon</code>) · rojo (página inexistente,
-    <code>--sn-link</code> con clase <code>.new</code>).</p>
-  </div>
-  <details class="howto">
-    <summary>Cómo escribirlo en wikitexto</summary>
-<pre class="howto-code">Texto corrido con '''negrita''', ''cursiva'' y '''''ambas'''''.
+  <code>--sn-fs-base</code> (1.00–1.05 rem fluido) · interlínea
+  <code>--sn-leading</code> (1.65, fijo) · medida de la hoja
+  <code>--sn-measure</code> (58 rem, fijo). Los párrafos van
+  justificados con <code>hyphens: auto</code> (depende del
+  <code>lang</code> del documento).</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">Texto corrido con '''negrita''', ''cursiva''
+y '''''ambas'''''.
 
 Enlace interno: [[Página]] o [[Página|texto a mostrar]].
-Enlace externo: [https://wiki.ead.pucv.cl texto] (con etiqueta) o
-[https://wiki.ead.pucv.cl] (numérico) o simplemente https://wiki.ead.pucv.cl.
+Enlace externo: [https://wiki.ead.pucv.cl texto]
+o simplemente https://wiki.ead.pucv.cl.
 
 Salto de párrafo: una línea en blanco.
-Salto de línea forzado: &lt;br&gt; (usar con moderación).
-Filete horizontal: cuatro guiones al inicio de línea: ----</pre>
-    <p>Los enlaces internos a páginas inexistentes aparecen en rojo
-    (clase <code>.new</code> automática). Los enlaces externos llevan
-    un pequeño ícono al final, salvo que envuelvan una imagen.</p>
+Filete horizontal: cuatro guiones al inicio: ----</pre>
+    <div class="sn-paper sn-body demo">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+      eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+      ad minim veniam, quis nostrud <a href="#">exercitation ullamco</a>
+      laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+      dolor in <strong>reprehenderit</strong> in voluptate velit esse
+      cillum dolore eu fugiat nulla pariatur.</p>
+      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+      officia deserunt mollit anim id est laborum. <a href="#" class="external">Sed
+      ut perspiciatis</a> unde omnis iste natus error sit voluptatem
+      accusantium doloremque <a href="#" class="new">laudantium</a>, totam
+      rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+      architecto beatae vitae dicta sunt explicabo.</p>
+    </div>
+  </div>
+  <div class="spec-notes">
+    <p>Enlaces: interno (carmín · azul en oscuro) · externo (con ícono
+    <code>--sn-ext-icon</code>) · rojo (página inexistente, clase
+    <code>.new</code> automática que MediaWiki añade al detectar el
+    enlace muerto).</p>
     <p>Para citar texto inline usá <code>&lt;cite&gt;…&lt;/cite&gt;</code>
     (no hay sintaxis wiki dedicada). Para énfasis semántico fuerte,
     <code>&lt;strong&gt;</code> y <code>&lt;em&gt;</code> equivalen a
     <code>'''</code> y <code>''</code> pero son más explícitas.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
   <h2>Listas</h2>
   <p class="meta">Sangría heredada de <code>--sn-s-5</code> · marcadores en
   <code>--sn-ink-soft</code> · espaciado vertical <code>--sn-s-1</code>.</p>
-  <div class="sn-paper sn-body demo demo-cols">
-    <div>
-      <h4>No ordenada</h4>
-      <ul>
-        <li>Lorem ipsum dolor sit amet</li>
-        <li>Consectetur adipiscing elit</li>
-        <li>Sed do eiusmod tempor incididunt
-          <ul>
-            <li>Ut labore et dolore magna aliqua</li>
-            <li>Enim ad minim veniam</li>
-          </ul>
-        </li>
-        <li>Ut enim ad minim veniam</li>
-      </ul>
-    </div>
-    <div>
-      <h4>Ordenada</h4>
-      <ol>
-        <li>Primer ítem de la secuencia</li>
-        <li>Segundo ítem</li>
-        <li>Tercer ítem, ligeramente más largo</li>
-        <li>Cuarto y último</li>
-      </ol>
-      <h4>Definiciones</h4>
-      <dl>
-        <dt>Término primario</dt>
-        <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
-        <dt>Término secundario</dt>
-        <dd>Sed do eiusmod tempor incididunt ut labore.</dd>
-      </dl>
-    </div>
-  </div>
-  <details class="howto">
-    <summary>Cómo escribirlo en wikitexto</summary>
+  <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">* Ítem de lista no ordenada
 * Otro ítem
 ** Sub-ítem (dos asteriscos)
@@ -511,13 +475,38 @@ Filete horizontal: cuatro guiones al inicio de línea: ----</pre>
 
 : Texto sangrado (sin término)
 :: Doble sangría</pre>
+    <div class="sn-paper sn-body demo">
+      <ul>
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetur adipiscing elit
+          <ul>
+            <li>Sub-ítem (dos asteriscos)</li>
+            <li>Otro sub-ítem</li>
+          </ul>
+        </li>
+        <li>Ut enim ad minim veniam</li>
+      </ul>
+      <ol>
+        <li>Primer ítem de la secuencia</li>
+        <li>Segundo ítem</li>
+        <li>Tercero</li>
+      </ol>
+      <dl>
+        <dt>Término primario</dt>
+        <dd>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+        <dt>Término secundario</dt>
+        <dd>Sed do eiusmod tempor incididunt ut labore.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>Cada ítem ocupa una línea. La sangría se controla repitiendo el
     marcador (<code>**</code>, <code>##</code>). Las listas se cortan al
     encontrar una línea en blanco o un marcador distinto.</p>
     <p>Las listas de definición (<code>;</code> y <code>:</code>)
     también sirven para sangrar texto suelto: una línea iniciada con
     <code>:</code> sin <code>;</code> previo produce sólo la sangría.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
@@ -526,105 +515,100 @@ Filete horizontal: cuatro guiones al inicio de línea: ----</pre>
   <code>--sn-sunk</code> · filas alternas <code>--sn-hairline-soft</code> ·
   filete inferior <code>--sn-hairline</code> · caption en
   <code>--sn-font-display</code>.</p>
-  <div class="sn-paper sn-body demo">
-    <table class="wikitable">
-      <caption>Escala tipográfica del sistema</caption>
-      <thead>
-        <tr><th>Token</th><th>Rol</th><th>Tamaño (<code>clamp</code>)</th><th>Familia</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><code>--sn-fs-display</code></td><td>Display, H1</td><td>1.5–2.0 rem</td><td>display</td></tr>
-        <tr><td><code>--sn-fs-xl</code></td><td>H2</td><td>1.35–1.62 rem</td><td>display</td></tr>
-        <tr><td><code>--sn-fs-lg</code></td><td>H3, lede</td><td>1.20–1.42 rem</td><td>text</td></tr>
-        <tr><td><code>--sn-fs-md</code></td><td>H4, intro</td><td>1.05–1.18 rem</td><td>text</td></tr>
-        <tr><td><code>--sn-fs-base</code></td><td>Cuerpo</td><td>1.00–1.05 rem</td><td>text</td></tr>
-        <tr><td><code>--sn-fs-sm</code></td><td>Meta, UI</td><td>0.82–0.90 rem</td><td>text</td></tr>
-        <tr><td><code>--sn-fs-xs</code></td><td>Apostillas, badges</td><td>0.72–0.78 rem</td><td>text / mono</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <details class="howto">
-    <summary>Cómo escribirlo en wikitexto</summary>
+  <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">{| class="wikitable"
 |+ Título descriptivo de la tabla
-! Encabezado A !! Encabezado B !! Año
+! Token !! Rol !! Familia
 |-
-| Celda A1 || Celda B1 || 2024
+| --sn-fs-display || H1 display || text
 |-
-| Celda A2 || Celda B2 || 2025
+| --sn-fs-xl || H2 || text
 |-
-| Celda A3 || Celda B3 || 2026
+| --sn-fs-lg || H3 || text
+|-
+| --sn-fs-base || Cuerpo || text
 |}</pre>
+    <div class="sn-paper sn-body demo">
+      <table class="wikitable">
+        <caption>Escala tipográfica del sistema</caption>
+        <thead>
+          <tr><th>Token</th><th>Rol</th><th>Familia</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>--sn-fs-display</code></td><td>H1 display</td><td>text</td></tr>
+          <tr><td><code>--sn-fs-xl</code></td><td>H2</td><td>text</td></tr>
+          <tr><td><code>--sn-fs-lg</code></td><td>H3</td><td>text</td></tr>
+          <tr><td><code>--sn-fs-base</code></td><td>Cuerpo</td><td>text</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>Estructura: <code>{|</code> abre la tabla y va con la clase
     <code>wikitable</code> para heredar los estilos del skin.
     <code>|+</code> es el título (<code>&lt;caption&gt;</code>).
     <code>!</code> son celdas de encabezado, <code>|</code> son celdas
     de datos. <code>|-</code> separa filas. <code>|}</code> cierra.</p>
     <p>Atajos: <code>!!</code> y <code>||</code> permiten poner varias
-    celdas en una sola línea (en lugar de una línea por celda con
-    <code>!</code> o <code>|</code> al inicio).</p>
-  </details>
+    celdas en una sola línea. Modificador
+    <code>class="wikitable plantilla"</code> retira los bordes internos
+    para fichas (perfil, ficha técnica).</p>
+  </div>
 </section>
 
 <section class="comp">
   <h2>Cita y poema</h2>
-  <p class="meta"><code>blockquote</code> · <code>--sn-font-display</code> ·
-  sin filete, sólo sangría izquierda (<code>--sn-s-5</code>).<br>
-  <code>&lt;poem&gt;</code> · misma familia · <code>white-space: pre-wrap</code>
-  preserva los blancos del wikitexto como materia significante. Demostrado
-  con el fragmento-eje de <em>Un coup de dés jamais n'abolira le hasard</em>
-  (Mallarmé, 1897), donde la página es partitura y el espacio en blanco,
-  silencio tipográfico.</p>
-  <div class="sn-paper sn-body demo">
-    <blockquote>
-      <p>El verso no debe componerse de palabras, sino de intenciones, y
-      todas las palabras deben borrarse ante la sensación.</p>
-      <footer>— Stéphane Mallarmé · <cite>Crisis de verso</cite> (1897)</footer>
-    </blockquote>
-    <div class="poem"><p>              UN GOLPE DE DADOS
-
-                                        JAMÁS
-
-      AUN LANZADO EN CIRCUNSTANCIAS
-
-                                        ETERNAS
-
-      DESDE EL FONDO DE UN NAUFRAGIO
-
-              ABOLIRÁ
-
-                                        EL AZAR</p></div>
-  </div>
-  <details class="howto">
-    <summary>Cómo escribirlo en wikitexto</summary>
+  <p class="meta"><code>&lt;blockquote&gt;</code> y <code>&lt;poem&gt;</code>
+  (extensión Poem) van en serif <code>--sn-font-serif</code>: Alegreya
+  variable, el único uso editorial del skin. El poema lleva
+  <code>white-space: pre-wrap</code>, lo que conserva los espacios del
+  wikitexto como materia significante (no son adorno: son la
+  espacialidad del verso). Fragmento de la <em>Aventura de Amereida</em>
+  (1967) usado en la portada de Casiopea.</p>
+  <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;blockquote&gt;
 Texto de la cita en uno o más párrafos.
 — Autoría, &lt;cite&gt;Obra&lt;/cite&gt; (año)
 &lt;/blockquote&gt;
 
 &lt;poem&gt;
-              UN GOLPE DE DADOS
+     no fue
+        el hallazgo
+             ajeno a los descubrimientos
 
-                                        JAMÁS
-
-      AUN LANZADO EN CIRCUNSTANCIAS
-
-                                        ETERNAS
-
-              ABOLIRÁ
-
-                                        EL AZAR
+ ¡oh marinos!
+     sus pájaras salvajes
+        el mar incierto
+             las gentes desnudas entre sus dioses
 &lt;/poem&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <blockquote>
+        <p>el descubrimiento no nos descubre nuestro propio continente,
+        sino que nos da el continente propio.</p>
+        <footer>— <cite>Amereida</cite> (1967)</footer>
+      </blockquote>
+      <div class="poem"><p>     no fue
+        el hallazgo
+             ajeno a los descubrimientos
+
+ ¡oh marinos!
+     sus pájaras salvajes
+        el mar incierto
+             las gentes desnudas entre sus dioses</p></div>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>Para la cita: <code>&lt;blockquote&gt;…&lt;/blockquote&gt;</code>
     envuelve uno o varios párrafos. La atribución va como texto al final
     (no hay marcado específico).</p>
-    <p>Para el poema: cada línea del wikitexto produce una línea visual y
-    <strong>los espacios al inicio se preservan literalmente</strong> —
-    así se reconstruye la espacialidad del original mallarmeano. También
-    funcionan los dos puntos al inicio (<code>:</code>, <code>::</code>)
-    como sangrías estándar del wikitexto, y <code>----</code> produce un
-    filete horizontal.</p>
-  </details>
+    <p>Para el poema: cada línea del wikitexto produce una línea visual
+    y <strong>los espacios al inicio se preservan literalmente</strong>
+    — así se reconstruye la espacialidad del verso. La extensión Poem
+    inserta un <code>&lt;br&gt;</code> tras cada línea, pero el skin lo
+    suprime visualmente porque el <code>\n</code> con
+    <code>white-space: pre-wrap</code> ya produce el salto (de no hacerlo
+    quedaría un espacio doble entre líneas).</p>
+  </div>
 </section>
 
 <section class="comp">
@@ -634,19 +618,11 @@ Texto de la cita en uno o más párrafos.
   Inline: padding 1px / 4px · radio 2 px · 0.9 em.<br>
   Bloque: padding <code>--sn-s-3</code> / <code>--sn-s-4</code> · radio
   <code>--sn-radius</code> · scroll horizontal en overflow.</p>
-  <div class="sn-paper sn-body demo">
-    <p>Inline: <code>const lorem = ipsum(dolor)</code> dentro de un párrafo.</p>
-    <pre><code>// Bloque pre &gt; code
-function loremIpsum(dolor, sit) {
-    const amet = consectetur(dolor);
-    return amet + sit;
-}</code></pre>
-  </div>
-  <details class="howto">
-    <summary>Cómo escribirlo en wikitexto</summary>
+  <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">Código inline: &lt;code&gt;const x = 1&lt;/code&gt;.
 
-Bloque indentado (lo más simple): empezar la línea con un espacio.
+Bloque indentado (lo más simple): empezar
+la línea con un espacio.
  function ejemplo() {
    return 42;
  }
@@ -655,21 +631,25 @@ Bloque preformateado explícito:
 &lt;pre&gt;
 texto monoespaciado, conserva
 saltos de línea y espacios.
-&lt;/pre&gt;
-
-Con resaltado de sintaxis (extensión SyntaxHighlight):
-&lt;syntaxhighlight lang="javascript"&gt;
-function ejemplo() {
-  return 42;
-}
-&lt;/syntaxhighlight&gt;</pre>
+&lt;/pre&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <p>Inline: <code>const lorem = ipsum(dolor)</code> dentro de un párrafo.</p>
+      <pre><code>// Bloque pre &gt; code
+function loremIpsum(dolor, sit) {
+    const amet = consectetur(dolor);
+    return amet + sit;
+}</code></pre>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>Para citar nombres de variables, comandos o identificadores en
     medio de un párrafo, usá <code>&lt;code&gt;</code>. Para mostrar
-    fragmentos largos, preferí <code>&lt;syntaxhighlight&gt;</code> si
-    aplica (con <code>lang="…"</code>) — colorea según el lenguaje.</p>
+    fragmentos largos, <code>&lt;pre&gt;</code> + <code>&lt;code&gt;</code>
+    es el patrón estándar (lo que aquí se renderiza).</p>
     <p>El bloque preformateado por sangrado (línea iniciada con un
-    espacio) es el más rápido pero no soporta resaltado ni metadatos.</p>
-  </details>
+    espacio) es el más rápido pero no permite resaltado ni metadatos.
+    La wiki no carga <code>SyntaxHighlight</code> en producción.</p>
+  </div>
 </section>
 
 <section class="comp">
@@ -710,8 +690,7 @@ function ejemplo() {
       </button>
     </div>
   </div>
-  <details class="howto">
-    <summary>Dónde aparecen</summary>
+  <div class="spec-notes">
     <p>Los botones son parte de la <strong>interfaz del skin</strong>,
     no se escriben en el wikitexto del artículo. Aparecen
     automáticamente en formularios (editar, mover, subir archivo), en
@@ -721,7 +700,7 @@ function ejemplo() {
     <p>Si una plantilla necesita un botón propio, lo mejor es envolver
     un enlace con la clase <code>sn-btn</code>:
     <code>&lt;span class="sn-btn"&gt;[[Página|Texto]]&lt;/span&gt;</code>.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
@@ -767,8 +746,7 @@ function ejemplo() {
       </p>
     </form>
   </div>
-  <details class="howto">
-    <summary>Dónde aparecen</summary>
+  <div class="spec-notes">
     <p>Los formularios estándar de MediaWiki (preferencias, búsqueda
     avanzada, mover página) los provee el core y heredan estos estilos
     automáticamente. Para crear formularios editoriales (fichas de
@@ -777,7 +755,7 @@ function ejemplo() {
     una página <code>Plantilla:Formulario/Nombre</code> con la sintaxis
     de PageForms (<code>{{{field|nombre|input type=…}}}</code>) y el
     skin lo renderiza con estos primitivos.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
@@ -796,14 +774,13 @@ function ejemplo() {
       </ul>
     </nav>
   </div>
-  <details class="howto">
-    <summary>Dónde aparecen</summary>
+  <div class="spec-notes">
     <p>Las pestañas las genera el skin a partir de los namespaces y
     permisos: <em>Artículo · Discusión · Editar · Historial · Más</em>.
     No se escriben en el wikitexto. Para añadir pestañas propias, las
     extensiones usan el hook <code>SkinTemplateNavigation</code>; el
     skin las recibe y las renderiza en la misma bandeja.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
@@ -811,37 +788,46 @@ function ejemplo() {
   <p class="meta">Fondos derivados con <code>color-mix(in oklab, ...)</code>
   sobre <code>--sn-paper</code> — voltean con el tema sin redefinir. Filete
   izquierdo (3 px) en el color de la señal.</p>
-  <div class="demo demo-stack">
-    <aside class="sn-wash sn-wash-ok">
-      <strong>Confirmación.</strong> Lorem ipsum dolor sit amet, consectetur
-      adipiscing elit.
-    </aside>
-    <aside class="sn-wash sn-wash-info">
-      <strong>Información.</strong> Sed do eiusmod tempor incididunt ut
-      labore et dolore magna aliqua.
-    </aside>
-    <aside class="sn-wash sn-wash-warn">
-      <strong>Advertencia.</strong> Ut enim ad minim veniam, quis nostrud
-      exercitation ullamco laboris.
-    </aside>
-    <aside class="sn-wash sn-wash-danger">
-      <strong>Error.</strong> Duis aute irure dolor in reprehenderit in
-      voluptate velit esse cillum.
-    </aside>
-  </div>
-  <details class="howto">
-    <summary>Cómo usarlos desde una plantilla</summary>
-<pre class="howto-code">&lt;div class="sn-wash sn-wash-info"&gt;
-'''Información.''' Texto del aviso, con [[enlaces]] o '''énfasis'''.
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;div class="sn-wash sn-wash-ok"&gt;
+'''Confirmación.''' Texto del aviso.
+&lt;/div&gt;
+
+&lt;div class="sn-wash sn-wash-info"&gt;
+'''Información.''' Aviso neutro.
+&lt;/div&gt;
+
+&lt;div class="sn-wash sn-wash-warn"&gt;
+'''Advertencia.''' Precaución.
+&lt;/div&gt;
+
+&lt;div class="sn-wash sn-wash-danger"&gt;
+'''Error.''' Bloqueo o falla.
 &lt;/div&gt;</pre>
-    <p>Variantes disponibles: <code>sn-wash-ok</code> (confirmación) ·
+    <div class="demo demo-stack">
+      <aside class="sn-wash sn-wash-ok">
+        <strong>Confirmación.</strong> Lorem ipsum dolor sit amet.
+      </aside>
+      <aside class="sn-wash sn-wash-info">
+        <strong>Información.</strong> Sed do eiusmod tempor incididunt.
+      </aside>
+      <aside class="sn-wash sn-wash-warn">
+        <strong>Advertencia.</strong> Ut enim ad minim veniam.
+      </aside>
+      <aside class="sn-wash sn-wash-danger">
+        <strong>Error.</strong> Duis aute irure dolor.
+      </aside>
+    </div>
+  </div>
+  <div class="spec-notes">
+    <p>Variantes: <code>sn-wash-ok</code> (confirmación) ·
     <code>sn-wash-info</code> (aviso neutro) ·
     <code>sn-wash-warn</code> (precaución) ·
     <code>sn-wash-danger</code> (error o bloqueo). Estos avisos los
     inserta el skin en respuesta a acciones del sistema, pero también
     se pueden emitir desde una plantilla envolviendo el contenido en
     un <code>&lt;div&gt;</code> con la clase correspondiente.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
@@ -849,26 +835,31 @@ function ejemplo() {
   <p class="meta">Badge: tipografía <code>--sn-fs-xs</code> peso 500, radio
   <code>--sn-radius</code> · fondo wash correspondiente a la señal.<br>
   Pill: <code>--sn-radius-pill</code> + familia mono para valores numéricos.</p>
-  <div class="demo demo-inline">
-    <span class="sn-badge">Neutro</span>
-    <span class="sn-badge sn-badge-nova">Nova</span>
-    <span class="sn-badge sn-badge-ok">OK</span>
-    <span class="sn-badge sn-badge-warn">Aviso</span>
-    <span class="sn-badge sn-badge-danger">Error</span>
-    <span class="sn-pill">000 ítems</span>
-    <span class="sn-pill">000 ítems</span>
-  </div>
-  <details class="howto">
-    <summary>Cómo usarlos desde una plantilla</summary>
-<pre class="howto-code">&lt;span class="sn-badge sn-badge-ok"&gt;Activo&lt;/span&gt;
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;span class="sn-badge"&gt;Neutro&lt;/span&gt;
+&lt;span class="sn-badge sn-badge-nova"&gt;Nova&lt;/span&gt;
+&lt;span class="sn-badge sn-badge-ok"&gt;Activo&lt;/span&gt;
 &lt;span class="sn-badge sn-badge-warn"&gt;En revisión&lt;/span&gt;
+&lt;span class="sn-badge sn-badge-danger"&gt;Bloqueado&lt;/span&gt;
+
 &lt;span class="sn-pill"&gt;42 ítems&lt;/span&gt;</pre>
+    <div class="demo demo-inline">
+      <span class="sn-badge">Neutro</span>
+      <span class="sn-badge sn-badge-nova">Nova</span>
+      <span class="sn-badge sn-badge-ok">OK</span>
+      <span class="sn-badge sn-badge-warn">Aviso</span>
+      <span class="sn-badge sn-badge-danger">Error</span>
+      <span class="sn-pill">000 ítems</span>
+      <span class="sn-pill">000 ítems</span>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>Badges para estados cortos (palabras); pills para contadores
     numéricos (familia mono). Variantes:
     <code>sn-badge-nova</code> · <code>-ok</code> · <code>-warn</code>
     · <code>-danger</code>. Útiles para marcar el estado de una etapa,
     un proyecto o una observación dentro de fichas y plantillas.</p>
-  </details>
+  </div>
 </section>
 
 <section class="comp">
@@ -876,35 +867,43 @@ function ejemplo() {
   <p class="meta">Numeración en <code>--sn-font-mono</code> ·
   <code>--sn-fs-xs</code> · filete izquierdo en <code>--sn-nova</code>
   marca la sección activa.</p>
-  <div class="demo demo-cols">
-    <nav class="sn-toc" aria-label="Tabla de contenidos">
-      <h3 class="sn-toc-h">Contenidos</h3>
-      <ol>
-        <li><a href="#"><span class="num">1</span> Sección uno</a></li>
-        <li><a href="#" class="active"><span class="num">2</span> Sección dos · activa</a>
-          <ol>
-            <li><a href="#"><span class="num">2.1</span> Sub-sección</a></li>
-            <li><a href="#"><span class="num">2.2</span> Sub-sección</a></li>
-          </ol>
-        </li>
-        <li><a href="#"><span class="num">3</span> Sección tres</a></li>
-        <li><a href="#"><span class="num">4</span> Sección cuatro</a></li>
-        <li><a href="#"><span class="num">5</span> Sección cinco</a></li>
-      </ol>
-    </nav>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">== Sección uno ==
+== Sección dos ==
+=== Sub-sección 2.1 ===
+=== Sub-sección 2.2 ===
+== Sección tres ==
+
+Palabras mágicas (control fino):
+__TOC__       inserta el índice en este punto.
+__NOTOC__     suprime el índice de la página.
+__FORCETOC__  fuerza el índice aun con &lt; 4 cabeceras.</pre>
+    <div class="demo">
+      <nav class="sn-toc" aria-label="Tabla de contenidos">
+        <h3 class="sn-toc-h">Contenidos</h3>
+        <ol>
+          <li><a href="#"><span class="num">1</span> Sección uno</a></li>
+          <li><a href="#" class="active"><span class="num">2</span> Sección dos · activa</a>
+            <ol>
+              <li><a href="#"><span class="num">2.1</span> Sub-sección</a></li>
+              <li><a href="#"><span class="num">2.2</span> Sub-sección</a></li>
+            </ol>
+          </li>
+          <li><a href="#"><span class="num">3</span> Sección tres</a></li>
+        </ol>
+      </nav>
+    </div>
   </div>
-  <details class="howto">
-    <summary>Cómo controlarla en wikitexto</summary>
-<pre class="howto-code">__TOC__       Inserta la tabla de contenidos en este punto exacto.
-__NOTOC__     Desactiva la tabla de contenidos del artículo.
-__FORCETOC__  Fuerza la tabla aunque haya menos de 4 cabeceras.</pre>
+  <div class="spec-notes">
     <p>Por defecto la tabla aparece automáticamente cuando hay 4 o más
     cabeceras (<code>==</code>, <code>===</code>, etc.), justo antes de
-    la primera. Las palabras mágicas anteriores (con doble guion bajo
-    a cada lado) la sobrescriben.</p>
-    <p>El skin la renderiza con numeración en monoespaciada y un filete
-    carmín marcando la sección activa al hacer scroll.</p>
-  </details>
+    la primera. Las palabras mágicas con doble guión bajo a cada lado
+    la sobrescriben (sensibles a mayúsculas).</p>
+    <p>El skin la renderiza <strong>en la posición donde la coloque
+    MediaWiki</strong> — respeta la ubicación de <code>__TOC__</code>.
+    Solo cambia su vestimenta (numeración monoespaciada, filete
+    izquierdo carmín marcando la sección activa).</p>
+  </div>
 </section>
 
 <section class="comp">
@@ -912,24 +911,91 @@ __FORCETOC__  Fuerza la tabla aunque haya menos de 4 cabeceras.</pre>
   <p class="meta"><code>aside.sn-notice</code> · información meta del
   artículo (categorías, redirecciones, banners de plantilla) · fondo
   <code>--sn-info-wash</code> · filete <code>--sn-warn</code>.</p>
-  <div class="sn-paper sn-body demo">
-    <aside class="sn-notice" role="note">
-      <strong>Nota.</strong> Lorem ipsum dolor sit amet, consectetur
-      adipiscing elit. Sed do eiusmod tempor incididunt.
-    </aside>
-    <p>El cuerpo del artículo continúa debajo del aviso, manteniendo el
-    flujo de lectura sin saltos visuales bruscos.</p>
-  </div>
-  <details class="howto">
-    <summary>Cómo usarla desde una plantilla</summary>
+  <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;aside class="sn-notice" role="note"&gt;
-'''Nota.''' Texto del aviso, con [[enlaces]] si hace falta.
+'''Nota.''' Texto del aviso, con [[enlaces]]
+si hace falta.
 &lt;/aside&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <aside class="sn-notice" role="note">
+        <strong>Nota.</strong> Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Sed do eiusmod tempor incididunt.
+      </aside>
+      <p>El cuerpo del artículo continúa debajo del aviso, manteniendo el
+      flujo de lectura sin saltos visuales bruscos.</p>
+    </div>
+  </div>
+  <div class="spec-notes">
     <p>A diferencia de los washes (que codifican una severidad), la
     nota al margen es información meta del artículo: redirecciones,
     banners de plantilla, advertencias editoriales. Va dentro del
-    cuerpo y rompe sutilmente el flujo sin alarmar.</p>
-  </details>
+    cuerpo y rompe sutilmente el flujo sin alarmar. Se usa también
+    para el fragmento administrable
+    <code>Stella-Nova:Aviso</code> que se inyecta al tope del paper.</p>
+  </div>
+</section>
+
+<section class="comp">
+  <h2>Grilla utilitaria</h2>
+  <p class="meta">Reemplaza el patrón <code>.row &gt; .col-md-*</code> del
+  skin Bootstrap anterior. <code>.grilla</code> es un Grid simple;
+  <code>.cols-N</code> fija N columnas iguales (2–6);
+  <code>.cols1-2</code> / <code>.cols2-1</code> son tercios asimétricos.
+  Bajo 64 rem las grillas densas (4/5/6) reducen columnas; bajo 48 rem
+  todas colapsan a una sola.</p>
+
+  <h3 class="spec-subh">cols-2</h3>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;div class="grilla cols-2"&gt;
+[[Archivo:a.jpg]]
+[[Archivo:b.jpg]]
+&lt;/div&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="grilla cols-2">
+        <div class="spec-cell">celda 1</div>
+        <div class="spec-cell">celda 2</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="spec-subh">cols-3</h3>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;div class="grilla cols-3"&gt;
+…tres hijos directos…
+&lt;/div&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="grilla cols-3">
+        <div class="spec-cell">1</div>
+        <div class="spec-cell">2</div>
+        <div class="spec-cell">3</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="spec-subh">cols2-1 (tercios asimétricos)</h3>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;div class="grilla cols2-1"&gt;
+Bloque amplio (dos tercios)
+Bloque angosto (un tercio)
+&lt;/div&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="grilla cols2-1">
+        <div class="spec-cell">2/3 — bloque amplio</div>
+        <div class="spec-cell">1/3</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-notes">
+    <p>Cada hijo directo de <code>.grilla</code> es una celda; URLs
+    largas o bloques de código no desbordan
+    (<code>minmax(0, 1fr)</code>). El gap entre celdas es
+    <code>--sn-s-4</code> (1 rem) y no se ajusta por página.</p>
+    <p>Funciona en chrome normal y en <code>__PANTALLACOMPLETA__</code>:
+    ambos contenedores llevan <code>.sn-body</code>, que es donde el
+    skin define la regla. Si la grilla aparece "rota" (en una sola
+    columna), revisar que esté dentro de <code>.sn-body</code>.</p>
+  </div>
 </section>
 """
 
@@ -1439,29 +1505,73 @@ pre code { background: transparent; padding: 0; }
 /* `.poem` ya está estilada por stella-nova.css (familia display,
    white-space: pre-wrap, `.poem br { display: none }`). No redefinir aquí. */
 
-/* — Bloque "Cómo escribirlo en wikitexto": tutorial para el editor — */
-.howto { margin-top: var(--sn-s-3); padding: var(--sn-s-4);
-         background: var(--sn-sunk); border-radius: var(--sn-radius);
-         font-size: var(--sn-fs-sm); }
-.howto > summary { cursor: pointer; font-family: var(--sn-font-mono);
-                   font-size: var(--sn-fs-xs); text-transform: uppercase;
-                   letter-spacing: 0.05em; color: var(--sn-ink-soft);
-                   list-style: none; padding: 0; user-select: none; }
-.howto > summary::-webkit-details-marker { display: none; }
-.howto > summary::before { content: '+ '; font-weight: 600;
-                           color: var(--sn-ink-faint); }
-.howto[open] > summary::before { content: '− '; }
-.howto > summary:hover { color: var(--sn-ink); }
-.howto .howto-code, .howto pre.howto-code {
-  margin: var(--sn-s-3) 0 0; padding: var(--sn-s-3) var(--sn-s-4);
-  background: var(--sn-paper); border: 1px solid var(--sn-hairline-soft);
-  border-radius: var(--sn-radius-s); overflow-x: auto;
-  font-family: var(--sn-font-mono); font-size: var(--sn-fs-xs);
-  color: var(--sn-ink); line-height: 1.55;
+/* — Bloque "uso": código wikitexto a la izquierda, render a la derecha
+   ── el editor lee la sintaxis y el efecto al mismo tiempo. Usa la
+   misma `grilla cols-2` que el skin expone para wikitexto: el
+   especímen demuestra el patrón usándolo. Bajo 56 rem colapsa a una
+   sola columna (código arriba, render abajo). */
+.spec-usage.grilla.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sn-s-4);
+  margin-top: var(--sn-s-3);
+  margin-bottom: 0;
+  align-items: stretch;
 }
-.howto p { margin: var(--sn-s-3) 0 0; color: var(--sn-ink-soft);
-           font-size: var(--sn-fs-sm); line-height: 1.55; }
-.howto p code { font-size: 0.92em; }
+@media (max-width: 56rem) {
+  .spec-usage.grilla.cols-2 { grid-template-columns: 1fr; }
+}
+.spec-usage > pre.howto-code {
+  margin: 0;
+  padding: var(--sn-s-4);
+  background: var(--sn-sunk);
+  border: 1px solid var(--sn-hairline-soft);
+  border-radius: var(--sn-radius);
+  font-family: var(--sn-font-mono);
+  font-size: var(--sn-fs-xs);
+  color: var(--sn-ink);
+  line-height: 1.55;
+  overflow-x: auto;
+  white-space: pre;
+}
+.spec-usage > .demo { margin-top: 0; }
+
+/* — Notas explicativas debajo del bloque de uso ── prosa secundaria
+   sobre fondo sunk, para distinguirla del cuerpo editorial del demo. */
+.spec-notes {
+  margin-top: var(--sn-s-4);
+  padding: var(--sn-s-3) var(--sn-s-4);
+  background: var(--sn-sunk);
+  border-radius: var(--sn-radius);
+  font-size: var(--sn-fs-sm);
+  color: var(--sn-ink-soft);
+}
+.spec-notes p { margin: 0 0 var(--sn-s-2); line-height: 1.55; }
+.spec-notes p:last-child { margin-bottom: 0; }
+.spec-notes p code { font-size: 0.92em; }
+
+/* — Subtítulos dentro de un componente (p. ej. variantes de grilla) — */
+.spec-subh {
+  font-family: var(--sn-font-mono);
+  font-size: var(--sn-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: var(--sn-ink-soft);
+  margin: var(--sn-s-5) 0 var(--sn-s-2);
+}
+
+/* — Celda neutra para demostrar grillas: contorno sobrio, contenido
+   pequeño centrado — no compite con el contenido editorial real. */
+.spec-cell {
+  padding: var(--sn-s-4);
+  background: var(--sn-sunk);
+  border-radius: var(--sn-radius);
+  text-align: center;
+  font-family: var(--sn-font-mono);
+  font-size: var(--sn-fs-sm);
+  color: var(--sn-ink-soft);
+}
 
 /* Iconbutton mínimo (el stella-nova.css real lo cubre, pero el demo aislado
    no siempre está dentro de los selectores anclados al chrome) */

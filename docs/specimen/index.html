@@ -66,12 +66,6 @@
       <button type="button" data-theme="dark">Oscuro</button>
       <button type="button" data-theme="auto">Auto</button>
     </fieldset>
-    <fieldset class="spec-seg" aria-label="Ancho">
-      <legend class="vh">Ancho</legend>
-      <button type="button" data-width="narrow">Angosto</button>
-      <button type="button" data-width="standard" aria-pressed="true">Estándar</button>
-      <button type="button" data-width="wide">Ancho</button>
-    </fieldset>
   </div>
 </header>
 <main class="spec-main">
@@ -212,6 +206,13 @@
   <figcaption>
     <code class="sw-var">--sn-link-visited</code>
     <span class="sw-val">#612403</span>
+    
+  </figcaption>
+</figure><figure class="sw" style="--sw-c: var(--sn-link-new);">
+  <span class="sw-chip" aria-hidden="true"></span>
+  <figcaption>
+    <code class="sw-var">--sn-link-new</code>
+    <span class="sw-val">rgba(34, 31, 26, .42)</span>
     
   </figcaption>
 </figure><figure class="sw" style="--sw-c: var(--sn-icon);">
@@ -395,11 +396,15 @@
   <div class="tokgrp-body grid-size">
     <div class="kv">
   <code class="kv-var">--sn-font-text</code>
-  <span class="kv-val">'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif</span>
+  <span class="kv-val">'Alegreya Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif</span>
   
 </div><div class="kv">
   <code class="kv-var">--sn-font-display</code>
-  <span class="kv-val">'Newsreader', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif</span>
+  <span class="kv-val">var(--sn-font-text)</span>
+  
+</div><div class="kv">
+  <code class="kv-var">--sn-font-serif</code>
+  <span class="kv-val">'Alegreya', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif</span>
   
 </div><div class="kv">
   <code class="kv-var">--sn-font-mono</code>
@@ -412,10 +417,6 @@
 </div><div class="kv">
   <code class="kv-var">--sn-leading</code>
   <span class="kv-val">1.65</span>
-  
-</div><div class="kv">
-  <code class="kv-var">--sn-leading-tight</code>
-  <span class="kv-val">1.22</span>
   
 </div><figure class="ts" style="font-size: var(--sn-fs-root);">
   <span class="ts-sample">Lorem ipsum dolor sit amet</span>
@@ -471,6 +472,40 @@
   <figcaption>
     <code class="ts-var">--sn-fs-display</code>
     <span class="ts-val">calc(clamp(1.5rem, 1.32rem + .85vw, 2rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-page-title);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-page-title</code>
+    <span class="ts-val">calc(clamp(1.85rem, 1.55rem + 1.3vw, 2.5rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure>
+  </div>
+</section>
+<section class="tokgrp">
+  <h2 class="tokgrp-h">Baseline grid</h2>
+  <div class="tokgrp-body grid-other">
+    <figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-baseline);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-baseline</code>
+    <span class="sz-val">calc(var(--sn-fs-base) * var(--sn-leading))</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-baseline-2);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-baseline-2</code>
+    <span class="sz-val">calc(var(--sn-baseline) * 2)</span>
+    
+  </figcaption>
+</figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-baseline-3);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-baseline-3</code>
+    <span class="sz-val">calc(var(--sn-baseline) * 3)</span>
     
   </figcaption>
 </figure>
@@ -540,7 +575,7 @@
   <figcaption>
     <code class="sz-var">--sn-measure</code>
     <span class="sz-val">58rem</span>
-    <span class="sz-note">= standard (default)</span>
+    
   </figcaption>
 </figure><figure class="sz">
   <span class="sz-bar" style="--sz-w: var(--sn-rail);"></span>
@@ -700,7 +735,7 @@
         b.setAttribute('aria-pressed', b.dataset[kind] === value ? 'true' : 'false');
       });
     };
-    ['theme', 'width'].forEach(function (k) {
+    ['theme'].forEach(function (k) {
       var saved = localStorage.getItem('sn-spec-' + k);
       if (saved) apply(k, saved);
       document.querySelectorAll('[data-' + k + ']').forEach(function (b) {

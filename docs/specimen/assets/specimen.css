@@ -356,29 +356,73 @@ pre code { background: transparent; padding: 0; }
 /* `.poem` ya está estilada por stella-nova.css (familia display,
    white-space: pre-wrap, `.poem br { display: none }`). No redefinir aquí. */
 
-/* — Bloque "Cómo escribirlo en wikitexto": tutorial para el editor — */
-.howto { margin-top: var(--sn-s-3); padding: var(--sn-s-4);
-         background: var(--sn-sunk); border-radius: var(--sn-radius);
-         font-size: var(--sn-fs-sm); }
-.howto > summary { cursor: pointer; font-family: var(--sn-font-mono);
-                   font-size: var(--sn-fs-xs); text-transform: uppercase;
-                   letter-spacing: 0.05em; color: var(--sn-ink-soft);
-                   list-style: none; padding: 0; user-select: none; }
-.howto > summary::-webkit-details-marker { display: none; }
-.howto > summary::before { content: '+ '; font-weight: 600;
-                           color: var(--sn-ink-faint); }
-.howto[open] > summary::before { content: '− '; }
-.howto > summary:hover { color: var(--sn-ink); }
-.howto .howto-code, .howto pre.howto-code {
-  margin: var(--sn-s-3) 0 0; padding: var(--sn-s-3) var(--sn-s-4);
-  background: var(--sn-paper); border: 1px solid var(--sn-hairline-soft);
-  border-radius: var(--sn-radius-s); overflow-x: auto;
-  font-family: var(--sn-font-mono); font-size: var(--sn-fs-xs);
-  color: var(--sn-ink); line-height: 1.55;
+/* — Bloque "uso": código wikitexto a la izquierda, render a la derecha
+   ── el editor lee la sintaxis y el efecto al mismo tiempo. Usa la
+   misma `grilla cols-2` que el skin expone para wikitexto: el
+   especímen demuestra el patrón usándolo. Bajo 56 rem colapsa a una
+   sola columna (código arriba, render abajo). */
+.spec-usage.grilla.cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sn-s-4);
+  margin-top: var(--sn-s-3);
+  margin-bottom: 0;
+  align-items: stretch;
 }
-.howto p { margin: var(--sn-s-3) 0 0; color: var(--sn-ink-soft);
-           font-size: var(--sn-fs-sm); line-height: 1.55; }
-.howto p code { font-size: 0.92em; }
+@media (max-width: 56rem) {
+  .spec-usage.grilla.cols-2 { grid-template-columns: 1fr; }
+}
+.spec-usage > pre.howto-code {
+  margin: 0;
+  padding: var(--sn-s-4);
+  background: var(--sn-sunk);
+  border: 1px solid var(--sn-hairline-soft);
+  border-radius: var(--sn-radius);
+  font-family: var(--sn-font-mono);
+  font-size: var(--sn-fs-xs);
+  color: var(--sn-ink);
+  line-height: 1.55;
+  overflow-x: auto;
+  white-space: pre;
+}
+.spec-usage > .demo { margin-top: 0; }
+
+/* — Notas explicativas debajo del bloque de uso ── prosa secundaria
+   sobre fondo sunk, para distinguirla del cuerpo editorial del demo. */
+.spec-notes {
+  margin-top: var(--sn-s-4);
+  padding: var(--sn-s-3) var(--sn-s-4);
+  background: var(--sn-sunk);
+  border-radius: var(--sn-radius);
+  font-size: var(--sn-fs-sm);
+  color: var(--sn-ink-soft);
+}
+.spec-notes p { margin: 0 0 var(--sn-s-2); line-height: 1.55; }
+.spec-notes p:last-child { margin-bottom: 0; }
+.spec-notes p code { font-size: 0.92em; }
+
+/* — Subtítulos dentro de un componente (p. ej. variantes de grilla) — */
+.spec-subh {
+  font-family: var(--sn-font-mono);
+  font-size: var(--sn-fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  color: var(--sn-ink-soft);
+  margin: var(--sn-s-5) 0 var(--sn-s-2);
+}
+
+/* — Celda neutra para demostrar grillas: contorno sobrio, contenido
+   pequeño centrado — no compite con el contenido editorial real. */
+.spec-cell {
+  padding: var(--sn-s-4);
+  background: var(--sn-sunk);
+  border-radius: var(--sn-radius);
+  text-align: center;
+  font-family: var(--sn-font-mono);
+  font-size: var(--sn-fs-sm);
+  color: var(--sn-ink-soft);
+}
 
 /* Iconbutton mínimo (el stella-nova.css real lo cubre, pero el demo aislado
    no siempre está dentro de los selectores anclados al chrome) */

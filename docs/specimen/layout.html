@@ -66,12 +66,6 @@
       <button type="button" data-theme="dark">Oscuro</button>
       <button type="button" data-theme="auto">Auto</button>
     </fieldset>
-    <fieldset class="spec-seg" aria-label="Ancho">
-      <legend class="vh">Ancho</legend>
-      <button type="button" data-width="narrow">Angosto</button>
-      <button type="button" data-width="standard" aria-pressed="true">Estándar</button>
-      <button type="button" data-width="wide">Ancho</button>
-    </fieldset>
   </div>
 </header>
 <main class="spec-main">
@@ -238,7 +232,7 @@ function loremIpsum(arg1, arg2) {
         b.setAttribute('aria-pressed', b.dataset[kind] === value ? 'true' : 'false');
       });
     };
-    ['theme', 'width'].forEach(function (k) {
+    ['theme'].forEach(function (k) {
       var saved = localStorage.getItem('sn-spec-' + k);
       if (saved) apply(k, saved);
       document.querySelectorAll('[data-' + k + ']').forEach(function (b) {

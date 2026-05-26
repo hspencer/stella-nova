@@ -10,7 +10,7 @@
 	var cfg = ( window.mw && mw.config && mw.config.get( 'wgStellaNova' ) ) || {
 		identity: 'anonymous', persist: 'browser', apiPrefix: 'stellanova-', server: {}
 	};
-	var KEYS = [ 'theme', 'width', 'font', 'leading', 'toc', 'collapsible', 'motion' ];
+	var KEYS = [ 'theme', 'font', 'toc', 'collapsible', 'motion' ];
 	var TOGGLES = { collapsible: 1, motion: 1 };
 
 	/* ── Persistencia: cuenta (cross-device) vs navegador ── */

@@ -5,7 +5,8 @@
 -- ALCANCE. Allium describe comportamiento observable, no presentación.
 -- Por eso este spec NO modela (y deliberadamente lo deja a ARCHITECTURE.md /
 -- tokens.css / CSS):
---   · tipografía "Work Sans" (cargar vs. clonar es decisión de empaquetado),
+--   · tipografía (Alegreya Sans + Alegreya + IBM Plex Mono): cargar vs.
+--     clonar es decisión de empaquetado,
 --   · feather icons, la metáfora "página de papel", fondo gris ahuesado,
 --   · tokens semánticos en archivos separados, layout/posiciones exactas,
 --   · la PRESENTACIÓN de la navegación: que el chrome del sitio se muestre
@@ -14,15 +15,23 @@
 --     hamburguesa en pantallas pequeñas, sin riel persistente — decisión
 --     de producto 2026-05-18). El spec sólo fija QUÉ regiones existen y
 --     qué exponen, no DÓNDE se sitúan ni su afordancia de despliegue,
+--   · justificación + hyphenation de párrafos del cuerpo (decisión de
+--     presentación editorial 2026-05-26),
 --   · la búsqueda y el logo→home (comportamiento de MediaWiki core, no del skin).
 --
 -- Sí modela los núcleos con estado y decisión condicional:
---   1. Preferencias de skin (7, estilo Citizen): resolución por campo
---      explícito > SO (donde aplica) > default. EXCEPCIÓN tema: default
---      claro; el SO sólo aplica si la elección es `auto` (decisión de
---      producto 2026-05-18). Persistencia híbrida por identidad —
---      registrado → cuenta MediaWiki (BBDD, cross-device);
+--   1. Preferencias de skin (5, ver enum lista abajo): resolución por
+--      campo explícito > SO (donde aplica) > default. EXCEPCIÓN tema:
+--      default claro; el SO sólo aplica si la elección es `auto`
+--      (decisión de producto 2026-05-18). Persistencia híbrida por
+--      identidad — registrado → cuenta MediaWiki (BBDD, cross-device);
 --      anónimo/temporal → sesión del navegador (por-navegador).
+--      NOTA 2026-05-26: el conjunto se redujo de 7 a 5 — se retiraron
+--      ContentWidth y LineHeight porque la métrica de la hoja y la
+--      interlínea del cuerpo participan del cálculo del baseline grid
+--      (--sn-baseline = fs-base × leading); dejarlas modulables al
+--      usuario desparametrizaba el ajuste vertical entre cabeceras y
+--      párrafos. Ambos quedaron como tokens fijos en tokens.css.
 --   2. Chrome administrable desde páginas wiki del namespace Stella-Nova
 --      (pie, barra lateral, aviso): visibilidad y autorización CRUD.
 --   3. Qué expone cada región según identidad (anónimo / cuenta temporal
@@ -248,10 +257,11 @@ enum ChromeSlot { footer | sidebar | notice }
 
 enum LayoutMode { standard | fullscreen }
 
--- Las 7 preferencias de skin (estilo Citizen/Vector-2022).
-enum ContentWidth { narrow | standard | wide | full }
+-- Las 5 preferencias de skin (estilo Citizen/Vector-2022). Histórico
+-- 2026-05-26: se retiraron ContentWidth y LineHeight (ver nota de
+-- ALCANCE arriba); ambas son fijas a nivel de token y no exhibidas al
+-- usuario.
 enum FontSize { small | medium | large }
-enum LineHeight { compact | normal | relaxed }
 enum Toggle { enabled | disabled }
 enum TocMode { persistent | inline }
 enum Motion { full | reduced }
@@ -260,16 +270,14 @@ enum Motion { full | reduced }
 -- Value Types
 ------------------------------------------------------------
 
--- El conjunto de 7 preferencias de skin. Cada campo es opcional: null =
+-- El conjunto de 5 preferencias de skin. Cada campo es opcional: null =
 -- "sin elección explícita" → se resuelve por default (y, donde aplica,
 -- por SO). El tema es el caso especial: null → claro (el SO NO aplica);
 -- el SO sólo influye si theme = auto. Los demás (p. ej. motion) sí
 -- toman la señal del SO en ausencia de elección.
 value Preferences {
     theme: ThemeChoice?
-    content_width: ContentWidth?
     font_size: FontSize?
-    line_height: LineHeight?
     collapsible_sections: Toggle?       -- recordar estado de secciones
     toc_mode: TocMode?                  -- índice persistente vs en línea
     reduced_motion: Motion?             -- override de prefers-reduced-motion
@@ -304,9 +312,7 @@ entity ViewingSession {
         else if saved?.theme = light: light
         else: light
     active_motion: saved?.reduced_motion ?? os_motion ?? full
-    active_content_width: saved?.content_width ?? standard
     active_font_size: saved?.font_size ?? medium
-    active_line_height: saved?.line_height ?? normal
     active_collapsible: saved?.collapsible_sections ?? enabled
     active_toc_mode: saved?.toc_mode ?? persistent
 }
@@ -428,7 +434,7 @@ invariant ThemeAlwaysResolved {
 ------------------------------------------------------------
 
 -- Panel de preferencias. Público: cualquier visitante (anónimo, temporal
--- o registrado). Las 7 preferencias estilo Citizen.
+-- o registrado). Las 5 preferencias estilo Citizen.
 surface PreferencesPanel {
     facing viewer: User
     context session: ViewingSession where user = viewer
@@ -436,9 +442,7 @@ surface PreferencesPanel {
     exposes:
         session.active_theme
         session.active_motion
-        session.active_content_width
         session.active_font_size
-        session.active_line_height
         session.active_collapsible
         session.active_toc_mode
         session.os_scheme

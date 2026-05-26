@@ -376,7 +376,7 @@
 
 {{/is-sn-fullscreen}}
 
-{{!	PreferencesPanel — diálogo. Expone las 7 preferencias resueltas + las
+{{!	PreferencesPanel — diálogo. Expone las 5 preferencias resueltas + las
 	señales del SO. provides SavePreferences / ResetPreferences. JS lo hace
 	modal accesible; sin JS sigue siendo un formulario legible.
 	Se emite FUERA de los condicionales para que también esté disponible
@@ -403,28 +403,11 @@
 				</div>
 			</fieldset>
 			<fieldset class="sn-pref">
-				<legend>{{msg-stellanova-pref-width}}</legend>
-				<div class="sn-seg" role="radiogroup" data-sn-pref="width">
-					<button type="button" data-v="narrow">{{msg-stellanova-w-narrow}}</button>
-					<button type="button" data-v="standard">{{msg-stellanova-w-standard}}</button>
-					<button type="button" data-v="wide">{{msg-stellanova-w-wide}}</button>
-					<button type="button" data-v="full">{{msg-stellanova-w-full}}</button>
-				</div>
-			</fieldset>
-			<fieldset class="sn-pref">
 				<legend>{{msg-stellanova-pref-font}}</legend>
 				<div class="sn-seg" role="radiogroup" data-sn-pref="font">
 					<button type="button" data-v="small">{{msg-stellanova-sz-s}}</button>
 					<button type="button" data-v="medium">{{msg-stellanova-sz-m}}</button>
 					<button type="button" data-v="large">{{msg-stellanova-sz-l}}</button>
-				</div>
-			</fieldset>
-			<fieldset class="sn-pref">
-				<legend>{{msg-stellanova-pref-leading}}</legend>
-				<div class="sn-seg" role="radiogroup" data-sn-pref="leading">
-					<button type="button" data-v="compact">{{msg-stellanova-ld-compact}}</button>
-					<button type="button" data-v="normal">{{msg-stellanova-ld-normal}}</button>
-					<button type="button" data-v="relaxed">{{msg-stellanova-ld-relaxed}}</button>
 				</div>
 			</fieldset>
 			<fieldset class="sn-pref">

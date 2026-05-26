@@ -2,6 +2,8 @@
 
 Doctrina que rige el desarrollo del skin. Doc canónico (vive en el repo del
 skin, publicable). El plan accionable está en [`DEVELOPMENT.md`](DEVELOPMENT.md).
+La guía editorial (palabras mágicas y clases CSS opt-in para el wikitexto)
+está en [`WIKITEXTO.md`](WIKITEXTO.md).
 
 ## 0. Principio rector
 

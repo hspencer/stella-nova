@@ -7,7 +7,7 @@
  * Ritmo vertical sobre la interlínea del cuerpo: la unidad es
  * `--sn-baseline`, todo line-height/margen vertical de bloque es un múltiplo.
  *
- * Tema: prefers-color-scheme + override [data-sn-theme]. Las 7 preferencias
+ * Tema: prefers-color-scheme + override [data-sn-theme]. Las 5 preferencias
  * del spec se enchufan por data-attributes en <html> (resueltas server-side
  * para registrados, pre-paint para anónimo/temporal). Aquí solo los valores;
  * el contrato de resolución (explícito > SO > default) vive en el spec.
@@ -112,7 +112,9 @@
 	--sn-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
 
 	/* Escala fluida sobria (sin titulares exagerados). --sn-font-scale lo
-	   modula la preferencia tamaño-de-fuente; --sn-leading el interlineado. */
+	   modula la preferencia tamaño-de-fuente. --sn-leading es FIJO (no es
+	   preferencia de usuario): cambiarlo desparametriza el ajuste al
+	   baseline grid. */
 	--sn-font-scale: 1;
 	--sn-leading: 1.65;
 
@@ -130,10 +132,10 @@
 	--sn-fs-page-title: calc(clamp(1.85rem, 1.55rem + 1.3vw, 2.5rem) * var(--sn-font-scale));
 
 	/* — Baseline grid — la unidad del ritmo vertical es la interlínea del
-	   cuerpo: `--sn-baseline` = fs-base × leading. Cambia con las
-	   preferencias FontSize y LineHeight del usuario, así que todo el ritmo
-	   (line-heights de cabeceras, márgenes verticales entre bloques) escala
-	   con ellas. Reglas:
+	   cuerpo: `--sn-baseline` = fs-base × leading. Escala SOLO con la
+	   preferencia FontSize del usuario (leading y ancho de hoja son fijos),
+	   para que el cálculo del ajuste al baseline grid no se desparametrice.
+	   Reglas:
 	     1. body usa `--sn-leading` (unitless) como line-height, para que
 	        las cajas inline (sub, sup, code) hereden proporción.
 	     2. Headings y bloques (p, ul/ol, blockquote, poem) usan
@@ -152,8 +154,8 @@
 	--sn-s-7: 3.5rem;  --sn-s-8: 5.25rem;
 
 	/* Ancho máximo de la HOJA (no del texto: el contenido va al 100%).
-	   Lo modula la preferencia ContentWidth. */
-	--sn-measure: 58rem;          /* = standard (default)                   */
+	   Fijo, no es preferencia de usuario. */
+	--sn-measure: 58rem;
 	--sn-rail: 15.5rem;           /* (sin uso; reservado)                   */
 	--sn-shell: 82rem;            /* ancho máximo del conjunto (header/pie) */
 
@@ -343,23 +345,13 @@
 	}
 }
 
-/* ── Preferencia: ancho de contenido (spec ContentWidth) ── */
-/* Escala recalibrada: el más angosto = el "mediano" anterior (42rem),
-   y de ahí hacia arriba. La hoja ya no constriñe el texto (va al 100%). */
-:root[data-sn-width="narrow"]   { --sn-measure: 42rem; }
-:root[data-sn-width="standard"] { --sn-measure: 58rem; }
-:root[data-sn-width="wide"]     { --sn-measure: 76rem; }
-:root[data-sn-width="full"]     { --sn-measure: none; --sn-shell: 100%; }
-
-/* ── Preferencia: tamaño de fuente (spec FontSize) ── */
+/* ── Preferencia: tamaño de fuente (spec FontSize) ──
+   Única preferencia tipográfica modulable por el usuario. Ancho de hoja
+   e interlineado son fijos: cambiarlos desparametriza el ajuste al
+   baseline grid. */
 :root[data-sn-font="small"]  { --sn-font-scale: .92; }
 :root[data-sn-font="medium"] { --sn-font-scale: 1; }
 :root[data-sn-font="large"]  { --sn-font-scale: 1.14; }
-
-/* ── Preferencia: interlineado (spec LineHeight) ── */
-:root[data-sn-leading="compact"] { --sn-leading: 1.45; }
-:root[data-sn-leading="normal"]  { --sn-leading: 1.65; }
-:root[data-sn-leading="relaxed"] { --sn-leading: 1.9; }
 
 /* ── Movimiento: SO + override (spec Motion; reduced-motion 1ª clase) ── */
 @media (prefers-reduced-motion: reduce) {

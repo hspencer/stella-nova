@@ -86,6 +86,26 @@ class SkinStellaNova extends SkinMustache {
 	}
 
 	/**
+	 * Datos para skin.mustache. Extiende lo que ya emite SkinMustache (las
+	 * "data keys" estándar — html-headelement, data-portlets, data-footer…)
+	 * con las keys propias del skin, ramificadas por entidad del spec:
+	 *
+	 *   is-sn-fullscreen        bool         — PageRender.mode = fullscreen?
+	 *   sn-identity             string       — UserIdentity: anonymous | temporary | registered
+	 *   sn-isotype              {…}          — SiteIsotype: SVG embebido + override de $wgLogos
+	 *   sn-sitenav, sn-has-sitenav, sn-toolbox
+	 *                                       — Partición del MediaWiki:Sidebar
+	 *                                         (toolbox al pie, resto al header)
+	 *   sn-edit, sn-editcode    {href,label} — Lápiz de la barra (deriva PageForms)
+	 *   sn-pageviews, sn-has-pageviews
+	 *                                       — Vistas del menú "Página", sin el editar (lo lleva el lápiz)
+	 *   sn-prefs                {…}          — PreferencesPanel: estado inicial server-side
+	 *   sn-chrome               {…}          — ManagedChrome: fragmentos Pie/Sidebar/Aviso
+	 *
+	 * El template consume estas keys con secciones Mustache. La filosofía:
+	 * decidir aquí lo que requiere PHP (state, lookups, condicionales sobre
+	 * extensiones disponibles) y dejarle al template solo presentación.
+	 *
 	 * @return array
 	 */
 	public function getTemplateData(): array {
@@ -220,20 +240,33 @@ class SkinStellaNova extends SkinMustache {
 		$data['sn-has-pageviews'] = $data['sn-pageviews'] !== [];
 
 		// — PreferencesPanel: estado inicial conocido server-side —
-		// (registrado → opciones de cuenta; anónimo/temporal → skin.js los
-		// sincroniza desde el navegador tras cargar). El spec garantiza
-		// resolución explícito > SO > default; aquí solo el inicial.
-		$prefs = [];
+		//
+		// Para registrados el server tiene la última palabra: leemos las 5
+		// opciones de cuenta (`stellanova-<pref>`) que persiste MediaWiki en
+		// BBDD vía Hooks::onGetPreferences. Para anónimo/temporal el server
+		// no sabe nada (sus prefs viven en localStorage); skin.js las
+		// sincroniza al cargar la página, sin parpadeo porque
+		// Hooks::onBeforePageDisplay ya aplicó el tema en pre-paint.
+		//
+		// `can-reset` habilita el botón "Restablecer" del panel: si nada hay
+		// guardado, no hay nada que restablecer.
+		//
+		// El bloque `theme-is-*` lo usa el panel para marcar el botón activo
+		// del segmento Tema antes de que skin.js corra (sin FOUC del control).
+		// La regla del producto: sin elección guardada → "auto" en el panel
+		// (no oscuro, no claro). Ver Hooks::onBeforePageDisplay.
+		$theme = '';
 		$anySet = false;
 		if ( $isNamed ) {
 			$lookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
-			foreach ( [ 'theme', 'width', 'font', 'leading', 'toc', 'collapsible', 'motion' ] as $p ) {
+			foreach ( [ 'theme', 'font', 'toc', 'collapsible', 'motion' ] as $p ) {
 				$val = (string)$lookup->getOption( $user, 'stellanova-' . $p );
-				$prefs[$p] = $val;
+				if ( $p === 'theme' ) {
+					$theme = $val;
+				}
 				$anySet = $anySet || $val !== '';
 			}
 		}
-		$theme = $prefs['theme'] ?? '';
 		$data['sn-prefs'] = [
 			'is-registered' => $isNamed,
 			'is-temporary'  => $isTemp,

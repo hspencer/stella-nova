@@ -351,14 +351,14 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	margin-inline: auto;
 	padding: clamp(var(--sn-s-5), 5vw, var(--sn-s-7)) var(--sn-s-4);
 }
-/* La preferencia ContentWidth controla el ancho de la HOJA (no el texto):
-   --sn-measure ahora es el tope de la hoja. El contenido va al 100%. */
+/* El ancho de la HOJA está fijado por --sn-measure (no es preferencia de
+   usuario: la métrica de la hoja desparametriza el ajuste al baseline grid).
+   El contenido va al 100% de la hoja. */
 .sn-paper-wrap {
 	width: 100%;
 	max-width: var(--sn-measure);
 	min-width: 0;
 }
-:root[data-sn-width="full"] .sn-paper-wrap { max-width: none; }
 
 .sn-portlet-h {
 	margin: 0 0 var(--sn-s-2);
@@ -403,7 +403,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	min-width: 0;
 }
 @media (min-width: 90rem) {
-	:root:not([data-sn-width="full"]) .sn-paper {
+	.sn-paper {
 		--sn-paper-px: clamp(var(--sn-s-7), 6vw, var(--sn-s-8));
 	}
 }
@@ -559,17 +559,18 @@ a.new, a[href].new { color: var(--sn-link-new); }
 
 /* ─────────────── Cuerpo: ritmo editorial ─────────────── */
 .sn-body { min-width: 0; }
-/* El contenido usa el 100% del ancho de la hoja. NO se constriñe el texto
-   a una medida de lectura: el ancho lo gobierna la preferencia
-   ContentWidth a nivel de la HOJA (.sn-paper-wrap), no por elemento. */
+/* El contenido usa el 100 % del ancho de la hoja. La medida de lectura la
+   da el ancho de la HOJA (.sn-paper-wrap, fijado en --sn-measure 58 rem),
+   no se constriñe elemento por elemento. */
 
-/* Títulos en Anthropic Sans (familia única para todas las cabeceras). h2
-   es la sección sobria; h3 es la subsección en kicker (mayúsculas + nova);
-   h4–h6 son labels secundarios. line-height y márgenes son múltiplos
-   enteros de --sn-baseline: el ritmo vertical es continuo entre p, listas
-   y cabeceras, y escala con las preferencias FontSize / LineHeight del
-   usuario. Sin filetes ni reglas horizontales — la jerarquía la hacen
-   tamaño, peso y color. */
+/* Títulos en Alegreya Sans (familia única para todas las cabeceras). h1–h2
+   son la voz editorial sobria; h3 es la subsección en color nova; h4–h6
+   son labels secundarios. line-heights y márgenes son múltiplos enteros
+   de --sn-baseline: el ritmo vertical es continuo entre p, listas y
+   cabeceras, y escala con la preferencia FontSize del usuario (la única
+   tipográfica modulable; interlineado y ancho de hoja son fijos). Sin
+   filetes ni reglas horizontales — la jerarquía la hacen tamaño, peso y
+   color. */
 /* Reset cascada de core: `mediawiki.skinning.interface` impone sobre h*
    y .mw-heading* lo siguiente, que rompe la doctrina del skin:
      · border-bottom: 1px solid #aaa  (filete bajo h1/h2 — NO va)
@@ -654,7 +655,17 @@ a.new, a[href].new { color: var(--sn-link-new); }
 .sn-body :is(h1, h2, h3, h4, h5, h6, .mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):first-child {
 	margin-top: 0;
 }
-.sn-body p { margin: 0 0 var(--sn-baseline); }
+/* Párrafos del cuerpo: justificados con hyphenation. La hyphenation depende
+   de que el documento declare `lang` (MW pone `<html lang="es">`); para otros
+   idiomas, el motor del navegador usa su diccionario. */
+.sn-body p {
+	margin: 0 0 var(--sn-baseline);
+	text-align: justify;
+	text-justify: inter-word;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+	hyphenate-limit-chars: 6 3 3;
+}
 .sn-body :is(ul, ol) { margin: 0 0 var(--sn-baseline); padding-left: var(--sn-s-5); }
 .sn-body li { margin: 0; }
 .sn-body li::marker { color: var(--sn-ink-faint); }
@@ -696,7 +707,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 .sn-body a.external:is(.image, .no-icon)::after,
 .sn-body a.external:has(img)::after { content: none; }
 
-/* Citas y poemas: única familia serif del skin (Anthropic Serif). El
+/* Citas y poemas: única familia serif del skin (Alegreya, variable). El
    <poem> de la extensión Poem se renderiza como .poem dentro de
    mw-parser-output. Line-height y márgenes en baselines: el ritmo se
    mantiene aunque el cuerpo cambie a Serif puntualmente. */
@@ -1362,7 +1373,7 @@ canvas, iframe,
 .sn-fs-menu .sn-fs-links {
 	list-style: none; margin: 0; padding: 0;
 	display: block;
-	line-height: var(--sn-leading-normal);
+	line-height: var(--sn-leading);
 }
 .sn-fs-menu .sn-fs-links li {
 	display: inline; margin: 0; padding: 0;
@@ -1782,7 +1793,7 @@ canvas, iframe,
 	background: var(--sn-paper);
 	color: var(--sn-ink);
 	font-size: var(--sn-fs-sm);
-	line-height: var(--sn-leading-normal);
+	line-height: var(--sn-leading);
 }
 /* Cuando va flotada (cambios recientes), respeta la separación lateral
    del bloque editorial sin pegarse al texto. */

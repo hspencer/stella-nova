@@ -40,6 +40,36 @@ a { color: var(--sn-link); text-underline-offset: .14em;
 a:hover { color: var(--sn-link-hover); }
 a:visited { color: var(--sn-link-visited); }
 
+/* ── Redlinks (a páginas inexistentes) y :visited ─────────────────
+   Overrides de MediaWiki:Common.css (heredado de producción), que
+   trae:
+     a[href].new { color: rgba(0,0,0,.3) !important; }   ← negro en dark
+     a:visited   { color: #681603; }                     ← rojo carbón
+   En claro funcionan (faded grey y rojo oscuro sobre cream). En oscuro
+   son inaccesibles (WCAG <1.5:1 sobre paper, falla tanto en .sn-body
+   como en .catlinks). Por eso el override sólo aplica en oscuro: en
+   claro respetamos el aire de producción. Especificidad bumpeada por
+   `:root[data-…]` (0,1,1,1+) gana al `a:visited` de Common; el
+   !important de redlinks empata al !important del site CSS, y la
+   especificidad mayor desempata. */
+a.new, a[href].new { color: var(--sn-link-new); }
+:root[data-sn-theme="dark"] a.new,
+:root[data-sn-theme="dark"] a[href].new {
+	color: var(--sn-link-new) !important;
+}
+:root[data-sn-theme="dark"] a:visited {
+	color: var(--sn-link-visited);
+}
+@media (prefers-color-scheme: dark) {
+	:root[data-sn-theme="auto"] a.new,
+	:root[data-sn-theme="auto"] a[href].new {
+		color: var(--sn-link-new) !important;
+	}
+	:root[data-sn-theme="auto"] a:visited {
+		color: var(--sn-link-visited);
+	}
+}
+
 ::selection { background: var(--sn-nova-wash); color: var(--sn-ink); }
 
 /* Foco: el anillo es la nova. Nunca solo color. */
@@ -321,14 +351,14 @@ a:visited { color: var(--sn-link-visited); }
 	margin-inline: auto;
 	padding: clamp(var(--sn-s-5), 5vw, var(--sn-s-7)) var(--sn-s-4);
 }
-/* La preferencia ContentWidth controla el ancho de la HOJA (no el texto):
-   --sn-measure ahora es el tope de la hoja. El contenido va al 100%. */
+/* El ancho de la HOJA está fijado por --sn-measure (no es preferencia de
+   usuario: la métrica de la hoja desparametriza el ajuste al baseline grid).
+   El contenido va al 100% de la hoja. */
 .sn-paper-wrap {
 	width: 100%;
 	max-width: var(--sn-measure);
 	min-width: 0;
 }
-:root[data-sn-width="full"] .sn-paper-wrap { max-width: none; }
 
 .sn-portlet-h {
 	margin: 0 0 var(--sn-s-2);
@@ -373,7 +403,7 @@ a:visited { color: var(--sn-link-visited); }
 	min-width: 0;
 }
 @media (min-width: 90rem) {
-	:root:not([data-sn-width="full"]) .sn-paper {
+	.sn-paper {
 		--sn-paper-px: clamp(var(--sn-s-7), 6vw, var(--sn-s-8));
 	}
 }
@@ -462,16 +492,21 @@ a:visited { color: var(--sn-link-visited); }
 	font-size: var(--sn-fs-sm);
 }
 
-/* — firstHeading: titular en Work Sans, ligero y en carmín nova (el
-   título de la página es la "voz" editorial del documento). — */
+/* — firstHeading: el título de la página, la voz editorial del documento.
+   Mayor que cualquier h1 del cuerpo (--sn-fs-page-title). Ocupa
+   line-height = 3 baselines + margin-bottom = 1 baseline (total 4
+   baselines), todo múltiplo entero para que los párrafos que vienen
+   después calcen exactamente en la retícula. Sin offset cap-based: la
+   simetría del integer-baseline conserva el colapso de márgenes y
+   permite alineación robusta en arreglos multicolumna. — */
 .sn-paper :is(h1#firstHeading, .firstHeading, .mw-first-heading) {
 	font-family: var(--sn-font-text);
 	font-weight: 300;
-	font-size: var(--sn-fs-display);
-	line-height: var(--sn-leading-tight);
+	font-size: var(--sn-fs-page-title);
+	line-height: var(--sn-baseline-3);
 	letter-spacing: -.018em;
 	color: var(--sn-nova);
-	margin: 0 0 var(--sn-s-2);
+	margin: 0 0 var(--sn-baseline);
 	max-width: 34ch;
 	text-wrap: balance;
 }
@@ -524,15 +559,18 @@ a:visited { color: var(--sn-link-visited); }
 
 /* ─────────────── Cuerpo: ritmo editorial ─────────────── */
 .sn-body { min-width: 0; }
-/* El contenido usa el 100% del ancho de la hoja. NO se constriñe el texto
-   a una medida de lectura: el ancho lo gobierna la preferencia
-   ContentWidth a nivel de la HOJA (.sn-paper-wrap), no por elemento. */
+/* El contenido usa el 100 % del ancho de la hoja. La medida de lectura la
+   da el ancho de la HOJA (.sn-paper-wrap, fijado en --sn-measure 58 rem),
+   no se constriñe elemento por elemento. */
 
-/* Títulos en Work Sans. h2 es la sección sobria; h3 es la subsección en
-   kicker (mayúsculas + nova); h4–h6 son labels secundarios. Interlineado
-   homologado a --sn-leading-tight (1.22), igual que el firstHeading: ritmo
-   vertical coherente entre todos los niveles. Sin filetes ni reglas
-   horizontales — la jerarquía la hacen tamaño, peso y color. */
+/* Títulos en Alegreya Sans (familia única para todas las cabeceras). h1–h2
+   son la voz editorial sobria; h3 es la subsección en color nova; h4–h6
+   son labels secundarios. line-heights y márgenes son múltiplos enteros
+   de --sn-baseline: el ritmo vertical es continuo entre p, listas y
+   cabeceras, y escala con la preferencia FontSize del usuario (la única
+   tipográfica modulable; interlineado y ancho de hoja son fijos). Sin
+   filetes ni reglas horizontales — la jerarquía la hacen tamaño, peso y
+   color. */
 /* Reset cascada de core: `mediawiki.skinning.interface` impone sobre h*
    y .mw-heading* lo siguiente, que rompe la doctrina del skin:
      · border-bottom: 1px solid #aaa  (filete bajo h1/h2 — NO va)
@@ -547,6 +585,20 @@ a:visited { color: var(--sn-link-visited); }
 	padding: 0;
 	display: block;
 }
+/* Además, MW `elements` impone `h1..h6, .mw-heading { color:#000 }` con
+   especificidad bare (0,0,1) → en modo oscuro deja headings negros sobre
+   el papel oscuro allí donde el skin no fija color explícito (el drawer
+   `.sn-prefs`, cabeceras de modales, contenido fuera de `.sn-body`).
+   Reseteamos a `inherit` en toda la chrome del skin y en el drawer (que
+   vive fuera de `.sn-app`): cada heading lee la tinta del contexto.
+   Reglas específicas (`.sn-paper :is(h1#firstHeading,…) { color: nova }`
+   en (1,1,1); `.sn-body :is(h3,…)` en (0,1,1) DELANTE en source-order)
+   siguen ganando por especificidad/orden. */
+.sn-app :is(h1, h2, h3, h4, h5, h6, .mw-heading),
+.sn-canvas :is(h1, h2, h3, h4, h5, h6, .mw-heading),
+.sn-prefs :is(h1, h2, h3, h4, h5, h6) {
+	color: inherit;
+}
 /* Cuando Parsoid envuelve el heading: el wrapper carga la tipografía y
    el <hN> interno hereda. Sin esto, la margin del <hN> se suma a la del
    wrapper y aparecen dobles separaciones. */
@@ -558,43 +610,64 @@ a:visited { color: var(--sn-link-visited); }
 	text-transform: inherit;
 }
 
+/* Cabeceras del cuerpo (jerarquía bajo firstHeading). Familia única
+   (Alegreya Sans, sin caps). line-heights = 2 ó 1 baseline, márgenes
+   en múltiplos enteros de baseline. La jerarquía la hacen tamaño,
+   peso y color — no transformaciones tipográficas. */
+.sn-body :is(h1, .mw-heading1) {
+	font-family: var(--sn-font-text);
+	font-weight: 400; line-height: var(--sn-baseline-2);
+	letter-spacing: -.016em; color: var(--sn-ink);
+	font-size: var(--sn-fs-display);
+	margin: var(--sn-baseline-2) 0 var(--sn-baseline);
+}
 .sn-body :is(h2, .mw-heading2) {
-	font-family: var(--sn-font-display);
-	font-weight: 400; line-height: var(--sn-leading-tight);
+	font-family: var(--sn-font-text);
+	font-weight: 500; line-height: var(--sn-baseline-2);
 	letter-spacing: -.012em; color: var(--sn-ink);
 	font-size: var(--sn-fs-xl);
-	margin: var(--sn-s-6) 0 var(--sn-s-3);
+	margin: var(--sn-baseline-2) 0 var(--sn-baseline);
 }
 .sn-body :is(h3, .mw-heading3) {
 	font-family: var(--sn-font-text);
-	font-weight: 470; line-height: var(--sn-leading-tight);
-	letter-spacing: .035ex; color: var(--sn-nova);
-	text-transform: uppercase;
-	font-size: var(--sn-fs-md);
-	margin: var(--sn-s-5) 0 var(--sn-s-2);
+	font-weight: 500; line-height: var(--sn-baseline);
+	letter-spacing: 0; color: var(--sn-nova);
+	font-size: var(--sn-fs-lg);
+	margin: var(--sn-baseline-2) 0 var(--sn-baseline);
 }
 .sn-body :is(h4, h5, h6, .mw-heading4, .mw-heading5, .mw-heading6) {
-	font-family: var(--sn-font-text); line-height: var(--sn-leading-tight);
-	color: var(--sn-ink);
+	font-family: var(--sn-font-text); line-height: var(--sn-baseline);
+	letter-spacing: 0; color: var(--sn-ink);
 }
 .sn-body :is(h4, .mw-heading4) {
-	font-size: calc(var(--sn-fs-base) * 1.02);
-	margin: var(--sn-s-5) 0 var(--sn-s-2); font-weight: 620;
-	letter-spacing: 0;
+	font-size: var(--sn-fs-md);
+	margin: var(--sn-baseline) 0 0; font-weight: 700;
 }
-.sn-body :is(h5, h6, .mw-heading5, .mw-heading6) {
-	font-size: var(--sn-fs-sm); text-transform: uppercase;
-	letter-spacing: .06em; color: var(--sn-ink-soft);
-	margin: var(--sn-s-4) 0 var(--sn-s-2);
+.sn-body :is(h5, .mw-heading5) {
+	font-size: var(--sn-fs-base);
+	margin: var(--sn-baseline) 0 0; font-weight: 500;
 }
-.sn-body :is(h5, .mw-heading5) { font-weight: 600; }
-.sn-body :is(h6, .mw-heading6) { font-weight: 400; }
-.sn-body :is(h2, h3, h4, h5, h6, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):first-child {
+.sn-body :is(h6, .mw-heading6) {
+	font-size: var(--sn-fs-sm);
+	margin: var(--sn-baseline) 0 0; font-weight: 500;
+	color: var(--sn-ink-soft);
+}
+.sn-body :is(h1, h2, h3, h4, h5, h6, .mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):first-child {
 	margin-top: 0;
 }
-.sn-body p { margin: 0 0 var(--sn-s-4); }
-.sn-body :is(ul, ol) { margin: 0 0 var(--sn-s-4); padding-left: var(--sn-s-5); }
-.sn-body li { margin: .2rem 0; }
+/* Párrafos del cuerpo: justificados con hyphenation. La hyphenation depende
+   de que el documento declare `lang` (MW pone `<html lang="es">`); para otros
+   idiomas, el motor del navegador usa su diccionario. */
+.sn-body p {
+	margin: 0 0 var(--sn-baseline);
+	text-align: justify;
+	text-justify: inter-word;
+	-webkit-hyphens: auto;
+	hyphens: auto;
+	hyphenate-limit-chars: 6 3 3;
+}
+.sn-body :is(ul, ol) { margin: 0 0 var(--sn-baseline); padding-left: var(--sn-s-5); }
+.sn-body li { margin: 0; }
 .sn-body li::marker { color: var(--sn-ink-faint); }
 /* Enlaces del contenido: el token manda. Especificidad .sn-body a*
    (0,0,2,x) para vencer a MediaWiki:Common.css `a:visited{...}`, que
@@ -634,29 +707,37 @@ a:visited { color: var(--sn-link-visited); }
 .sn-body a.external:is(.image, .no-icon)::after,
 .sn-body a.external:has(img)::after { content: none; }
 
-/* Citas y poemas: serif editorial (Newsreader). El <poem> de la
-   extensión Poem se renderiza como .poem dentro de mw-parser-output. */
+/* Citas y poemas: única familia serif del skin (Alegreya, variable). El
+   <poem> de la extensión Poem se renderiza como .poem dentro de
+   mw-parser-output. Line-height y márgenes en baselines: el ritmo se
+   mantiene aunque el cuerpo cambie a Serif puntualmente. */
 .sn-body blockquote {
-	margin: var(--sn-s-5) 0;
-	padding: var(--sn-s-1) 0 var(--sn-s-1) var(--sn-s-5);
-	font-family: var(--sn-font-display); font-optical-sizing: auto;
+	margin: var(--sn-baseline) 0;
+	padding: 0 0 0 var(--sn-s-5);
+	font-family: var(--sn-font-serif); font-optical-sizing: auto;
 	font-size: var(--sn-fs-md);
-	color: var(--sn-ink-soft); line-height: 1.55;
+	color: var(--sn-ink-soft); line-height: var(--sn-baseline);
 }
 .sn-body blockquote p:last-child { margin-bottom: 0; }
 .sn-body .poem {
-	font-family: var(--sn-font-display); font-optical-sizing: auto;
-	font-size: var(--sn-fs-md); line-height: 1.7;
+	font-family: var(--sn-font-serif); font-optical-sizing: auto;
+	font-size: var(--sn-fs-md); line-height: var(--sn-baseline);
 	color: var(--sn-ink);
 	white-space: pre-wrap;
 }
-.sn-body .poem p { margin: 0 0 var(--sn-s-4); }
+.sn-body .poem p { margin: 0 0 var(--sn-baseline); }
 /* La extensión Poem inserta <br/> tras cada línea (Poem.php). Con
    white-space: pre-wrap el \n del código ya da el salto, así que el
    <br/> sobra y produciría doble línea. Lo neutralizamos. */
 .sn-body .poem br { display: none; }
+/* MW feature `elements` impone `code, pre, .mw-code { color:#000;
+   background:#f8f9fa }` (selector bare → especificidad 0,0,1). Sin un
+   `color` explícito aquí, en modo oscuro queda negro sobre `--sn-sunk`
+   (#181610) — ilegible. Fijamos color de tinta del tema; el background
+   ya volteaba bien. */
 .sn-body :is(code, kbd, samp) {
 	font-family: var(--sn-font-mono); font-size: .9em;
+	color: var(--sn-ink);
 	background: var(--sn-sunk); padding: .12em .38em;
 	border-radius: var(--sn-radius-s);
 }
@@ -869,9 +950,9 @@ canvas, iframe,
 }
 .sn-body .toc .toctitle :is(h2, h3) {
 	margin: 0; padding: 0; border: 0; font-family: var(--sn-font-text);
-	font-size: var(--sn-fs-xs); font-weight: 600;
-	text-transform: uppercase; letter-spacing: .08em;
-	color: var(--sn-ink-faint);
+	font-size: var(--sn-fs-sm); font-weight: 600;
+	letter-spacing: 0;
+	color: var(--sn-ink-soft);
 }
 /* Colapsable: el checkbox nativo se oculta visualmente pero queda
    enfocable por teclado; el label es un cheurón que rota y, al marcar,
@@ -1292,7 +1373,7 @@ canvas, iframe,
 .sn-fs-menu .sn-fs-links {
 	list-style: none; margin: 0; padding: 0;
 	display: block;
-	line-height: var(--sn-leading-normal);
+	line-height: var(--sn-leading);
 }
 .sn-fs-menu .sn-fs-links li {
 	display: inline; margin: 0; padding: 0;
@@ -1621,9 +1702,9 @@ canvas, iframe,
 	font-family: var(--sn-font-text); font-size: var(--sn-fs-xs);
 	font-weight: 400; vertical-align: middle;
 	/* Look consistente sin importar el heading que lo contiene: anula
-	   `text-transform` y `letter-spacing` que h3/h5/h6 imponen
-	   (uppercase + spaciado) y se transmiten por herencia al botón. */
-	text-transform: lowercase;
+	   un eventual letter-spacing heredado. (text-transform ya no hace
+	   falta — los headings del cuerpo no usan uppercase desde el
+	   refactor del baseline grid). */
 	letter-spacing: normal;
 	opacity: 0;
 	transition: opacity var(--sn-dur-1);
@@ -1712,7 +1793,7 @@ canvas, iframe,
 	background: var(--sn-paper);
 	color: var(--sn-ink);
 	font-size: var(--sn-fs-sm);
-	line-height: var(--sn-leading-normal);
+	line-height: var(--sn-leading);
 }
 /* Cuando va flotada (cambios recientes), respeta la separación lateral
    del bloque editorial sin pegarse al texto. */
@@ -1735,13 +1816,16 @@ canvas, iframe,
        <div class="grilla cols-2"> … </div>
        <div class="grilla cols-3"> … </div>
        <div class="grilla cols-6"> … </div>
+       <div class="grilla cols1-2"> … </div>   ← 1/3 + 2/3
+       <div class="grilla cols2-1"> … </div>   ← 2/3 + 1/3
 
    Funciona tanto en chrome normal como en __PANTALLACOMPLETA__: ambos
    wrappers de contenido llevan `.sn-body`. `minmax(0, 1fr)` evita
    desbordes cuando una celda lleva contenido sin wrap (URLs, código).
    Degradación: en pantallas medias (≤ 64rem) las grillas más densas
    (cols-4/5/6) reducen el número de columnas; por debajo de 48rem
-   (tablet vertical) todas caen a una sola columna. */
+   (tablet vertical) todas caen a una sola columna — las asimétricas
+   cols1-2 / cols2-1 también colapsan a una columna ahí. */
 .sn-body .grilla {
 	display: grid;
 	gap: var(--sn-s-4);
@@ -1752,6 +1836,9 @@ canvas, iframe,
 .sn-body .grilla.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .sn-body .grilla.cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .sn-body .grilla.cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+/* Asimétricas: pareja de columnas en proporción 1:2 / 2:1 (tercios). */
+.sn-body .grilla.cols1-2 { grid-template-columns: 1fr 2fr; }
+.sn-body .grilla.cols2-1 { grid-template-columns: 2fr 1fr; }
 @media (max-width: 64rem) {
 	.sn-body .grilla.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.sn-body .grilla.cols-5,
@@ -1762,7 +1849,9 @@ canvas, iframe,
 	.sn-body .grilla.cols-3,
 	.sn-body .grilla.cols-4,
 	.sn-body .grilla.cols-5,
-	.sn-body .grilla.cols-6 { grid-template-columns: 1fr; }
+	.sn-body .grilla.cols-6,
+	.sn-body .grilla.cols1-2,
+	.sn-body .grilla.cols2-1 { grid-template-columns: 1fr; }
 }
 
 /* ─── Editor: tipografía monoespaciada recién instalada (IBM Plex Mono),
