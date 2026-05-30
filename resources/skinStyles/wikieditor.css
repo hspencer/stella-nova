@@ -155,8 +155,20 @@ form#editform {
 	color: var(--sn-ink);
 	border-top-color: var(--sn-hairline-soft);
 }
+/* Caracteres especiales: celdas tipo botón. Sobre el CSS base de WikiEditor
+   (border 1px, padding 5px 8px, font monospace, etc.) aplicamos los ajustes
+   afinados desde el inspector: glifo a 1em (no 1.25em), celda más alta
+   (1.682em), esquinas del skin y márgenes en `ex` (escalan con la fuente).
+   La mayor altura dejaría el glifo pegado arriba, así que pasamos la celda a
+   inline-flex y lo centramos. Color y borde siguen por token (= #222/#ccc del
+   inspector, pero tematizables claro/oscuro). */
 .wikiEditor-ui-toolbar .page-characters div span {
+	display: inline-flex; align-items: center; justify-content: center;
+	height: 1.682em;
+	margin-left: .5ex; margin-top: .5ex;
+	font-size: 1em;
 	border-color: var(--sn-hairline);
+	border-radius: var(--sn-radius);
 	color: var(--sn-ink);
 }
 .wikiEditor-ui-toolbar .page-characters div span:hover {

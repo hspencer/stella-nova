@@ -559,11 +559,13 @@ a.new, a[href].new { color: var(--sn-link-new); }
 
 /* ─────────────── Cuerpo: ritmo editorial ─────────────── */
 .sn-body { min-width: 0; }
-/* El contenido usa el 100 % del ancho de la hoja. La medida de lectura la
-   da el ancho de la HOJA (.sn-paper-wrap, fijado en --sn-measure 58 rem),
-   no se constriñe elemento por elemento. */
+/* El ancho de la HOJA lo fija --sn-measure (.sn-paper-wrap, 58 rem). En
+   general el contenido usa el 100 % de la hoja; la EXCEPCIÓN son los
+   párrafos corridos del artículo, constreñidos al 80 % para acortar la
+   medida de lectura (ver `.sn-body … > p` más abajo). El resto de bloques
+   —cabeceras, listas, tablas, fichas, figuras— sigue al 100 %. */
 
-/* Títulos en Alegreya Sans (familia única para todas las cabeceras). h1–h2
+/* Títulos en IBM Plex Sans (familia única para todas las cabeceras). h1–h2
    son la voz editorial sobria; h3 es la subsección en color nova; h4–h6
    son labels secundarios. line-heights y márgenes son múltiplos enteros
    de --sn-baseline: el ritmo vertical es continuo entre p, listas y
@@ -611,7 +613,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 }
 
 /* Cabeceras del cuerpo (jerarquía bajo firstHeading). Familia única
-   (Alegreya Sans, sin caps). line-heights = 2 ó 1 baseline, márgenes
+   (IBM Plex Sans, sin caps). line-heights = 2 ó 1 baseline, márgenes
    en múltiplos enteros de baseline. La jerarquía la hacen tamaño,
    peso y color — no transformaciones tipográficas. */
 .sn-body :is(h1, .mw-heading1) {
@@ -666,6 +668,15 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	hyphens: auto;
 	hyphenate-limit-chars: 6 3 3;
 }
+/* Párrafos corridos del artículo al 80 % del ancho de la hoja (flush-left,
+   alineados con cabeceras y listas): acorta la medida de lectura sin tocar
+   --sn-measure ni el baseline grid. Acotado a los <p> de nivel superior del
+   parser output (directos o bajo un <section> de Parsoid) para NO encoger
+   los párrafos anidados en tablas, fichas, blockquotes, figuras o listas. */
+.sn-body > .mw-parser-output > p,
+.sn-body > .mw-parser-output > section > p {
+	width: 80%;
+}
 .sn-body :is(ul, ol) { margin: 0 0 var(--sn-baseline); padding-left: var(--sn-s-5); }
 .sn-body li { margin: 0; }
 .sn-body li::marker { color: var(--sn-ink-faint); }
@@ -707,7 +718,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 .sn-body a.external:is(.image, .no-icon)::after,
 .sn-body a.external:has(img)::after { content: none; }
 
-/* Citas y poemas: única familia serif del skin (Alegreya, variable). El
+/* Citas y poemas: única familia serif del skin (IBM Plex Serif). El
    <poem> de la extensión Poem se renderiza como .poem dentro de
    mw-parser-output. Line-height y márgenes en baselines: el ritmo se
    mantiene aunque el cuerpo cambie a Serif puntualmente. */
@@ -931,10 +942,20 @@ canvas, iframe,
 /* ──────────────── Índice (ToC NATIVO, en su sitio) ────────────────
    No se relocaliza ni se duplica: MediaWiki lo inyecta donde marca
    __TOC__ (o en su posición automática) y el skin solo lo VISTE para
-   que tenga el lenguaje de diseño del resto. */
+   que tenga el lenguaje de diseño del resto.
+
+   EXCEPCIÓN AL BASELINE GRID (decisión deliberada): el índice es una
+   TARJETA, no texto corrido. Sus márgenes/paddings usan la escala de
+   espaciado (--sn-s-*), no --sn-baseline, y su alto total es variable
+   (depende del nº de entradas), así que no calza la grilla de línea de
+   base ni se pretende que lo haga. El texto que sigue conserva su propio
+   ritmo interno; solo el origen global de la grilla se desplaza un poco
+   tras la tarjeta. NO "arreglar" pasando los márgenes a baseline: el
+   desfase por el alto interno variable seguiría existiendo. Por eso el
+   h2 interior puede llevar line-height: 1 sin romper nada. */
 .sn-body .toc, .mw-parser-output .toc {
-	display: table;            /* se ajusta al contenido, no full-width */
-	max-width: 100%;
+	display: block;            /* full-width: ocupa el 100% de la hoja */
+	width: 100%;
 	margin: var(--sn-s-4) 0 var(--sn-s-6);
 	border: 1px solid var(--sn-hairline-soft);
 	border-radius: var(--sn-radius);
@@ -951,6 +972,7 @@ canvas, iframe,
 .sn-body .toc .toctitle :is(h2, h3) {
 	margin: 0; padding: 0; border: 0; font-family: var(--sn-font-text);
 	font-size: var(--sn-fs-sm); font-weight: 600;
+	line-height: 1;
 	letter-spacing: 0;
 	color: var(--sn-ink-soft);
 }
@@ -1026,20 +1048,57 @@ canvas, iframe,
 	margin-top: var(--sn-s-7);
 }
 /* El ancho del pie se alinea con la HOJA (--sn-measure), no con la chrome
-   (--sn-shell), para que las 3 columnas queden bajo la columna de lectura
-   y no exhiban espacio muerto a los lados. Las columnas van a 1fr puro,
-   estiradas: contenido anclado al borde izquierdo de cada pista, sin
-   centrados artificiales que volvían el rejuntado irregular. */
+   (--sn-shell), para que las columnas queden bajo la columna de lectura y
+   no exhiban espacio muerto a los lados. Dos columnas en proporción 2fr 1fr:
+   ANCHA (izq) = última edición + herramientas inline; ANGOSTA (der) =
+   enlaces de sitio + bloque editable (Stella-Nova:Pie). */
 .sn-footer-inner {
 	max-width: var(--sn-measure); margin-inline: auto;
 	padding: var(--sn-s-6) var(--sn-s-4);
 	display: grid; gap: var(--sn-s-6) var(--sn-s-7);
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-columns: 2fr 1fr;
 	align-items: start;
 }
 .sn-footer-col { min-width: 0; }
 
-/* Col 1 — bloque institucional gestionado (Stella-Nova:Pie). */
+/* — Columna ancha — última edición + herramientas inline — */
+.sn-footer-main { display: flex; flex-direction: column; gap: var(--sn-s-4); }
+.sn-foot-lastedit { margin: 0; color: var(--sn-ink-soft); }
+.sn-foot-lastedit .sn-foot-user { color: var(--sn-link); text-decoration: none; }
+.sn-foot-lastedit .sn-foot-user:hover { color: var(--sn-link-hover); text-decoration: underline; }
+
+/* Herramientas y más: SIN título, enlaces inline en rojo; al hover/focus se
+   visten como nav-pill (igual que el botón de editar-sección). La lista
+   arranca flush con el borde izquierdo de la columna (el margen negativo
+   compensa el padding horizontal de la primera píldora). */
+.sn-foot-toollist {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; flex-wrap: wrap; gap: var(--sn-s-1) var(--sn-s-2);
+	margin-inline-start: calc(-1 * var(--sn-s-2));
+}
+.sn-foot-toollist li { margin: 0; list-style: none; }
+.sn-foot-toollist li a {
+	display: inline-block; padding: .15rem var(--sn-s-2);
+	color: var(--sn-link); text-decoration: none;
+	border: 1px solid transparent; border-radius: var(--sn-radius-pill);
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);
+}
+.sn-foot-toollist li a:hover, .sn-foot-toollist li a:focus-visible {
+	background: var(--sn-paper); border-color: var(--sn-hairline);
+	color: var(--sn-nova);
+}
+
+/* — Columna angosta — enlaces de sitio inline + bloque editable — */
+.sn-footer-side { display: flex; flex-direction: column; gap: var(--sn-s-5); }
+.sn-foot-places {
+	list-style: none; margin: 0; padding: 0;
+	display: flex; flex-wrap: wrap; gap: var(--sn-s-1) var(--sn-s-3);
+}
+.sn-foot-places li { margin: 0; }
+.sn-foot-places a { color: var(--sn-ink-soft); text-decoration: none; }
+.sn-foot-places a:hover { color: var(--sn-nova); }
+
+/* Bloque institucional editable (Stella-Nova:Pie), al pie de la columna. */
 .sn-footer-managed { color: var(--sn-ink); }
 .sn-footer-managed :is(h1,h2,h3,h4) {
 	font-family: var(--sn-font-text); color: var(--sn-ink);
@@ -1049,35 +1108,6 @@ canvas, iframe,
 .sn-footer-managed a { color: var(--sn-link); }
 .sn-footer-managed :is(p, ul, ol) { margin: 0 0 var(--sn-s-3); }
 .sn-footer-managed > :last-child { margin-bottom: 0; }
-
-/* Col 2 — última modificación + licencia (data-info) y enlaces de sitio
-   privacidad/acerca/descargos (data-places). Sin logos enlazados. */
-.sn-footer-legal { display: flex; flex-direction: column; gap: var(--sn-s-3); }
-.sn-foot-info, .sn-foot-places {
-	list-style: none; margin: 0; padding: 0;
-	display: flex; flex-direction: column; gap: .3rem;
-}
-.sn-foot-info a, .sn-foot-places a { color: var(--sn-ink-soft); }
-.sn-foot-info a:hover, .sn-foot-places a:hover { color: var(--sn-nova); }
-
-/* Col 3 — "Herramientas y más" (con ícono) en columna, lista vertical. */
-.sn-footer-h {
-	display: flex; align-items: center; gap: var(--sn-s-2);
-	margin: 0 0 var(--sn-s-3); font-family: var(--sn-font-text);
-	font-size: var(--sn-fs-xs); font-weight: 600;
-	text-transform: uppercase; letter-spacing: .08em;
-	color: var(--sn-ink-faint);
-}
-.sn-footer-toollist {
-	list-style: none; margin: 0; padding: 0;
-	display: flex; flex-direction: column; gap: .2rem;
-}
-.sn-footer-toollist li { margin: 0; list-style: none; }
-.sn-footer-toollist li a {
-	display: inline-block; padding: .15rem 0;
-	color: var(--sn-ink-soft); text-decoration: none;
-}
-.sn-footer-toollist li a:hover { color: var(--sn-nova); }
 
 /* ─────────────────── PreferencesPanel (diálogo) ─────────────────── */
 .sn-prefs-scrim {
@@ -1458,10 +1488,7 @@ canvas, iframe,
    completo (ver bloque @48rem más abajo): el form se colapsa, aparece el
    trigger-lupa y todos los paneles se presentan como modal a pantalla
    completa. No hay estado intermedio de cabecera envuelta a 2 líneas. */
-@media (max-width: 64rem) {
-	.sn-footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 40rem) {
+@media (max-width: 48rem) {
 	.sn-footer-inner { grid-template-columns: 1fr; gap: var(--sn-s-5); }
 }
 
@@ -1701,10 +1728,18 @@ canvas, iframe,
 	margin-inline-start: var(--sn-s-4);
 	font-family: var(--sn-font-text); font-size: var(--sn-fs-xs);
 	font-weight: 400; vertical-align: middle;
-	/* Look consistente sin importar el heading que lo contiene: anula
-	   un eventual letter-spacing heredado. (text-transform ya no hace
-	   falta — los headings del cuerpo no usan uppercase desde el
-	   refactor del baseline grid). */
+	/* Look IDÉNTICO en cualquier sección, sin importar el heading que lo
+	   contiene. El botón hereda del hN todas sus métricas de texto; las
+	   neutralizamos para que la píldora no cambie de tamaño entre niveles:
+	     · `line-height: 1` — clave: sin esto el enlace hereda el
+	       line-height del heading (h1/h2 = 2 baselines, h3–h6 = 1), lo que
+	       estiraba la altura de la píldora según el título. Fijo en 1, la
+	       altura = font-size + padding propios, constante.
+	     · `letter-spacing: normal` — anula el tracking negativo de los hN.
+	     · `font-weight`/`font-size`/`font-family` — propios, no del heading.
+	   (text-transform ya no hace falta — los headings del cuerpo no usan
+	   uppercase desde el refactor del baseline grid). */
+	line-height: 1;
 	letter-spacing: normal;
 	opacity: 0;
 	transition: opacity var(--sn-dur-1);
@@ -1713,11 +1748,13 @@ canvas, iframe,
 :is(h1, h2, h3, h4, h5, h6, .mw-heading, .mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6):focus-within .mw-editsection {
 	opacity: 1;
 }
-.mw-editsection-bracket,
-.mw-editsection-divider { display: none; }
+/* Los corchetes `[ ]` y el divider `|` ya NO se emiten: SkinStellaNova
+   sobreescribe doEditSectionLinksHTML() y no genera esos spans (antes se
+   ocultaban con display:none, puro ruido en el DOM). Si por lo que fuera
+   reaparecieran, este es el sitio donde volverlos a ocultar. */
 .mw-editsection a {
 	display: inline-flex; align-items: center;
-	padding: .15rem var(--sn-s-3);
+	padding: .15rem var(--sn-s-2);
 	border: 1px solid transparent; border-radius: 999px;
 	color: var(--sn-ink-faint); text-decoration: none;
 	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);

@@ -1,87 +1,39 @@
 /* Stella Nova — fuentes auto-alojadas. Sin CDN en runtime (privacidad +
-   instalación local).
-     · Alegreya Sans — cuerpo · UI · cabeceras, pesos 300/400/500/700/900,
-       en ambas variantes normal e italic.
-     · Alegreya — citas y <poem>, variable wght 400–900, normal + italic.
+   instalación local). Familia única IBM Plex:
+     · IBM Plex Sans — cuerpo · UI · cabeceras. VARIABLE (eje wght 100–700),
+       en ambas variantes normal e italic: un solo woff2 por estilo cubre
+       todos los pesos del diseño sin interpolación falsa.
+     · IBM Plex Serif — citas y <poem> (único uso editorial). Estática:
+       no existe versión variable. Pesos 400 y 700, normal + italic.
      · IBM Plex Mono — código, normal+italic 400 y normal 600.
    Subset latin: U+0000-00FF cubre el español (no hace falta latin-ext).
-   Las woff2 viven en resources/fonts/.
+   Las woff2 viven en resources/fonts/ (fontsource v5).
 
    IMPORTANTE: cada familia debe declarar TANTO normal como italic. Si
    falta la italic, el navegador "sintetiza" una falsa (sesga la regular)
    y se ve mal. Esto le pasó en la primera migración: los <em>/<cite> del
    cuerpo quedaron con itálicas sintéticas hasta que se añadieron estas. */
 
+/* — IBM Plex Sans — variable, eje wght 100–700. El rango de peso completo
+   del diseño (300–700) sale de estos dos archivos; cualquier font-weight
+   intermedio interpola de verdad. Pesos > 700 (p.ej. 900) se recortan al
+   máximo del eje. — */
 @font-face {
-	font-family: 'Alegreya Sans';
+	font-family: 'IBM Plex Sans';
 	font-style: normal;
-	font-weight: 300;
+	font-weight: 100 700;
 	font-display: swap;
-	src: url('fonts/alegreya-sans-300.woff2') format('woff2');
+	src: url('fonts/plexsans-latin-wght-normal.woff2') format('woff2');
 }
 @font-face {
-	font-family: 'Alegreya Sans';
+	font-family: 'IBM Plex Sans';
 	font-style: italic;
-	font-weight: 300;
+	font-weight: 100 700;
 	font-display: swap;
-	src: url('fonts/alegreya-sans-300-italic.woff2') format('woff2');
+	src: url('fonts/plexsans-latin-wght-italic.woff2') format('woff2');
 }
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-400.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: italic;
-	font-weight: 400;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-400-italic.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: normal;
-	font-weight: 500;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-500.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: italic;
-	font-weight: 500;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-500-italic.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: normal;
-	font-weight: 700;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-700.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: italic;
-	font-weight: 700;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-700-italic.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: normal;
-	font-weight: 900;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-900.woff2') format('woff2');
-}
-@font-face {
-	font-family: 'Alegreya Sans';
-	font-style: italic;
-	font-weight: 900;
-	font-display: swap;
-	src: url('fonts/alegreya-sans-900-italic.woff2') format('woff2');
-}
+
+/* — IBM Plex Mono — código. — */
 @font-face {
 	font-family: 'IBM Plex Mono';
 	font-style: italic;
@@ -130,17 +82,34 @@
 	src: url('fonts/plexmono-latin-normal-600.woff2') format('woff2');
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+/* — IBM Plex Serif — citas y poemas. Estática (sin variable upstream):
+   pesos 400 y 700, cada uno normal + italic. — */
 @font-face {
-	font-family: 'Alegreya';
+	font-family: 'IBM Plex Serif';
 	font-style: normal;
-	font-weight: 400 900;
+	font-weight: 400;
 	font-display: swap;
-	src: url('fonts/alegreya-400-900.woff2') format('woff2');
+	src: url('fonts/plexserif-latin-normal-400.woff2') format('woff2');
 }
 @font-face {
-	font-family: 'Alegreya';
+	font-family: 'IBM Plex Serif';
 	font-style: italic;
-	font-weight: 400 900;
+	font-weight: 400;
 	font-display: swap;
-	src: url('fonts/alegreya-italic-400-900.woff2') format('woff2');
+	src: url('fonts/plexserif-latin-italic-400.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'IBM Plex Serif';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('fonts/plexserif-latin-normal-700.woff2') format('woff2');
+}
+@font-face {
+	font-family: 'IBM Plex Serif';
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url('fonts/plexserif-latin-italic-700.woff2') format('woff2');
 }

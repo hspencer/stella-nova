@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Componentes — Stella Nova v0.0.7</title>
+<title>Componentes — Stella Nova v0.0.8</title>
 <link rel="icon" href="assets/icons/casiopea-icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/tokens.css">
@@ -56,7 +56,7 @@
 	</g>
 </svg>
     <span class="spec-brand-name">Stella Nova</span>
-    <span class="spec-brand-ver">v0.0.7</span>
+    <span class="spec-brand-ver">v0.0.8</span>
   </a>
   <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html">Fundamentos</a><a href="components.html" aria-current="page">Componentes</a><a href="layout.html">Layout</a></nav>
   <div class="spec-controls">
@@ -78,7 +78,7 @@
 
 <section class="comp">
   <h2>Colofón tipográfico</h2>
-  <p class="meta">Tres familias variables auto-alojadas en
+  <p class="meta">Familia única IBM Plex, auto-alojada en
   <code>assets/fonts/</code> (woff2, subsetting latin / latin-ext vía
   <code>unicode-range</code>). Sin CDN, sin Google Fonts.</p>
   <div class="demo">
@@ -86,7 +86,7 @@
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-text);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>Alegreya Sans</strong> · humanista, pesos 300/400/500/700/900<br>
+          <strong>IBM Plex Sans</strong> · variable, eje wght 100–700<br>
           Token <code>--sn-font-text</code> · cuerpo, UI y TODAS las cabeceras<br>
           (<code>--sn-font-display</code> es alias de <code>--sn-font-text</code>:
           la doctrina del skin es "todo sans en cabeceras")
@@ -95,7 +95,7 @@
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-serif);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>Alegreya</strong> · serif editorial, variable wght 400–900<br>
+          <strong>IBM Plex Serif</strong> · serif editorial, pesos 400 / 700<br>
           Token <code>--sn-font-serif</code> · único uso editorial<br>
           Uso: <code>&lt;blockquote&gt;</code>, <code>&lt;poem&gt;</code>
         </div>
@@ -115,7 +115,7 @@
 <section class="comp">
   <h2>Cabeceras</h2>
   <p class="meta">Todas las cabeceras (H1–H6) en <code>--sn-font-text</code>
-  — Alegreya Sans, familia única. Sus alturas de línea son múltiplos enteros
+  — IBM Plex Sans, familia única. Sus alturas de línea son múltiplos enteros
   de <code>--sn-baseline</code> (la interlínea del cuerpo): H1/H2 ocupan
   2 baselines, H3–H6 uno. Escala: <code>--sn-fs-display</code>
   (1.5–2.0 rem) → <code>--sn-fs-sm</code> (0.82–0.90 rem). El acento de
@@ -298,8 +298,8 @@ Filete horizontal: cuatro guiones al inicio: ----</pre>
 <section class="comp">
   <h2>Cita y poema</h2>
   <p class="meta"><code>&lt;blockquote&gt;</code> y <code>&lt;poem&gt;</code>
-  (extensión Poem) van en serif <code>--sn-font-serif</code>: Alegreya
-  variable, el único uso editorial del skin. El poema lleva
+  (extensión Poem) van en serif <code>--sn-font-serif</code>: IBM Plex
+  Serif, el único uso editorial del skin. El poema lleva
   <code>white-space: pre-wrap</code>, lo que conserva los espacios del
   wikitexto como materia significante (no son adorno: son la
   espacialidad del verso). Fragmento de la <em>Aventura de Amereida</em>
@@ -741,7 +741,7 @@ Bloque angosto (un tercio)
 <footer class="spec-foot">
   <p>
     Espécimen generado por <code>scripts/build-specimen.py</code> ·
-    Stella Nova v0.0.7 ·
+    Stella Nova v0.0.8 ·
     <a href="notes.md">notes.md</a> (notas del taller de diseño) ·
     <a href="https://wiki.ead.pucv.cl">wiki.ead.pucv.cl</a>
   </p>

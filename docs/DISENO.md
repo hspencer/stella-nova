@@ -42,8 +42,8 @@ ver los cambios al instante:
 
 ## Tipografía
 
-**Alegreya Sans** (cuerpo · UI · todas las cabeceras h1–h6, pesos
-discretos 300/400/500/700/900) · **Alegreya** (variable wght 400–900,
+**IBM Plex Sans** (cuerpo · UI · todas las cabeceras h1–h6; **variable**,
+eje wght 100–700) · **IBM Plex Serif** (estática, pesos 400/700,
 único uso editorial: citas y `<poem>`) · **IBM Plex Mono** (código).
 
 Todas auto-alojadas (sin CDN en runtime): `@font-face` en

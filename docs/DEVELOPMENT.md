@@ -100,16 +100,21 @@ Decidir herramienta (pendiente del PLAN del proyecto).
 - Remoto: **GitHub `eadpucv/stella-nova`** (`origin` configurado, **sin push**
   aún — empujar cuando M1+ esté presentable).
 - Testing/CI: herramienta por definir (M7).
-- **Tipografía** (rev. 2026-05-25): **Alegreya Sans** (cuerpo · UI · todas
-  las cabeceras h1–h6, pesos discretos 300/400/500/700/900) + **Alegreya**
-  (variable wght 400–900, único uso editorial: citas y `<poem>`) + **IBM
-  Plex Mono** (código). Auto-alojadas en `resources/fonts/` (sin CDN en
-  runtime). Subset latin: U+0000-00FF cubre el español sin necesidad de
-  latin-ext. `--sn-font-display` queda como alias de `--sn-font-text`
-  para que la doctrina "todo sans en cabeceras" se exprese en un solo
-  token (reintroducir un display distinto = cambiar la línea del alias).
-  Historial: Work Sans + Newsreader → Anthropic Sans + Anthropic Serif →
-  Alegreya Sans + Alegreya (todos el 2026-05-25 en la rama `fonts`).
+- **Tipografía** (rev. 2026-05-29): familia única **IBM Plex**. **IBM Plex
+  Sans** (cuerpo · UI · todas las cabeceras h1–h6) — **variable**, un único
+  woff2 por estilo (normal/italic) cubre el eje wght 100–700, así cualquier
+  peso del diseño interpola de verdad en vez de cargar 5 archivos discretos.
+  **IBM Plex Serif** (estática, pesos 400/700 normal+italic; único uso
+  editorial: citas y `<poem>`) + **IBM Plex Mono** (código). Auto-alojadas
+  en `resources/fonts/` (sin CDN en runtime). Subset latin: U+0000-00FF
+  cubre el español sin necesidad de latin-ext. `--sn-font-display` queda
+  como alias de `--sn-font-text` para que la doctrina "todo sans en
+  cabeceras" se exprese en un solo token (reintroducir un display distinto
+  = cambiar la línea del alias). IBM Plex Sans tope en 700: pesos > 700
+  (un único `font-weight: 800` en un badge de Echo) se recortan al máximo
+  del eje. Historial: Work Sans + Newsreader → Anthropic Sans + Anthropic
+  Serif → Alegreya Sans + Alegreya (2026-05-25, rama `fonts`) → IBM Plex
+  Sans (variable) + IBM Plex Serif (2026-05-29).
 - **Sin `text-transform: uppercase` en cabeceras del cuerpo** (rev.
   2026-05-25): h3 (subsección en nova) y h5/h6 (labels secundarios)
   perdieron el uppercase; ahora la jerarquía visual la hacen tamaño,

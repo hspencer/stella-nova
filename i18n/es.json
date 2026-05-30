@@ -20,6 +20,7 @@
 	"stellanova-edit": "Editar",
 	"stellanova-form-edit": "Editar con formulario",
 	"stellanova-edit-code": "Editar código",
+	"stellanova-footer-lastedit": "Esta página se editó por última vez el $1 a las $2 por $3.",
 	"stellanova-prefs": "Preferencias de lectura",
 	"stellanova-close": "Cerrar",
 	"stellanova-reset": "Restablecer",

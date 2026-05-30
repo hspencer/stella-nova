@@ -13,7 +13,10 @@
 
 namespace MediaWiki\Skins\StellaNova;
 
+use MediaWiki\Html\Html;
+use MediaWiki\Language\Language;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Revision\RevisionRecord;
 use SkinMustache;
 use Title;
 
@@ -239,6 +242,43 @@ class SkinStellaNova extends SkinMustache {
 		}
 		$data['sn-has-pageviews'] = $data['sn-pageviews'] !== [];
 
+		// — Pie: línea "Esta página se editó por última vez el … a las … por
+		// <Usuario>". Reúne la fecha/hora (formateadas como el core, en el
+		// idioma del usuario) con el AUTOR de la revisión mostrada (oldid si
+		// lo hay; si no, la actual). El autor se resuelve con FOR_PUBLIC: si
+		// está suprimido, se omite el "por" y se cae al lastmod estándar.
+		// Solo para páginas existentes con revisión datada (las especiales no
+		// tienen, y entonces el pie simplemente no muestra la línea).
+		$data['sn-lastedit'] = null;
+		if ( $title && $title->canExist() ) {
+			$revLookup = MediaWikiServices::getInstance()->getRevisionLookup();
+			$revId = $out->getRevisionId();
+			$rev = $revId
+				? $revLookup->getRevisionById( $revId )
+				: $revLookup->getRevisionByTitle( $title );
+			if ( $rev && $rev->getTimestamp() ) {
+				$lang = $this->getLanguage();
+				$ts = $rev->getTimestamp();
+				$d = $lang->userDate( $ts, $user );
+				$t = $lang->userTime( $ts, $user );
+				$author = $rev->getUser( RevisionRecord::FOR_PUBLIC );
+				if ( $author ) {
+					$name = $author->getName();
+					$userPage = Title::makeTitleSafe( NS_USER, $name );
+					$userHtml = $userPage
+						? Html::element( 'a',
+							[ 'href' => $userPage->getLocalURL(), 'class' => 'sn-foot-user' ],
+							$name )
+						: Html::element( 'span', [ 'class' => 'sn-foot-user' ], $name );
+					$html = $this->msg( 'stellanova-footer-lastedit', $d, $t )
+						->rawParams( $userHtml )->escaped();
+				} else {
+					$html = $this->msg( 'lastmodifiedat', $d, $t )->escaped();
+				}
+				$data['sn-lastedit'] = [ 'html' => $html ];
+			}
+		}
+
 		// — PreferencesPanel: estado inicial conocido server-side —
 		//
 		// Para registrados el server tiene la última palabra: leemos las 5
@@ -345,5 +385,33 @@ class SkinStellaNova extends SkinMustache {
 		} catch ( \Throwable $e ) {
 			return $blank;
 		}
+	}
+
+	/**
+	 * Editar-sección SIN los corchetes de adorno. Core (Skin::doEditSectionLinksHTML,
+	 * marcado @stable to override by skins) envuelve los enlaces entre
+	 * `<span class="mw-editsection-bracket">[</span>` … `]` y los separa con un
+	 * `<span class="mw-editsection-divider">` (pipe). El skin ocultaba AMBOS por
+	 * CSS (display:none) — eran ruido en el DOM. Aquí los suprimimos en origen:
+	 * emitimos solo el contenedor `.mw-editsection` con los `<a>` de cada enlace.
+	 * El espaciado entre enlaces (cuando hay más de uno, p. ej. editar + editar
+	 * código) lo da el `gap` flex de `.mw-editsection` en stella-nova.css, así
+	 * que no hace falta divider. El resto del contrato (clase contenedora, los
+	 * enlaces) se mantiene intacto.
+	 *
+	 * @param array $links
+	 * @param Language $lang
+	 * @return string
+	 */
+	protected function doEditSectionLinksHTML( array $links, Language $lang ) {
+		$linksHtml = [];
+		foreach ( $links as $linkDetails ) {
+			$linksHtml[] = $linkDetails['html'];
+		}
+		return Html::rawElement(
+			'span',
+			[ 'class' => 'mw-editsection' ],
+			implode( '', $linksHtml )
+		);
 	}
 }

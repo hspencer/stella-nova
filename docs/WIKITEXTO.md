@@ -235,7 +235,7 @@ cuando reconoce el patrón:
   (fondo paper, bordes hairline, headers en sunk). No hace falta hacer
   nada.
 - **`<blockquote>`** y **`<poem>`** (extensión Poem): la única familia
-  serif del skin (Alegreya) se aplica automáticamente. No usar
+  serif del skin (IBM Plex Serif) se aplica automáticamente. No usar
   `<blockquote>` para "destacar texto general" — está reservado para
   citas reales.
 - **Enlaces externos:** ícono Feather "external-link" al final como

@@ -2,8 +2,9 @@
  *
  * Metáfora rectora: "página de papel". Una hoja cálida flota sobre un campo
  * gris ahuesado (el atelier de la e[ad]); un único punto de luz carmín es la
- * nova. Editorial, sobrio, cálido. Alegreya Sans (cuerpo · UI · cabeceras) ·
- * Alegreya (citas, poemas — único uso editorial) · IBM Plex Mono (código).
+ * nova. Editorial, sobrio, cálido. IBM Plex Sans (cuerpo · UI · cabeceras,
+ * variable) · IBM Plex Serif (citas, poemas — único uso editorial) ·
+ * IBM Plex Mono (código).
  * Ritmo vertical sobre la interlínea del cuerpo: la unidad es
  * `--sn-baseline`, todo line-height/margen vertical de bloque es un múltiplo.
  *
@@ -100,15 +101,16 @@
 	/* Velo de diálogos modales */
 	--sn-scrim:             color-mix(in oklab, var(--sn-ink) 45%, transparent);
 
-	/* — Tipografía — Alegreya Sans (cuerpo, UI y TODAS las cabeceras; pesos
-	   300/400/500/700/900), Alegreya (variable wght 400–900, único uso
+	/* — Tipografía — familia única IBM Plex. IBM Plex Sans (cuerpo, UI y
+	   TODAS las cabeceras; VARIABLE, eje wght 100–700: cualquier peso del
+	   diseño interpola de verdad), IBM Plex Serif (estática, único uso
 	   editorial: citas y <poem>), IBM Plex Mono (código). Auto-alojadas
 	   (fonts.css). `--sn-font-display` queda como alias de `--sn-font-text`:
 	   la doctrina del skin es "todo sans en cabeceras"; el alias permite
 	   reintroducir un display distinto tocando solo el token. */
-	--sn-font-text: 'Alegreya Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--sn-font-text: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--sn-font-display: var(--sn-font-text);
-	--sn-font-serif: 'Alegreya', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
+	--sn-font-serif: 'IBM Plex Serif', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
 	--sn-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
 
 	/* Escala fluida sobria (sin titulares exagerados). --sn-font-scale lo

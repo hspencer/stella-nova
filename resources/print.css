@@ -2,7 +2,7 @@
    sombra, tinta sobre blanco, enlaces legibles. */
 .sn-header, .sn-skip, .sn-fs-bar,
 .sn-prefs, .sn-prefs-scrim, .sn-toc,
-.sn-footer-tools, .sn-foot-icons, .sn-iconsprite, .noprint {
+.sn-foot-tools, .sn-foot-icons, .sn-iconsprite, .noprint {
 	display: none !important;
 }
 body { background: #fff !important; color: #000; }
@@ -16,6 +16,9 @@ body::before { display: none !important; }
 .sn-body > :is(p, ul, ol, dl, blockquote, h2, h3, h4, h5, h6, pre) {
 	max-width: none !important;
 }
+/* En pantalla los párrafos corridos van al 80%; impresos, ancho completo. */
+.sn-body > .mw-parser-output > p,
+.sn-body > .mw-parser-output > section > p { width: auto !important; }
 .sn-footer { border-top: 1px solid #999; background: #fff !important; }
 .sn-footer-inner, .sn-footer-managed { padding: .5rem 0; }
 a { color: #000; text-decoration: underline; }

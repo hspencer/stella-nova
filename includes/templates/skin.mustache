@@ -332,44 +332,41 @@
 		</div>
 	</div>
 
-	{{!	Pie — replica la LÓGICA del pie de producción (wiki.ead.pucv.cl):
-		  1. Bloque institucional gestionado (página Stella-Nova:Pie) — el
-		     "espacio" propio del skin, arriba y destacado.
-		  2. Última modificación + licencia/atribución (data-info).
-		  3. Enlaces de sitio: privacidad · acerca · descargos (data-places).
-		  4. "Powered by" MediaWiki / Semantic MediaWiki (data-icons).
-		  5. "Herramientas y más" como sección DESPLEGABLE (igual que
-		     producción, que la trae colapsable) — el portlet tb.
-		Obligaciones core (2-4) SIEMPRE presentes. La navegación del sitio
-		(Escuela/Wiki/Navegación) vive en su menú del header, no aquí. }}
+	{{!	Pie — dos columnas (2fr 1fr):
+		COLUMNA ANCHA (izq):
+		  1. Última edición: "Esta página se editó por última vez el … a las
+		     … por <Usuario>" (sn-lastedit, derivado en PHP).
+		  2. Enlaces de "Herramientas y más" (portlet tb) SIN título: inline,
+		     en rojo, nav-pill al hover.
+		COLUMNA ANGOSTA (der):
+		  3. Enlaces de sitio inline: privacidad · acerca · descargos
+		     (data-places).
+		  4. Bloque institucional editable (Stella-Nova:Pie), debajo.
+		La obligación core de "última edición" la cumple sn-lastedit; los
+		enlaces de sitio (data-places) siempre presentes. Los logos
+		"powered-by" (data-icons) se omiten a propósito. La navegación del
+		sitio (Escuela/Wiki/Navegación) vive en su menú del header, no aquí. }}
 	<footer class="sn-footer" role="contentinfo">
 		<div class="sn-footer-inner">
-			{{!	Col 1 — bloque institucional gestionado (Stella-Nova:Pie). }}
-			{{#sn-chrome}}{{#footer}}{{#is-published}}
-			<section class="sn-footer-col sn-footer-managed" aria-label="{{msg-sitetitle}}">{{{html}}}</section>
-			{{/is-published}}{{/footer}}{{/sn-chrome}}
+			{{!	Columna ancha — última edición + herramientas inline. }}
+			<div class="sn-footer-col sn-footer-main">
+				{{#sn-lastedit}}<p class="sn-foot-lastedit">{{{html}}}</p>{{/sn-lastedit}}
 
-			{{!	Col 2 — última modificación + licencia (data-info) y los
-				enlaces de sitio del namespace Casiopea: privacidad, acerca,
-				descargos (data-places). Los logos enlazados (data-icons /
-				powered-by) se omiten a propósito. }}
-			<div class="sn-footer-col sn-footer-legal" {{{html-user-language-attributes}}}>
-				{{#data-footer}}
-				{{#data-info}}<ul class="sn-foot-info" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-info}}
-				{{#data-places}}<ul class="sn-foot-places" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-places}}
-				{{/data-footer}}
+				{{#sn-toolbox}}{{^is-empty}}
+				<nav class="sn-foot-tools" aria-label="{{label}}">
+					<ul class="sn-foot-toollist">{{{html-items}}}</ul>
+				</nav>
+				{{/is-empty}}{{/sn-toolbox}}
 			</div>
 
-			{{!	Col 3 — "Herramientas y más" (portlet tb) con ícono. }}
-			{{#sn-toolbox}}{{^is-empty}}
-			<nav class="sn-footer-col sn-footer-tools" aria-label="{{label}}">
-				<h2 class="sn-footer-h">
-					<svg class="sn-i" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"><use href="#sn-i-tool"/></svg>
-					{{#label}}{{.}}{{/label}}{{^label}}{{msg-stellanova-managed-nav}}{{/label}}
-				</h2>
-				<ul class="sn-footer-toollist">{{{html-items}}}</ul>
-			</nav>
-			{{/is-empty}}{{/sn-toolbox}}
+			{{!	Columna angosta — enlaces de sitio inline + bloque editable. }}
+			<div class="sn-footer-col sn-footer-side" {{{html-user-language-attributes}}}>
+				{{#data-footer}}{{#data-places}}<ul class="sn-foot-places" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-places}}{{/data-footer}}
+
+				{{#sn-chrome}}{{#footer}}{{#is-published}}
+				<section class="sn-footer-managed" aria-label="{{msg-sitetitle}}">{{{html}}}</section>
+				{{/is-published}}{{/footer}}{{/sn-chrome}}
+			</div>
 		</div>
 	</footer>
 </div>

@@ -37,7 +37,7 @@ ASSETS    = OUT_DIR / "assets"
 # ── token parser ───────────────────────────────────────────────────────────
 # Cabecera de sección: comentario que empieza con `/* — ` y captura el título
 # hasta el primer separador (—, (, :, , , o cierre */). Tolera headers
-# multilínea como `/* — Tipografía — Alegreya Sans (cuerpo/UI)... */`.
+# multilínea como `/* — Tipografía — IBM Plex Sans (cuerpo/UI)... */`.
 SECTION_RE = re.compile(r"/\*\s*—\s*([^—(:,\n]+?)\s*(?:[—(:,]|\*/)")
 # Captura --sn-<nombre>: <valor>;  (valor puede ser multilínea), nota opcional /* ... */
 TOKEN_RE = re.compile(
@@ -339,7 +339,7 @@ def body_components():
 
 <section class="comp">
   <h2>Colofón tipográfico</h2>
-  <p class="meta">Tres familias variables auto-alojadas en
+  <p class="meta">Familia única IBM Plex, auto-alojada en
   <code>assets/fonts/</code> (woff2, subsetting latin / latin-ext vía
   <code>unicode-range</code>). Sin CDN, sin Google Fonts.</p>
   <div class="demo">
@@ -347,7 +347,7 @@ def body_components():
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-text);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>Alegreya Sans</strong> · humanista, pesos 300/400/500/700/900<br>
+          <strong>IBM Plex Sans</strong> · variable, eje wght 100–700<br>
           Token <code>--sn-font-text</code> · cuerpo, UI y TODAS las cabeceras<br>
           (<code>--sn-font-display</code> es alias de <code>--sn-font-text</code>:
           la doctrina del skin es "todo sans en cabeceras")
@@ -356,7 +356,7 @@ def body_components():
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-serif);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>Alegreya</strong> · serif editorial, variable wght 400–900<br>
+          <strong>IBM Plex Serif</strong> · serif editorial, pesos 400 / 700<br>
           Token <code>--sn-font-serif</code> · único uso editorial<br>
           Uso: <code>&lt;blockquote&gt;</code>, <code>&lt;poem&gt;</code>
         </div>
@@ -376,7 +376,7 @@ def body_components():
 <section class="comp">
   <h2>Cabeceras</h2>
   <p class="meta">Todas las cabeceras (H1–H6) en <code>--sn-font-text</code>
-  — Alegreya Sans, familia única. Sus alturas de línea son múltiplos enteros
+  — IBM Plex Sans, familia única. Sus alturas de línea son múltiplos enteros
   de <code>--sn-baseline</code> (la interlínea del cuerpo): H1/H2 ocupan
   2 baselines, H3–H6 uno. Escala: <code>--sn-fs-display</code>
   (1.5–2.0 rem) → <code>--sn-fs-sm</code> (0.82–0.90 rem). El acento de
@@ -559,8 +559,8 @@ Filete horizontal: cuatro guiones al inicio: ----</pre>
 <section class="comp">
   <h2>Cita y poema</h2>
   <p class="meta"><code>&lt;blockquote&gt;</code> y <code>&lt;poem&gt;</code>
-  (extensión Poem) van en serif <code>--sn-font-serif</code>: Alegreya
-  variable, el único uso editorial del skin. El poema lleva
+  (extensión Poem) van en serif <code>--sn-font-serif</code>: IBM Plex
+  Serif, el único uso editorial del skin. El poema lleva
   <code>white-space: pre-wrap</code>, lo que conserva los espacios del
   wikitexto como materia significante (no son adorno: son la
   espacialidad del verso). Fragmento de la <em>Aventura de Amereida</em>

@@ -5,7 +5,7 @@
 -- ALCANCE. Allium describe comportamiento observable, no presentación.
 -- Por eso este spec NO modela (y deliberadamente lo deja a ARCHITECTURE.md /
 -- tokens.css / CSS):
---   · tipografía (Alegreya Sans + Alegreya + IBM Plex Mono): cargar vs.
+--   · tipografía (IBM Plex Sans + IBM Plex Serif + IBM Plex Mono): cargar vs.
 --     clonar es decisión de empaquetado,
 --   · feather icons, la metáfora "página de papel", fondo gris ahuesado,
 --   · tokens semánticos en archivos separados, layout/posiciones exactas,
