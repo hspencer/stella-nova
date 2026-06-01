@@ -16,7 +16,10 @@
 
 namespace MediaWiki\Skins\StellaNova;
 
+use ExtensionRegistry;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\ResourceLoader\ResourceLoader;
+use MediaWiki\ResourceLoader\SkinModule;
 use OutputPage;
 use ParserOutput;
 use Skin;
@@ -32,6 +35,58 @@ class Hooks {
 		'stellanova-theme' => '',
 		'stellanova-font'  => '',
 	];
+
+	/**
+	 * Registra los módulos ResourceLoader del skin con la ruta remota
+	 * calculada del DIRECTORIO REAL donde está instalado el skin, no de un
+	 * nombre fijo. Así "basta clonar" en cualquier carpeta (StellaNova,
+	 * stella-nova, lo que sea) y las URLs de las fuentes (y demás assets del
+	 * módulo) resuelven solas: $wgStylePath + '/' + <carpeta-real>/resources.
+	 *
+	 * Por qué aquí y no en skin.json: `remoteSkinPath` en skin.json es un
+	 * literal estático ("StellaNova/resources"); si la carpeta no se llama
+	 * así, los woff2 dan 404 (MediaWiki no deriva la ruta sola — confirmado
+	 * en ResourceLoader\FileModule::extractBasePaths). Calcularla en PHP es
+	 * la única forma robusta al nombre de carpeta.
+	 *
+	 * OJO: NO usar __DIR__ — resuelve symlinks, así que en una instalación
+	 * con la carpeta enlazada (p.ej. skins/StellaNova → repo stella-nova)
+	 * devolvería el nombre real del repo y las URLs 404. La ruta REGISTRADA
+	 * por wfLoadSkin (ExtensionRegistry) preserva el nombre tal como el wiki
+	 * sirve la carpeta — sirve tanto para el symlink de dev como para el
+	 * clon directo en producción.
+	 *
+	 * @param ResourceLoader $rl
+	 */
+	public static function onResourceLoaderRegisterModules( ResourceLoader $rl ): void {
+		$jsonPath = ExtensionRegistry::getInstance()->getAllThings()['StellaNova']['path'] ?? null;
+		// Fallback: si no se halla por nombre, __DIR__ (correcto en clon directo).
+		$skinDir = $jsonPath !== null ? dirname( $jsonPath ) : dirname( __DIR__ );
+		$paths = [
+			'localBasePath'  => $skinDir . '/resources',
+			'remoteSkinPath' => basename( $skinDir ) . '/resources',
+		];
+		$rl->register( 'skins.stellanova.styles', $paths + [
+			'class'    => SkinModule::class,
+			'features' => [
+				'normalize'      => true,
+				'elements'       => true,
+				'content-links'  => true,
+				'content-tables' => true,
+				'toc'            => true,
+			],
+			'styles' => [
+				'fonts.css'       => [],
+				'tokens.css'      => [],
+				'stella-nova.css' => [],
+				'print.css'       => [ 'media' => 'print' ],
+			],
+		] );
+		$rl->register( 'skins.stellanova.scripts', $paths + [
+			'scripts'      => [ 'skin.js' ],
+			'dependencies' => [ 'mediawiki.api' ],
+		] );
+	}
 
 	/**
 	 * Registra el id del doble-guión-bajo. Que el id esté registrado hace

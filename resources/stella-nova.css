@@ -967,6 +967,36 @@ canvas, iframe,
 	border-radius: 999px; }
 .catlinks.catlinks-allhidden { display: none; }
 
+/* — Enlace de patrullaje nativo ("Marcar esta página como verificada") —
+   El core lo renderiza como
+     <div class="patrollink"><a><button class="cdx-button
+     cdx-button--action-progressive">…</button></a></div>   (Article.php).
+   El skin lo re-viste como nav-pill (mismo lenguaje que las categorías),
+   neutralizando el botón Codex primario. Scoped a `.patrollink`: NO afecta
+   a los demás cdx-button del wiki (VE, InputBox, Thanks, etc.). La mayor
+   especificidad (`.patrollink button.cdx-button`) le gana al CSS de Codex
+   sin necesidad de !important. */
+.patrollink { margin-top: var(--sn-s-6); }
+.patrollink a { text-decoration: none; }
+.patrollink button.cdx-button {
+	display: inline-flex; align-items: center; gap: var(--sn-s-1);
+	min-height: 0;
+	padding: .3rem .85rem;
+	font: inherit; font-size: var(--sn-fs-sm); font-weight: 500;
+	color: var(--sn-ink);
+	background: var(--sn-sunk);
+	border: 1px solid var(--sn-hairline);
+	border-radius: 999px;
+	box-shadow: none; cursor: pointer;
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);
+}
+.patrollink a:hover button.cdx-button,
+.patrollink a:focus-visible button.cdx-button {
+	background: var(--sn-paper);
+	border-color: var(--sn-nova);
+	color: var(--sn-nova);
+}
+
 /* ──────────────── Índice (ToC NATIVO, en su sitio) ────────────────
    No se relocaliza ni se duplica: MediaWiki lo inyecta donde marca
    __TOC__ (o en su posición automática) y el skin solo lo VISTE para

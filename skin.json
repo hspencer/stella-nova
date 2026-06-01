@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "StellaNova",
 	"namemsg": "skinname-stellanova",
-	"version": "0.0.9",
+	"version": "0.1.0",
 	"author": [
 		"Herbert Spencer"
 	],
@@ -87,40 +87,10 @@
 		"OutputPageParserOutput": "MediaWiki\\Skins\\StellaNova\\Hooks::onOutputPageParserOutput",
 		"GetPreferences": "MediaWiki\\Skins\\StellaNova\\Hooks::onGetPreferences",
 		"UserGetDefaultOptions": "MediaWiki\\Skins\\StellaNova\\Hooks::onUserGetDefaultOptions",
-		"BeforePageDisplay": "MediaWiki\\Skins\\StellaNova\\Hooks::onBeforePageDisplay"
+		"BeforePageDisplay": "MediaWiki\\Skins\\StellaNova\\Hooks::onBeforePageDisplay",
+		"ResourceLoaderRegisterModules": "MediaWiki\\Skins\\StellaNova\\Hooks::onResourceLoaderRegisterModules"
 	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "resources",
-		"remoteSkinPath": "StellaNova/resources"
-	},
-	"ResourceModules": {
-		"skins.stellanova.styles": {
-			"class": "MediaWiki\\ResourceLoader\\SkinModule",
-			"features": {
-				"normalize": true,
-				"elements": true,
-				"content-links": true,
-				"content-tables": true,
-				"toc": true
-			},
-			"styles": {
-				"fonts.css": {},
-				"tokens.css": {},
-				"stella-nova.css": {},
-				"print.css": {
-					"media": "print"
-				}
-			}
-		},
-		"skins.stellanova.scripts": {
-			"scripts": [
-				"skin.js"
-			],
-			"dependencies": [
-				"mediawiki.api"
-			]
-		}
-	},
+	"_comment_ResourceModules": "skins.stellanova.styles y skins.stellanova.scripts se registran en PHP (Hooks::onResourceLoaderRegisterModules) con remoteSkinPath calculado de la carpeta REAL del skin, para que las URLs de las fuentes resuelvan sin importar cómo se llame el directorio al clonar.",
 	"ResourceModuleSkinStyles": {
 		"stellanova": {
 			"localBasePath": "resources",
