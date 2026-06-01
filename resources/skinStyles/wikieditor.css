@@ -164,7 +164,7 @@ form#editform {
    inspector, pero tematizables claro/oscuro). */
 .wikiEditor-ui-toolbar .page-characters div span {
 	display: inline-flex; align-items: center; justify-content: center;
-	height: 1.682em;
+	height: 2rem;
 	margin-left: .5ex; margin-top: .5ex;
 	font-size: 1em;
 	border-color: var(--sn-hairline);

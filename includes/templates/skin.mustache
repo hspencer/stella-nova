@@ -278,17 +278,35 @@
 								<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-x"/></svg>
 							</button>
 						</header>
-						<ul class="sn-modal-body">{{{html-items}}}</ul>
+						<div class="sn-modal-body">
+							<ul class="sn-menu-items">{{{html-items}}}</ul>
+							{{!	Preferencias de lectura — antes panel aparte; ahora
+								apéndice del menú de usuario tras un separador: sólo
+								Tema (claro/auto/oscuro) y Tamaño de letra. }}
+							<hr class="sn-menu-sep">
+							<div class="sn-menu-prefs">
+								<fieldset class="sn-pref">
+									<legend>{{msg-stellanova-pref-theme}}</legend>
+									<div class="sn-seg sn-seg-icon" role="radiogroup" data-sn-pref="theme" data-sn-os="{{sn-prefs.os-scheme}}">
+										<button type="button" data-v="light" title="{{msg-stellanova-theme-light}}" aria-label="{{msg-stellanova-theme-light}}"><svg class="sn-i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><use href="#sn-i-sun"/></svg></button>
+										<button type="button" data-v="auto" title="{{msg-stellanova-auto}}" aria-label="{{msg-stellanova-auto}}"><svg class="sn-i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><use href="#sn-i-clock"/></svg></button>
+										<button type="button" data-v="dark" title="{{msg-stellanova-theme-dark}}" aria-label="{{msg-stellanova-theme-dark}}"><svg class="sn-i" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"><use href="#sn-i-moon"/></svg></button>
+									</div>
+								</fieldset>
+								<fieldset class="sn-pref">
+									<legend>{{msg-stellanova-pref-font}}</legend>
+									<div class="sn-seg sn-seg-sz" role="radiogroup" data-sn-pref="font">
+										<button type="button" data-v="small" title="{{msg-stellanova-sz-s}}" aria-label="{{msg-stellanova-sz-s}}"><span aria-hidden="true">S</span></button>
+										<button type="button" data-v="medium" title="{{msg-stellanova-sz-m}}" aria-label="{{msg-stellanova-sz-m}}"><span aria-hidden="true">M</span></button>
+										<button type="button" data-v="large" title="{{msg-stellanova-sz-l}}" aria-label="{{msg-stellanova-sz-l}}"><span aria-hidden="true">L</span></button>
+									</div>
+								</fieldset>
+							</div>
+						</div>
 					</div>
 				</div>
 				{{/data-user-menu}}
 				{{/data-portlets}}
-
-				<button type="button" class="sn-prefs-trigger" aria-haspopup="dialog"
-					aria-controls="sn-prefs" data-sn-prefs-open
-					aria-label="{{msg-stellanova-prefs}}" title="{{msg-stellanova-prefs}}">
-					<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-sliders"/></svg>
-				</button>
 			</div>
 		</div>
 	</header>
@@ -296,14 +314,28 @@
 	<div class="sn-shell">
 		<div class="sn-paper-wrap">
 			<article class="sn-paper mw-body">
+				{{!	Aviso gestionado (Stella-Nova:Aviso): lo PRIMERO dentro de la
+					hoja, full-bleed a los bordes del papel (niega el padding con
+					los mismos --sn-paper-px/py que usa .full-width), fondo
+					--sn-warn, con botón de cerrar. El pre-pintado (Hooks) ya fijó
+					data-sn-notice-hide en <html> si esta versión ya se descartó,
+					así que no parpadea. data-sn-notice = id de revisión: al editar
+					el aviso, reaparece aunque se hubiera cerrado antes. }}
+				{{#sn-chrome}}{{#notice}}{{#is-published}}
+				<aside class="sn-notice" role="note" data-sn-notice="{{version}}">
+					<div class="sn-notice-body">{{{html}}}</div>
+					<button type="button" class="sn-notice-x" data-sn-notice-close
+						aria-label="{{msg-stellanova-close}}" title="{{msg-stellanova-close}}">
+						<svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-x"/></svg>
+					</button>
+				</aside>
+				{{/is-published}}{{/notice}}{{/sn-chrome}}
+
 				<div class="sn-indicators mw-indicators">
 					{{#array-indicators}}<div id="{{id}}" class="mw-indicator">{{{html}}}</div>{{/array-indicators}}
 				</div>
 
 				{{{html-site-notice}}}
-				{{#sn-chrome}}{{#notice}}{{#is-published}}
-				<aside class="sn-notice" role="note">{{{html}}}</aside>
-				{{/is-published}}{{/notice}}{{/sn-chrome}}
 
 				{{{html-title-heading}}}
 
@@ -348,7 +380,7 @@
 		sitio (Escuela/Wiki/Navegación) vive en su menú del header, no aquí. }}
 	<footer class="sn-footer" role="contentinfo">
 		<div class="sn-footer-inner">
-			{{!	Columna ancha — última edición + herramientas inline. }}
+			{{!	Columna ancha — última edición + herramientas inline + enlaces de sitio. }}
 			<div class="sn-footer-col sn-footer-main">
 				{{#sn-lastedit}}<p class="sn-foot-lastedit">{{{html}}}</p>{{/sn-lastedit}}
 
@@ -357,12 +389,12 @@
 					<ul class="sn-foot-toollist">{{{html-items}}}</ul>
 				</nav>
 				{{/is-empty}}{{/sn-toolbox}}
+
+				{{#data-footer}}{{#data-places}}<ul class="sn-foot-places" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-places}}{{/data-footer}}
 			</div>
 
-			{{!	Columna angosta — enlaces de sitio inline + bloque editable. }}
+			{{!	Columna angosta — bloque editable (Stella-Nova:Pie). }}
 			<div class="sn-footer-col sn-footer-side" {{{html-user-language-attributes}}}>
-				{{#data-footer}}{{#data-places}}<ul class="sn-foot-places" id="{{id}}">{{#array-items}}<li id="{{id}}">{{{html}}}</li>{{/array-items}}</ul>{{/data-places}}{{/data-footer}}
-
 				{{#sn-chrome}}{{#footer}}{{#is-published}}
 				<section class="sn-footer-managed" aria-label="{{msg-sitetitle}}">{{{html}}}</section>
 				{{/is-published}}{{/footer}}{{/sn-chrome}}
@@ -372,68 +404,6 @@
 </div>
 
 {{/is-sn-fullscreen}}
-
-{{!	PreferencesPanel — diálogo. Expone las 5 preferencias resueltas + las
-	señales del SO. provides SavePreferences / ResetPreferences. JS lo hace
-	modal accesible; sin JS sigue siendo un formulario legible.
-	Se emite FUERA de los condicionales para que también esté disponible
-	desde el modal único de pantalla completa (data-sn-prefs-open en la
-	sección "Preferencias"). }}
-<div class="sn-prefs-scrim" data-sn-prefs-scrim hidden></div>
-<aside class="sn-prefs" id="sn-prefs" role="dialog" aria-modal="true"
-	aria-labelledby="sn-prefs-title" hidden>
-	<form class="sn-prefs-form" data-sn-prefs-form>
-		<header class="sn-prefs-head">
-			<h2 id="sn-prefs-title">{{msg-stellanova-prefs}}</h2>
-			<button type="button" class="sn-prefs-x" data-sn-prefs-close
-				aria-label="{{msg-stellanova-close}}" title="{{msg-stellanova-close}}">
-				<svg class="sn-i" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><use href="#sn-i-x"/></svg>
-			</button>
-		</header>
-		<div class="sn-prefs-body">
-			<fieldset class="sn-pref">
-				<legend>{{msg-stellanova-pref-theme}}</legend>
-				<div class="sn-seg" role="radiogroup" data-sn-pref="theme" data-sn-os="{{sn-prefs.os-scheme}}">
-					<button type="button" data-v="auto">{{msg-stellanova-auto}}</button>
-					<button type="button" data-v="light">{{msg-stellanova-theme-light}}</button>
-					<button type="button" data-v="dark">{{msg-stellanova-theme-dark}}</button>
-				</div>
-			</fieldset>
-			<fieldset class="sn-pref">
-				<legend>{{msg-stellanova-pref-font}}</legend>
-				<div class="sn-seg" role="radiogroup" data-sn-pref="font">
-					<button type="button" data-v="small">{{msg-stellanova-sz-s}}</button>
-					<button type="button" data-v="medium">{{msg-stellanova-sz-m}}</button>
-					<button type="button" data-v="large">{{msg-stellanova-sz-l}}</button>
-				</div>
-			</fieldset>
-			<fieldset class="sn-pref">
-				<legend>{{msg-stellanova-pref-toc}}</legend>
-				<div class="sn-seg" role="radiogroup" data-sn-pref="toc">
-					<button type="button" data-v="persistent">{{msg-stellanova-toc-persistent}}</button>
-					<button type="button" data-v="inline">{{msg-stellanova-toc-inline}}</button>
-				</div>
-			</fieldset>
-			<label class="sn-pref sn-pref-row">
-				<span>{{msg-stellanova-pref-collapsible}}</span>
-				<input type="checkbox" class="sn-switch" data-sn-pref="collapsible">
-			</label>
-			<label class="sn-pref sn-pref-row">
-				<span>{{msg-stellanova-pref-motion}}<small>{{msg-stellanova-pref-motion-hint}}</small></span>
-				<input type="checkbox" class="sn-switch" data-sn-pref="motion">
-			</label>
-		</div>
-		<footer class="sn-prefs-foot">
-			<p class="sn-prefs-scope" data-sn-scope>
-				{{#sn-prefs}}
-				{{#is-registered}}{{msg-stellanova-prefs-scope-account}}{{/is-registered}}
-				{{^is-registered}}{{msg-stellanova-prefs-scope-browser}}{{/is-registered}}
-				{{/sn-prefs}}
-			</p>
-			<button type="button" class="sn-btn sn-btn-ghost" data-sn-prefs-reset disabled>{{msg-stellanova-reset}}</button>
-		</footer>
-	</form>
-</aside>
 
 {{{html-after-content}}}
 {{{html-printtail}}}

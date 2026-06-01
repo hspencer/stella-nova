@@ -21,9 +21,7 @@
 	"stellanova-form-edit": "Editar con formulario",
 	"stellanova-edit-code": "Editar código",
 	"stellanova-footer-lastedit": "Esta página se editó por última vez el $1 a las $2 por $3.",
-	"stellanova-prefs": "Preferencias de lectura",
 	"stellanova-close": "Cerrar",
-	"stellanova-reset": "Restablecer",
 	"stellanova-auto": "Auto",
 	"stellanova-pref-theme": "Tema",
 	"stellanova-theme-light": "Claro",
@@ -31,13 +29,5 @@
 	"stellanova-pref-font": "Tamaño de letra",
 	"stellanova-sz-s": "Pequeña",
 	"stellanova-sz-m": "Media",
-	"stellanova-sz-l": "Grande",
-	"stellanova-pref-toc": "Índice",
-	"stellanova-toc-persistent": "Persistente",
-	"stellanova-toc-inline": "En línea",
-	"stellanova-pref-collapsible": "Secciones colapsables",
-	"stellanova-pref-motion": "Reducir movimiento",
-	"stellanova-pref-motion-hint": "Anula la preferencia del sistema",
-	"stellanova-prefs-scope-browser": "Estas preferencias se guardan en este navegador.",
-	"stellanova-prefs-scope-account": "Estas preferencias siguen a tu cuenta entre dispositivos."
+	"stellanova-sz-l": "Grande"
 }

@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "StellaNova",
 	"namemsg": "skinname-stellanova",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"author": [
 		"Herbert Spencer"
 	],
@@ -50,9 +50,7 @@
 						"stellanova-pagetools",
 						"stellanova-nav",
 						"stellanova-page",
-						"stellanova-prefs",
 						"stellanova-close",
-						"stellanova-reset",
 						"stellanova-auto",
 						"stellanova-pref-theme",
 						"stellanova-theme-light",
@@ -60,15 +58,7 @@
 						"stellanova-pref-font",
 						"stellanova-sz-s",
 						"stellanova-sz-m",
-						"stellanova-sz-l",
-						"stellanova-pref-toc",
-						"stellanova-toc-persistent",
-						"stellanova-toc-inline",
-						"stellanova-pref-collapsible",
-						"stellanova-pref-motion",
-						"stellanova-pref-motion-hint",
-						"stellanova-prefs-scope-browser",
-						"stellanova-prefs-scope-account"
+						"stellanova-sz-l"
 					],
 					"menus": [
 						"user-menu",

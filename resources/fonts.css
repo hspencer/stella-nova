@@ -1,8 +1,8 @@
 /* Stella Nova — fuentes auto-alojadas. Sin CDN en runtime (privacidad +
    instalación local). Familia única IBM Plex:
-     · IBM Plex Sans — cuerpo · UI · cabeceras. VARIABLE (eje wght 100–700),
-       en ambas variantes normal e italic: un solo woff2 por estilo cubre
-       todos los pesos del diseño sin interpolación falsa.
+     · IBM Plex Sans — cuerpo · UI · cabeceras. VARIABLE de DOS ejes
+       (peso wght 100–700 + ancho wdth 75–100), normal e italic: un solo
+       woff2 por estilo cubre todos los pesos y anchos sin interpolación falsa.
      · IBM Plex Serif — citas y <poem> (único uso editorial). Estática:
        no existe versión variable. Pesos 400 y 700, normal + italic.
      · IBM Plex Mono — código, normal+italic 400 y normal 600.
@@ -14,23 +14,31 @@
    y se ve mal. Esto le pasó en la primera migración: los <em>/<cite> del
    cuerpo quedaron con itálicas sintéticas hasta que se añadieron estas. */
 
-/* — IBM Plex Sans — variable, eje wght 100–700. El rango de peso completo
-   del diseño (300–700) sale de estos dos archivos; cualquier font-weight
-   intermedio interpola de verdad. Pesos > 700 (p.ej. 900) se recortan al
-   máximo del eje. — */
+/* — IBM Plex Sans — variable de DOS ejes: peso (wght 100–700) Y ancho
+   (wdth 75–100, declarado aquí como font-stretch 75% 100%). Un único woff2
+   por estilo cubre TODOS los pesos y TODOS los anchos del diseño, interpolando
+   de verdad. Para usar un ancho condensado en un elemento basta `font-stretch`
+   (p.ej. 80%) o `font-variation-settings: "wdth" 80`; 100% = ancho normal,
+   75% = lo más condensado que ofrece Plex.
+   NOTA: la build de fontsource `@fontsource-variable/ibm-plex-sans` solo expone
+   el eje wght — por eso los antiguos `plexsans-latin-wght-*.woff2` ignoraban
+   font-stretch. Estos archivos `wdthwght` son la build de DOS ejes de Google
+   Fonts (gstatic), subset latin, redonda + itálica. — */
 @font-face {
 	font-family: 'IBM Plex Sans';
 	font-style: normal;
 	font-weight: 100 700;
+	font-stretch: 75% 100%;
 	font-display: swap;
-	src: url('fonts/plexsans-latin-wght-normal.woff2') format('woff2');
+	src: url('fonts/plexsans-latin-wdthwght-normal.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'IBM Plex Sans';
 	font-style: italic;
 	font-weight: 100 700;
+	font-stretch: 75% 100%;
 	font-display: swap;
-	src: url('fonts/plexsans-latin-wght-italic.woff2') format('woff2');
+	src: url('fonts/plexsans-latin-wdthwght-italic.woff2') format('woff2');
 }
 
 /* — IBM Plex Mono — código. — */

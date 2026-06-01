@@ -74,6 +74,55 @@ class SkinStellaNova extends SkinMustache {
 	}
 
 	/**
+	 * Toolbox del pie (p-tb) → ícono Feather por item. La clave es el id
+	 * estándar del enlace que emite el core; el valor, el símbolo del sprite
+	 * (SnIcons.mustache). Los items sin entrada quedan sin ícono (p.ej.
+	 * t-smwbrowselink): la lista degrada a texto, no rompe.
+	 */
+	private const TOOL_ICONS = [
+		't-whatlinkshere'       => 'arrow-right',
+		't-recentchangeslinked' => 'git-merge',
+		't-upload'              => 'upload',
+		't-specialpages'        => 'tool',
+		't-print'               => 'printer',
+		't-permalink'           => 'link',
+		't-info'                => 'info',
+	];
+
+	/**
+	 * Inyecta el ícono Feather al inicio de cada <a> de la toolbox del pie.
+	 * El core entrega `html-items` como cadena de <li id="t-…"><a …>…</a></li>;
+	 * para cada <li> con id mapeado, insertamos el <svg><use> justo tras la
+	 * apertura del <a>. Presentación, sí, pero el ícono depende del id que
+	 * sólo el core conoce a esta altura — por eso aquí y no en Mustache/CSS
+	 * (un ::before con mask duplicaría la geometría que ya vive en el sprite).
+	 *
+	 * @param string $html
+	 * @return string
+	 */
+	private static function iconizeToollist( string $html ): string {
+		if ( $html === '' ) {
+			return $html;
+		}
+		// Captura: <li … id="t-…" …> … <a …>  → grupo 1 = id, grupo 0 = todo
+		// hasta la apertura del primer <a>. Insertamos el ícono tras el match.
+		return (string)preg_replace_callback(
+			'/<li\b[^>]*\bid="(t-[^"]+)"[^>]*>\s*<a\b[^>]*>/i',
+			static function ( array $m ): string {
+				$icon = self::TOOL_ICONS[$m[1]] ?? null;
+				if ( $icon === null ) {
+					return $m[0];
+				}
+				$svg = '<svg class="sn-i sn-foot-ico" aria-hidden="true" focusable="false"'
+					. ' width="15" height="15" viewBox="0 0 24 24"><use href="#sn-i-'
+					. $icon . '"/></svg>';
+				return $m[0] . $svg;
+			},
+			$html
+		);
+	}
+
+	/**
 	 * Lee un asset SVG, quita comentarios HTML y la declaración XML
 	 * (innecesaria al inyectar inline en el documento), defensivo.
 	 *
@@ -180,6 +229,9 @@ class SkinStellaNova extends SkinMustache {
 		}
 		$data['sn-sitenav'] = $siteNav;
 		$data['sn-has-sitenav'] = $siteNav !== [];
+		if ( is_array( $toolbox ) && isset( $toolbox['html-items'] ) ) {
+			$toolbox['html-items'] = self::iconizeToollist( (string)$toolbox['html-items'] );
+		}
 		$data['sn-toolbox'] = $toolbox;
 
 		// — UN botón "Editar" (lápiz) en la barra, antes del menú Página —
@@ -281,41 +333,14 @@ class SkinStellaNova extends SkinMustache {
 
 		// — PreferencesPanel: estado inicial conocido server-side —
 		//
-		// Para registrados el server tiene la última palabra: leemos las 5
-		// opciones de cuenta (`stellanova-<pref>`) que persiste MediaWiki en
-		// BBDD vía Hooks::onGetPreferences. Para anónimo/temporal el server
-		// no sabe nada (sus prefs viven en localStorage); skin.js las
-		// sincroniza al cargar la página, sin parpadeo porque
-		// Hooks::onBeforePageDisplay ya aplicó el tema en pre-paint.
-		//
-		// `can-reset` habilita el botón "Restablecer" del panel: si nada hay
-		// guardado, no hay nada que restablecer.
-		//
-		// El bloque `theme-is-*` lo usa el panel para marcar el botón activo
-		// del segmento Tema antes de que skin.js corra (sin FOUC del control).
-		// La regla del producto: sin elección guardada → "auto" en el panel
-		// (no oscuro, no claro). Ver Hooks::onBeforePageDisplay.
-		$theme = '';
-		$anySet = false;
-		if ( $isNamed ) {
-			$lookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
-			foreach ( [ 'theme', 'font', 'toc', 'collapsible', 'motion' ] as $p ) {
-				$val = (string)$lookup->getOption( $user, 'stellanova-' . $p );
-				if ( $p === 'theme' ) {
-					$theme = $val;
-				}
-				$anySet = $anySet || $val !== '';
-			}
-		}
+		// Estado inicial de los controles del menú de usuario (Tema · Tamaño
+		// de letra). El pre-pintado (Hooks::onBeforePageDisplay) ya fijó los
+		// atributos del documento; skin.js sincroniza el botón activo al
+		// cargar. `os-scheme` alimenta data-sn-os del segmento Tema (pista
+		// de a qué resuelve "auto"); `is-temporary` marca la cuenta temporal.
 		$data['sn-prefs'] = [
-			'is-registered' => $isNamed,
-			'is-temporary'  => $isTemp,
-			'can-reset'     => $anySet,
-			'theme-is-auto'  => $theme === '' ? 'true' : 'false',
-			'theme-is-light' => $theme === 'light' ? 'true' : 'false',
-			'theme-is-dark'  => $theme === 'dark' ? 'true' : 'false',
-			'os-scheme' => '',
-			'os-motion' => '',
+			'is-temporary' => $isTemp,
+			'os-scheme'    => '',
 		];
 
 		// — ManagedChrome: fragmentos editados como páginas del namespace —
@@ -338,10 +363,10 @@ class SkinStellaNova extends SkinMustache {
 	 * cualquier fallo degrada a no-publicado, nunca rompe el render.
 	 *
 	 * @param string $pageName
-	 * @return array{is-published:bool,html:string}
+	 * @return array{is-published:bool,html:string,version:string}
 	 */
 	private function resolveFragment( string $pageName ): array {
-		$blank = [ 'is-published' => false, 'html' => '' ];
+		$blank = [ 'is-published' => false, 'html' => '', 'version' => '' ];
 		try {
 			$services = MediaWikiServices::getInstance();
 			$nsInfo = $services->getContentLanguage();
@@ -381,7 +406,15 @@ class SkinStellaNova extends SkinMustache {
 			if ( trim( strip_tags( $parsed ) ) === '' && strpos( $parsed, '<img' ) === false ) {
 				return $blank;
 			}
-			return [ 'is-published' => true, 'html' => $parsed ];
+			// `version` = id de la última revisión: identifica ESTA versión del
+			// fragmento. El aviso descartado se recuerda por versión, así que
+			// al editar la página el aviso reaparece (spec: "si ya se ha leído"
+			// aplica a lo leído, no a un aviso nuevo).
+			return [
+				'is-published' => true,
+				'html'         => $parsed,
+				'version'      => (string)$title->getLatestRevID(),
+			];
 		} catch ( \Throwable $e ) {
 			return $blank;
 		}

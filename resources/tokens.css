@@ -52,6 +52,7 @@
 	/* — Señales — */
 	--sn-ok:           #2f6f43;
 	--sn-warn:         #8a5a12;
+	--sn-warn-ink:     #fcfbf7;   /* texto sobre --sn-warn (claro: ámbar oscuro → tinta clara) */
 	--sn-danger:       #b21e3e;
 
 	/* Washes de señales: fondos suaves para badges, banners, drop-targets,
@@ -113,6 +114,15 @@
 	--sn-font-serif: 'IBM Plex Serif', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
 	--sn-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
 
+	/* Ancho del cuerpo (eje wdth de IBM Plex Sans, vía font-stretch). 100% =
+	   normal, 75% = lo más condensado que ofrece Plex. Aplica a párrafos,
+	   listas y tablas (el cuerpo de .sn-body); las CABECERAS se resetean a
+	   100% aparte (doctrina: condensada solo en cuerpo, no en titulares).
+	   Serif y Mono no tienen eje de ancho → font-stretch los ignora sin daño.
+	   Sube a 100% para desactivar la condensación; baja hacia 75% para más
+	   densidad. */
+	--sn-text-width: 80%;
+
 	/* Escala fluida sobria (sin titulares exagerados). --sn-font-scale lo
 	   modula la preferencia tamaño-de-fuente. --sn-leading es FIJO (no es
 	   preferencia de usuario): cambiarlo desparametriza el ajuste al
@@ -157,9 +167,9 @@
 
 	/* Ancho máximo de la HOJA (no del texto: el contenido va al 100%).
 	   Fijo, no es preferencia de usuario. */
-	--sn-measure: 58rem;
+	--sn-measure: 64rem;         /* (ex 46~50) medida de lectura: única restricción de ancho de la hoja (~75-80 car. en Plex Sans). Sustituye al viejo truco `width:80%` sobre los <p>. Súbelo/bájalo a gusto. */
 	--sn-rail: 15.5rem;           /* (sin uso; reservado)                   */
-	--sn-shell: 82rem;            /* ancho máximo del conjunto (header/pie) */
+	--sn-shell: 81rem;            /* ancho máximo del conjunto (header/pie) */
 
 	/* Ícono de enlace externo (Feather "external-link"), como máscara para
 	   teñirlo con currentColor. Definido por diseño en el skin. */
@@ -349,7 +359,7 @@
 	--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
 	--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
 	--sn-link-new:#c8a89a;
-	--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-danger:#ff6b7e;
+	--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-warn-ink:#1a140a; --sn-danger:#ff6b7e;
 	--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
 	--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
 	--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
@@ -364,7 +374,7 @@
 		--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
 		--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
 		--sn-link-new:#c8a89a;
-		--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-danger:#ff6b7e;
+		--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-warn-ink:#1a140a; --sn-danger:#ff6b7e;
 		--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
 		--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
 		--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
@@ -380,8 +390,8 @@
 :root[data-sn-font="medium"] { --sn-font-scale: 1; }
 :root[data-sn-font="large"]  { --sn-font-scale: 1.14; }
 
-/* ── Movimiento: SO + override (spec Motion; reduced-motion 1ª clase) ── */
+/* ── Movimiento: sólo la señal del SO (ya no es preferencia del usuario;
+   reduced-motion sigue siendo 1ª clase). ── */
 @media (prefers-reduced-motion: reduce) {
-	:root:not([data-sn-motion="full"]) { --sn-motion: 0; }
+	:root { --sn-motion: 0; }
 }
-:root[data-sn-motion="reduced"] { --sn-motion: 0; }

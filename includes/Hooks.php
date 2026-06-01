@@ -16,20 +16,21 @@
 
 namespace MediaWiki\Skins\StellaNova;
 
+use MediaWiki\MediaWikiServices;
 use OutputPage;
 use ParserOutput;
 use Skin;
+use Title;
 use User;
 
 class Hooks {
 
-	/** Opción de cuenta → valor por defecto ('' = sin elección explícita). */
+	/** Opción de cuenta → valor por defecto ('' = sin elección explícita).
+	 *  Sólo dos preferencias: tema y tamaño de letra. Índice, secciones
+	 *  colapsables y reducción de movimiento se retiraron como preferencia. */
 	private const PREFS = [
-		'stellanova-theme'       => '',
-		'stellanova-font'        => '',
-		'stellanova-toc'         => '',
-		'stellanova-collapsible' => '',
-		'stellanova-motion'      => '',
+		'stellanova-theme' => '',
+		'stellanova-font'  => '',
 	];
 
 	/**
@@ -108,6 +109,24 @@ class Hooks {
 		if ( $skin->getSkinName() !== 'stellanova' ) {
 			return;
 		}
+
+		// — SiteIsotype (favicon): autocontenido, viaja con el skin —
+		// MediaWiki sólo emite <link rel="icon"> si $wgFavicon difiere del
+		// default '/favicon.ico' (OutputPage::getHeadLinksArray). Como la
+		// instalación NO fija $wgFavicon, no hay etiqueta del core que
+		// colisione: inyectamos la nuestra apuntando al asset del skin.
+		// SVG con @media prefers-color-scheme dentro → adapta a la pestaña
+		// clara/oscura del navegador sin variantes por tema. Esto deja el
+		// favicon definido desde el skin, sin tocar LocalSettings (decisión
+		// deliberada: el skin es autocontenido y desplegable sin editar
+		// config del servidor).
+		$stylePath = $skin->getConfig()->get( 'StylePath' );
+		$favicon = $stylePath . '/StellaNova/resources/favicon.svg';
+		$out->addHeadItem(
+			'stellanova-favicon',
+			'<link rel="icon" type="image/svg+xml" href="' . htmlspecialchars( $favicon ) . '">'
+		);
+
 		$user = $out->getUser();
 		$isNamed = method_exists( $user, 'isNamed' ) ? $user->isNamed() : $user->isRegistered();
 		$isTemp = method_exists( $user, 'isTemp' ) && $user->isTemp();
@@ -122,11 +141,17 @@ class Hooks {
 			}
 		}
 
+		// Versión del aviso gestionado (Stella-Nova:Aviso): id de su última
+		// revisión. El banner descartado se recuerda por versión; al editar
+		// el aviso, reaparece. El pre-pintado lo usa para ocultar sin FOUC.
+		$noticeId = self::noticeVersion();
+
 		$out->addJsConfigVars( 'wgStellaNova', [
 			'identity'   => $identity,
 			'persist'    => $isNamed ? 'account' : 'browser',
 			'apiPrefix'  => 'stellanova-',
 			'server'     => $server,
+			'noticeId'   => $noticeId,
 		] );
 
 		// Script de pre-pintado: lo antes posible en <head>, para resolver
@@ -138,20 +163,45 @@ class Hooks {
 		$cfgJson = str_replace(
 			'<', '\\u003C',
 			json_encode(
-				[ 'identity' => $identity, 'server' => (object)$server ],
+				[ 'identity' => $identity, 'server' => (object)$server, 'noticeId' => $noticeId ],
 				JSON_UNESCAPED_UNICODE
 			)
 		);
 		$script = '<script>(function(){try{' .
 			'var C=' . $cfgJson . ';' .
-			'var d=document.documentElement,K=["theme","font","toc","collapsible","motion"];' .
+			'var d=document.documentElement,K=["theme","font"];' .
 			'function g(k){if(C.identity==="registered"){return (C.server&&C.server[k])||"";}' .
 			'try{return localStorage.getItem("sn-pref-"+k)||"";}catch(e){return "";}}' .
 			'K.forEach(function(k){var v=g(k);if(!v)return;' .
 			'if(k==="theme"){if(v==="light"||v==="dark"||v==="auto")d.setAttribute("data-sn-theme",v);}' .
-			'else if(k==="motion"){if(v==="reduced"||v==="full")d.setAttribute("data-sn-motion",v);}' .
 			'else{d.setAttribute("data-sn-"+k,v);}});' .
+			// Aviso ya leído (misma versión) → ocultar antes del primer paint.
+			'if(C.noticeId){try{if(localStorage.getItem("sn-notice-dismissed")===C.noticeId)' .
+			'd.setAttribute("data-sn-notice-hide","");}catch(e){}}' .
 			'}catch(e){}})();</script>';
 		$out->addHeadItem( 'stellanova-prepaint', $script );
+	}
+
+	/**
+	 * Id de la última revisión de Stella-Nova:Aviso (o '' si no existe).
+	 * Barato: getLatestRevID no parsea. Réplica mínima de la resolución de
+	 * namespace de SkinStellaNova::resolveFragment (namespace dedicado si
+	 * está declarado; si no, página homónima en el espacio principal).
+	 *
+	 * @return string
+	 */
+	private static function noticeVersion(): string {
+		try {
+			$nsId = MediaWikiServices::getInstance()->getContentLanguage()
+				->getNsIndex( 'Stella-Nova' );
+			$title = ( $nsId !== false && $nsId !== null )
+				? Title::makeTitleSafe( $nsId, 'Aviso' )
+				: Title::newFromText( 'Stella-Nova:Aviso' );
+			if ( $title && $title->exists() ) {
+				return (string)$title->getLatestRevID();
+			}
+		} catch ( \Throwable $e ) {
+		}
+		return '';
 	}
 }

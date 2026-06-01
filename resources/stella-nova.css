@@ -190,7 +190,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	height: var(--sn-ctl); box-sizing: border-box;
 	display: flex; align-items: center; gap: var(--sn-s-1);
 	background: transparent;
-	border: 1px solid transparent;
+	border: 1px solid var(--sn-hairline);
 	border-radius: 999px;
 	padding: 0 var(--sn-s-1) 0 var(--sn-s-4);
 	transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
@@ -230,7 +230,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 }
 .sn-notif :is(a) { color: var(--sn-ink-soft); }
 
-.sn-prefs-trigger, .sn-usermenu-trigger {
+.sn-usermenu-trigger {
 	display: inline-grid; place-items: center;
 	width: var(--sn-ctl); height: var(--sn-ctl); padding: 0;
 	box-sizing: border-box;
@@ -238,7 +238,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	border: 1px solid transparent; border-radius: var(--sn-radius);
 	cursor: pointer; transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
 }
-.sn-prefs-trigger:hover, .sn-usermenu-trigger:hover,
+.sn-usermenu-trigger:hover,
 .sn-usermenu-trigger[aria-expanded="true"] {
 	background: var(--sn-paper); border-color: var(--sn-hairline);
 }
@@ -483,14 +483,39 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	}
 }
 
-.sn-notice, .mw-body-content .sitedir-ltr > .sn-notice {
-	margin: 0 0 var(--sn-s-5);
-	padding: var(--sn-s-3) var(--sn-s-4);
-	border-left: 3px solid var(--sn-nova);
-	background: var(--sn-nova-wash);
-	border-radius: 0 var(--sn-radius) var(--sn-radius) 0;
+/* Aviso gestionado (Stella-Nova:Aviso): lo PRIMERO dentro de la hoja,
+   full-bleed a los bordes del papel — niega el padding (--sn-paper-py arriba,
+   --sn-paper-px a los lados) con la misma convención que .full-width. Fondo
+   --sn-warn con tinta que contrasta en ambos temas (--sn-warn-ink), esquinas
+   superiores al radio de la hoja, y botón de cerrar. Se descarta por versión:
+   el pre-pintado oculta sin parpadeo vía html[data-sn-notice-hide]; skin.js
+   persiste el cierre en localStorage. */
+.sn-notice {
+	margin: calc(-1 * var(--sn-paper-py)) calc(-1 * var(--sn-paper-px)) var(--sn-s-5);
+	border: 0;
+	border-radius: var(--sn-radius-paper) var(--sn-radius-paper) 0 0;
+	background: var(--sn-sunk); color: var(--sn-warn-ink-soft);
+	display: flex; align-items: flex-start; gap: var(--sn-s-3);
+	padding: var(--sn-s-3) var(--sn-paper-px);
 	font-size: var(--sn-fs-sm);
 }
+html[data-sn-notice-hide] .sn-notice { display: none; }
+.sn-notice-body { flex: 1; min-width: 0; }
+.sn-notice-body > :first-child { margin-top: 0; }
+.sn-notice-body > :last-child { margin-bottom: 0; }
+.sn-notice-body a { color: inherit; text-decoration: underline; }
+.sn-notice-x {
+	flex: none; cursor: pointer; color: inherit;
+	display: grid; place-items: center;
+	width: 1.9rem; height: 1.9rem; padding: 0;
+	margin: -.1rem -.2rem 0 0;
+	background: transparent; border: 0; border-radius: var(--sn-radius);
+	transition: background var(--sn-dur-1);
+}
+.sn-notice-x:hover, .sn-notice-x:focus-visible {
+	background: color-mix(in oklab, var(--sn-warn-ink) 16%, transparent);
+}
+.sn-notice-x .sn-i { color: inherit; }
 
 /* — firstHeading: el título de la página, la voz editorial del documento.
    Mayor que cualquier h1 del cuerpo (--sn-fs-page-title). Ocupa
@@ -558,12 +583,15 @@ a.new, a[href].new { color: var(--sn-link-new); }
 .sn-subtitle a { color: var(--sn-ink-soft); }
 
 /* ─────────────── Cuerpo: ritmo editorial ─────────────── */
-.sn-body { min-width: 0; }
-/* El ancho de la HOJA lo fija --sn-measure (.sn-paper-wrap, 58 rem). En
-   general el contenido usa el 100 % de la hoja; la EXCEPCIÓN son los
-   párrafos corridos del artículo, constreñidos al 80 % para acortar la
-   medida de lectura (ver `.sn-body … > p` más abajo). El resto de bloques
-   —cabeceras, listas, tablas, fichas, figuras— sigue al 100 %. */
+/* Ancho condensado del cuerpo vía el eje wdth de IBM Plex Sans (token
+   --sn-text-width). font-stretch hereda, así que párrafos, listas, tablas y
+   captions lo toman; las cabeceras lo resetean a 100% más abajo. Serif/Mono
+   no tienen eje wdth → lo ignoran sin efecto. */
+.sn-body { min-width: 0; font-stretch: var(--sn-text-width); }
+/* El ancho de la HOJA lo fija --sn-measure (.sn-paper-wrap). Esa es la
+   medida de lectura: TODO el contenido —párrafos, cabeceras, listas, tablas,
+   fichas, figuras— vive dentro de ella al 100 %. (Las imágenes `.full-width`
+   son la única excepción: sangran hasta --sn-shell con margen negativo.) */
 
 /* Títulos en IBM Plex Sans (familia única para todas las cabeceras). h1–h2
    son la voz editorial sobria; h3 es la subsección en color nova; h4–h6
@@ -586,6 +614,12 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	border: 0;
 	padding: 0;
 	display: block;
+	font-stretch: 100%;   /* ancho normal: la condensada (--sn-text-width) es solo del cuerpo */
+}
+/* Las cabeceras envueltas por Parsoid: el <hN> interno también a 100% (hereda
+   de .sn-body el font-stretch condensado si no se resetea aquí). */
+.sn-body :is(.mw-heading1, .mw-heading2, .mw-heading3, .mw-heading4, .mw-heading5, .mw-heading6) > :is(h1, h2, h3, h4, h5, h6) {
+	font-stretch: 100%;
 }
 /* Además, MW `elements` impone `h1..h6, .mw-heading { color:#000 }` con
    especificidad bare (0,0,1) → en modo oscuro deja headings negros sobre
@@ -597,8 +631,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
    en (1,1,1); `.sn-body :is(h3,…)` en (0,1,1) DELANTE en source-order)
    siguen ganando por especificidad/orden. */
 .sn-app :is(h1, h2, h3, h4, h5, h6, .mw-heading),
-.sn-canvas :is(h1, h2, h3, h4, h5, h6, .mw-heading),
-.sn-prefs :is(h1, h2, h3, h4, h5, h6) {
+.sn-canvas :is(h1, h2, h3, h4, h5, h6, .mw-heading) {
 	color: inherit;
 }
 /* Cuando Parsoid envuelve el heading: el wrapper carga la tipografía y
@@ -668,15 +701,10 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	hyphens: auto;
 	hyphenate-limit-chars: 6 3 3;
 }
-/* Párrafos corridos del artículo al 80 % del ancho de la hoja (flush-left,
-   alineados con cabeceras y listas): acorta la medida de lectura sin tocar
-   --sn-measure ni el baseline grid. Acotado a los <p> de nivel superior del
-   parser output (directos o bajo un <section> de Parsoid) para NO encoger
-   los párrafos anidados en tablas, fichas, blockquotes, figuras o listas. */
-.sn-body > .mw-parser-output > p,
-.sn-body > .mw-parser-output > section > p {
-	width: 80%;
-}
+/* La medida de lectura ahora la fija --sn-measure en la hoja (.sn-paper-wrap),
+   una sola restricción de ancho. (Antes había aquí un `width:80%` sobre los <p>
+   de nivel superior; se retiró porque max-width:--sn-measure ya hace el trabajo
+   sin desalinear bloques ni competir con el ancho de la hoja.) */
 .sn-body :is(ul, ol) { margin: 0 0 var(--sn-baseline); padding-left: var(--sn-s-5); }
 .sn-body li { margin: 0; }
 .sn-body li::marker { color: var(--sn-ink-faint); }
@@ -732,7 +760,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 .sn-body blockquote p:last-child { margin-bottom: 0; }
 .sn-body .poem {
 	font-family: var(--sn-font-serif); font-optical-sizing: auto;
-	font-size: var(--sn-fs-md); line-height: var(--sn-baseline);
+	font-size: var(--sn-fs-sm); line-height: var(--sn-baseline);
 	color: var(--sn-ink);
 	white-space: pre-wrap;
 }
@@ -1061,42 +1089,47 @@ canvas, iframe,
 }
 .sn-footer-col { min-width: 0; }
 
-/* — Columna ancha — última edición + herramientas inline — */
-.sn-footer-main { display: flex; flex-direction: column; gap: var(--sn-s-4); }
+/* — Columna ancha — última edición + herramientas + enlaces de sitio —
+   Todo este lado va un punto más pequeño que el resto del pie (--sn-fs-xs). */
+.sn-footer-main {
+	display: flex; flex-direction: column; gap: var(--sn-s-4);
+	font-size: var(--sn-fs-xs);
+}
 .sn-foot-lastedit { margin: 0; color: var(--sn-ink-soft); }
 .sn-foot-lastedit .sn-foot-user { color: var(--sn-link); text-decoration: none; }
 .sn-foot-lastedit .sn-foot-user:hover { color: var(--sn-link-hover); text-decoration: underline; }
 
-/* Herramientas y más: SIN título, enlaces inline en rojo; al hover/focus se
-   visten como nav-pill (igual que el botón de editar-sección). La lista
-   arranca flush con el borde izquierdo de la columna (el margen negativo
-   compensa el padding horizontal de la primera píldora). */
+/* Herramientas y más: SIN título, enlaces comunes en línea (color de enlace,
+   subrayado sólo al hover/foco), cada uno con su ícono Feather delante
+   (inyectado en PHP por id de item → ver SkinStellaNova::iconizeToollist). */
 .sn-foot-toollist {
 	list-style: none; margin: 0; padding: 0;
-	display: flex; flex-wrap: wrap; gap: var(--sn-s-1) var(--sn-s-2);
-	margin-inline-start: calc(-1 * var(--sn-s-2));
+	display: flex; flex-wrap: wrap; gap: var(--sn-s-1) var(--sn-s-4);
 }
 .sn-foot-toollist li { margin: 0; list-style: none; }
 .sn-foot-toollist li a {
-	display: inline-block; padding: .15rem var(--sn-s-2);
+	display: inline-flex; align-items: center; gap: var(--sn-s-1);
 	color: var(--sn-link); text-decoration: none;
-	border: 1px solid transparent; border-radius: var(--sn-radius-pill);
-	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);
+	transition: color var(--sn-dur-1);
 }
 .sn-foot-toollist li a:hover, .sn-foot-toollist li a:focus-visible {
-	background: var(--sn-paper); border-color: var(--sn-hairline);
-	color: var(--sn-nova);
+	color: var(--sn-link-hover); text-decoration: underline;
 }
+/* El ícono escala con el texto del item (queda pequeño en --sn-fs-xs). */
+.sn-foot-ico { width: 1em; height: 1em; }
 
-/* — Columna angosta — enlaces de sitio inline + bloque editable — */
-.sn-footer-side { display: flex; flex-direction: column; gap: var(--sn-s-5); }
+/* Enlaces de sitio (privacidad/acerca/descargos): a 80% del cuerpo de pie. */
 .sn-foot-places {
 	list-style: none; margin: 0; padding: 0;
 	display: flex; flex-wrap: wrap; gap: var(--sn-s-1) var(--sn-s-3);
+	font-size: calc(var(--sn-fs-sm) * .8);
 }
 .sn-foot-places li { margin: 0; }
 .sn-foot-places a { color: var(--sn-ink-soft); text-decoration: none; }
 .sn-foot-places a:hover { color: var(--sn-nova); }
+
+/* — Columna angosta — bloque editable (Stella-Nova:Pie) — */
+.sn-footer-side { display: flex; flex-direction: column; gap: var(--sn-s-5); }
 
 /* Bloque institucional editable (Stella-Nova:Pie), al pie de la columna. */
 .sn-footer-managed { color: var(--sn-ink); }
@@ -1109,61 +1142,22 @@ canvas, iframe,
 .sn-footer-managed :is(p, ul, ol) { margin: 0 0 var(--sn-s-3); }
 .sn-footer-managed > :last-child { margin-bottom: 0; }
 
-/* ─────────────────── PreferencesPanel (diálogo) ─────────────────── */
-.sn-prefs-scrim {
-	position: fixed; inset: 0; z-index: var(--sn-z-panel);
-	background: rgba(20, 16, 9, .42);
-	-webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
-	opacity: 0; transition: opacity var(--sn-dur-2);
+/* ── Preferencias de lectura: apéndice del menú de usuario ──
+   Ya no hay panel/diálogo aparte. Tras el separador (<hr>) del menú van
+   los dos segmentos (Tema · Tamaño de letra). */
+.sn-menu-sep {
+	border: 0; border-top: 1px solid var(--sn-hairline-soft);
+	margin: var(--sn-s-2) 0;
 }
-.sn-prefs-scrim.is-open { opacity: 1; }
-.sn-prefs {
-	position: fixed; z-index: calc(var(--sn-z-panel) + 1);
-	top: 0; right: 0; height: 100dvh; width: min(26rem, 92vw);
-	display: flex; flex-direction: column;
-	background: var(--sn-paper); color: var(--sn-ink);
-	border-left: 1px solid var(--sn-hairline);
-	box-shadow: var(--sn-lift);
-	transform: translateX(101%);
-	transition: transform var(--sn-dur-3) var(--sn-ease);
-}
-.sn-prefs.is-open { transform: translateX(0); }
-.sn-prefs[hidden] { display: flex; } /* JS controla visibilidad vía .is-open */
-.sn-prefs-form { display: flex; flex-direction: column; height: 100%; }
-.sn-prefs-head {
-	display: flex; align-items: center; justify-content: space-between;
-	padding: var(--sn-s-5) var(--sn-s-5) var(--sn-s-4);
-	border-bottom: 1px solid var(--sn-hairline-soft);
-}
-.sn-prefs-head h2 {
-	margin: 0;
-	font-family: var(--sn-font-text); /* sans-serif del skin */
-	font-size: var(--sn-fs-md);
-	font-weight: 400;
-	letter-spacing: -.012em;
-}
-.sn-prefs-x {
-	background: transparent; border: 0; color: var(--sn-ink-soft);
-	cursor: pointer; padding: var(--sn-s-1); border-radius: var(--sn-radius);
-	display: grid; place-items: center;
-}
-.sn-prefs-x:hover { background: var(--sn-sunk); color: var(--sn-ink); }
-.sn-prefs-body {
-	flex: 1; overflow-y: auto;
-	padding: var(--sn-s-5);
-	display: flex; flex-direction: column; gap: var(--sn-s-5);
+.sn-menu-prefs {
+	display: flex; flex-direction: column; gap: var(--sn-s-3);
+	padding: var(--sn-s-1) var(--sn-s-3) var(--sn-s-2);
 }
 .sn-pref { border: 0; margin: 0; padding: 0; min-width: 0; }
-.sn-pref legend, .sn-pref-row > span {
-	padding: 0 0 var(--sn-s-2); font-size: var(--sn-fs-sm);
-	font-weight: 600; color: var(--sn-ink);
-}
-.sn-pref-row > span small { display: block; font-weight: 400;
-	color: var(--sn-ink-faint); font-size: var(--sn-fs-xs); margin-top: .1rem; }
-.sn-pref-row {
-	display: flex; align-items: center; justify-content: space-between;
-	gap: var(--sn-s-4); padding-top: var(--sn-s-4);
-	border-top: 1px solid var(--sn-hairline-soft);
+.sn-pref legend {
+	padding: 0 0 var(--sn-s-2); font-size: calc(var(--sn-fs-xs) * .88);
+	font-weight: 600; color: var(--sn-ink-faint);
+	text-transform: uppercase; letter-spacing: .06em;
 }
 
 /* Control segmentado */
@@ -1185,40 +1179,20 @@ canvas, iframe,
 	box-shadow: var(--sn-lift-soft);
 }
 
-/* Interruptor */
-.sn-switch {
-	appearance: none; -webkit-appearance: none;
-	flex: none; width: 2.6rem; height: 1.5rem; margin: 0;
-	background: var(--sn-hairline); border-radius: 999px;
-	position: relative; cursor: pointer;
-	transition: background var(--sn-dur-1);
+/* Segmentos con contenido no-textual (íconos / letras de talla): el botón
+   centra su contenido y, en el caso del ícono, éste sigue el color del
+   botón (ink-soft en reposo, ink al activo/hover) en vez de la política
+   global de íconos — aquí el ícono ES el control. */
+.sn-seg-icon button, .sn-seg-sz button {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-height: 1.6rem;
 }
-.sn-switch::after {
-	content: ""; position: absolute; top: 2px; left: 2px;
-	width: calc(1.5rem - 4px); height: calc(1.5rem - 4px);
-	background: var(--sn-paper); border-radius: 50%;
-	box-shadow: var(--sn-lift-soft);
-	transition: transform var(--sn-dur-2) var(--sn-ease);
-}
-.sn-switch:checked { background: var(--sn-nova); }
-.sn-switch:checked::after { transform: translateX(1.1rem); }
-
-.sn-prefs-foot {
-	display: flex; align-items: center; justify-content: space-between;
-	gap: var(--sn-s-4); padding: var(--sn-s-4) var(--sn-s-5);
-	border-top: 1px solid var(--sn-hairline-soft);
-}
-.sn-prefs-scope { margin: 0; font-size: var(--sn-fs-xs);
-	color: var(--sn-ink-faint); }
-.sn-btn {
-	font: inherit; font-size: var(--sn-fs-sm); cursor: pointer;
-	padding: .45rem var(--sn-s-4); border-radius: var(--sn-radius);
-	border: 1px solid var(--sn-hairline); background: transparent;
-	color: var(--sn-ink);
-}
-.sn-btn-ghost:hover:not(:disabled) { border-color: var(--sn-nova);
-	color: var(--sn-nova); }
-.sn-btn:disabled { opacity: .45; cursor: not-allowed; }
+.sn-seg-icon .sn-i { color: inherit; }
+/* Tallas S·M·L: letra que crece con la talla (guiño dimensional). */
+.sn-seg-sz button { font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.sn-seg-sz button[data-v="small"]  { font-size: calc(var(--sn-fs-sm) * .82); }
+.sn-seg-sz button[data-v="medium"] { font-size: var(--sn-fs-sm); }
+.sn-seg-sz button[data-v="large"]  { font-size: calc(var(--sn-fs-sm) * 1.22); }
 
 /* ─────────── ExperimentalCanvas + UnifiedMenuAffordance ───────────
    Pantalla completa (__PANTALLACOMPLETA__): la página POSEE el viewport.
@@ -1555,11 +1529,10 @@ canvas, iframe,
 	/* ───────────── PATRÓN MODAL UNIFICADO ─────────────
 	   Aplica a:
 	     · .sn-md[data-sn-open] .sn-menu-list — Navegación / Página / Usuario
-	     · .sn-prefs                          — Preferencias
+	       (el menú de usuario incluye ahora las preferencias de lectura)
 	     · html[data-sn-search-open] .sn-search — Búsqueda
 	   Mismo tamaño, mismo fondo, misma posición, misma transición. */
 	.sn-md[data-sn-open] .sn-menu-list,
-	.sn-prefs,
 	html[data-sn-search-open] .sn-search {
 		position: fixed;
 		inset: 0;
@@ -1657,32 +1630,6 @@ canvas, iframe,
 		color: var(--sn-ink-soft); background: transparent;
 	}
 
-	/* — Preferencias modal — su markup propio (.sn-prefs-head/body/foot)
-	   se ajusta al mismo patrón visual del modal unificado. — */
-	.sn-prefs        { transform: none; }
-	.sn-prefs.is-open { transform: none; }
-	.sn-prefs-scrim  { display: none; }      /* sin scrim: el modal es fullscreen */
-	/* IMPORTANTE: en desktop `.sn-prefs[hidden] { display: flex }` mantiene
-	   el panel en flow (el truco que permite animar el drawer con
-	   `transform: translateX(101%)`). En compact ese transform es `none`,
-	   así que sin esta sobreescritura el panel quedaría VISIBLE desde el
-	   page-load tapando toda la UI — y los clicks sobre la barra superior
-	   (incluido el botón X del propio modal cuando se "abre") caerían
-	   sobre el panel siempre-encendido y parecerían no hacer nada.
-	   Aquí `hidden=true` oculta de verdad. */
-	.sn-prefs[hidden] { display: none; }
-	.sn-prefs-head {
-		flex: none; padding: var(--sn-s-3) var(--sn-s-4);
-		border-bottom: 1px solid var(--sn-hairline-soft);
-		min-height: var(--sn-ctl);
-	}
-	.sn-prefs-head h2 {
-		font-size: var(--sn-fs-md); font-weight: 400;
-		font-family: var(--sn-font-text); letter-spacing: -.012em;
-	}
-	.sn-prefs-body { padding: var(--sn-s-4); gap: var(--sn-s-4); }
-	.sn-prefs-foot { flex: none; padding: var(--sn-s-3) var(--sn-s-4); }
-
 	/* Bloqueo de scroll del body cuando hay cualquier modal abierto. */
 	html[data-sn-modal] { overflow: hidden; }
 	html[data-sn-modal] body { overflow: hidden; }
@@ -1699,12 +1646,14 @@ canvas, iframe,
 
 @keyframes sn-modal-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ─────────────── Entrada orquestada (una sola) ─────────────── */
+/* ─────────────── Entrada orquestada (una sola) ───────────────
+   El movimiento ya no es preferencia del usuario; se respeta sólo la
+   señal del SO (prefers-reduced-motion). */
 @media (prefers-reduced-motion: no-preference) {
-	:root:not([data-sn-motion="reduced"]) .sn-paper {
+	.sn-paper {
 		animation: sn-rise calc(640ms * var(--sn-motion)) var(--sn-ease) both;
 	}
-	:root:not([data-sn-motion="reduced"]) .sn-header {
+	.sn-header {
 		animation: sn-fade calc(520ms * var(--sn-motion)) var(--sn-ease) both;
 	}
 }

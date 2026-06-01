@@ -1,13 +1,21 @@
 /* Stella Nova — impresión. La hoja se vuelve papel real: sin cromo, sin
-   sombra, tinta sobre blanco, enlaces legibles. */
-.sn-header, .sn-skip, .sn-fs-bar,
-.sn-prefs, .sn-prefs-scrim, .sn-toc,
-.sn-foot-tools, .sn-foot-icons, .sn-iconsprite, .noprint {
+   sombra, tinta sobre blanco, enlaces legibles. Sin menú superior y sin pie:
+   solo el contenido. El margen lo da @page (como el respiro de lectura en
+   pantalla, no de borde a borde). */
+@page {
+	margin: 2cm;
+}
+/* Fuera todo el cromo: menú superior (.sn-header), barra fullscreen, TOC,
+   sprite de íconos, y el PIE COMPLETO (.sn-footer). */
+.sn-header, .sn-skip, .sn-fs-bar, .sn-toc,
+.sn-footer, .sn-iconsprite, .noprint {
 	display: none !important;
 }
 body { background: #fff !important; color: #000; }
 body::before { display: none !important; }
 .sn-app, .sn-shell { display: block; max-width: none; margin: 0; padding: 0; }
+/* La hoja ocupa el área imprimible; el margen del documento lo fija @page. */
+.sn-paper-wrap { max-width: none; }
 .sn-paper {
 	box-shadow: none !important; border: 0 !important;
 	border-radius: 0 !important; padding: 0 !important;
@@ -16,11 +24,11 @@ body::before { display: none !important; }
 .sn-body > :is(p, ul, ol, dl, blockquote, h2, h3, h4, h5, h6, pre) {
 	max-width: none !important;
 }
-/* En pantalla los párrafos corridos van al 80%; impresos, ancho completo. */
+/* En pantalla el cuerpo va condensado/medido; impreso, ancho completo dentro
+   del margen de @page. */
+.sn-body { font-stretch: 100% !important; }
 .sn-body > .mw-parser-output > p,
 .sn-body > .mw-parser-output > section > p { width: auto !important; }
-.sn-footer { border-top: 1px solid #999; background: #fff !important; }
-.sn-footer-inner, .sn-footer-managed { padding: .5rem 0; }
 a { color: #000; text-decoration: underline; }
 .sn-body a[href^="http"]::after {
 	content: " (" attr(href) ")"; font-size: .85em; color: #555;
