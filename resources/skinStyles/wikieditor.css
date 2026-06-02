@@ -161,8 +161,18 @@ form#editform {
    (1.682em), esquinas del skin y márgenes en `ex` (escalan con la fuente).
    La mayor altura dejaría el glifo pegado arriba, así que pasamos la celda a
    inline-flex y lo centramos. Color y borde siguen por token (= #222/#ccc del
-   inspector, pero tematizables claro/oscuro). */
-.wikiEditor-ui-toolbar .page-characters div span {
+   inspector, pero tematizables claro/oscuro).
+
+   Prefijamos con `.skin-stellanova` (la clase que MW añade al <body> con el
+   skin activo) porque las reglas correspondientes upstream — height: 1em,
+   font-size: 1.25em — viven en `jquery.wikiEditor.toolbar.less`, parte del
+   módulo `ext.wikiEditor` (el grande, con JS). Ese módulo carga DESPUÉS que
+   nuestro `+ext.wikiEditor.styles`, así que misma especificidad → upstream
+   ganaba por orden de fuente. Subir un nivel de especificidad (+1 clase)
+   nos hace ganar siempre sin depender del orden de carga. Mismo patrón si
+   en el futuro otra extensión presenta el mismo síntoma: prefijar la regla
+   conflictiva con `.skin-stellanova`, no mover el hook entre módulos. */
+.skin-stellanova .wikiEditor-ui-toolbar .page-characters div span {
 	display: inline-flex; align-items: center; justify-content: center;
 	height: 2rem;
 	margin-left: .5ex; margin-top: .5ex;
@@ -171,11 +181,11 @@ form#editform {
 	border-radius: var(--sn-radius);
 	color: var(--sn-ink);
 }
-.wikiEditor-ui-toolbar .page-characters div span:hover {
+.skin-stellanova .wikiEditor-ui-toolbar .page-characters div span:hover {
 	background-color: var(--sn-sunk);
 	border-color: var(--sn-ink-faint);
 }
-.wikiEditor-ui-toolbar .page-characters div .wikiEditor-character-highlighted {
+.skin-stellanova .wikiEditor-ui-toolbar .page-characters div .wikiEditor-character-highlighted {
 	background-color: var(--sn-nova-wash);
 	color: var(--sn-ink);
 }

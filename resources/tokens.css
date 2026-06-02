@@ -55,6 +55,13 @@
 	--sn-warn-ink:     #fcfbf7;   /* texto sobre --sn-warn (claro: ámbar oscuro → tinta clara) */
 	--sn-danger:       #b21e3e;
 
+	/* Aviso editorial (banner .sn-notice gestionado desde Stella-Nova:Aviso):
+	   fondo ámbar pálido propio (no se confunde con --sn-warn-wash, que es
+	   un derivado de --sn-warn y se usa para badges/borders). Tinta tostada
+	   para contrastar sin estridencia. */
+	--sn-notice-bg:    #f7db7e;
+	--sn-notice-ink:   #2c2410;
+
 	/* Washes de señales: fondos suaves para badges, banners, drop-targets,
 	   bloques de información y aviso. Derivados con color-mix para que
 	   el modo oscuro voltee solo. (Reemplazan a colores hardcoded como
@@ -360,6 +367,7 @@
 	--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
 	--sn-link-new:#c8a89a;
 	--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-warn-ink:#1a140a; --sn-danger:#ff6b7e;
+	--sn-notice-bg:#5a4416; --sn-notice-ink:#f7db7e;
 	--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
 	--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
 	--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
@@ -375,6 +383,7 @@
 		--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#c2a6e0;
 		--sn-link-new:#c8a89a;
 		--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-warn-ink:#1a140a; --sn-danger:#ff6b7e;
+		--sn-notice-bg:#5a4416; --sn-notice-ink:#f7db7e;
 		--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
 		--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
 		--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);

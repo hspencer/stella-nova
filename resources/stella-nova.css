@@ -494,7 +494,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	margin: calc(-1 * var(--sn-paper-py)) calc(-1 * var(--sn-paper-px)) var(--sn-s-5);
 	border: 0;
 	border-radius: var(--sn-radius-paper) var(--sn-radius-paper) 0 0;
-	background: var(--sn-sunk); color: var(--sn-warn-ink-soft);
+	background: var(--sn-notice-bg); color: var(--sn-notice-ink);
 	display: flex; align-items: flex-start; gap: var(--sn-s-3);
 	padding: var(--sn-s-3) var(--sn-paper-px);
 	font-size: var(--sn-fs-sm);
