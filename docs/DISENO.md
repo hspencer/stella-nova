@@ -42,23 +42,42 @@ ver los cambios al instante:
 
 ## Tipografía
 
-**IBM Plex Sans** (cuerpo · UI · todas las cabeceras h1–h6; **variable**,
-eje wght 100–700) · **IBM Plex Serif** (estática, pesos 400/700,
-único uso editorial: citas y `<poem>`) · **IBM Plex Mono** (código).
+**IBM Plex Sans** (sans del cuerpo · UI · todas las cabeceras h1–h6;
+**variable**, dos ejes wght 100–700 + wdth 75–100) · **Source Serif 4**
+(serif del cuerpo cuando el lector la elige desde el menú, citas y
+`<poem>` por defecto; **variable**, eje wght 200–900) · **IBM Plex
+Mono** (código).
 
 Todas auto-alojadas (sin CDN en runtime): `@font-face` en
 [`resources/fonts.css`](../resources/fonts.css), archivos `woff2` en
 [`resources/fonts/`](../resources/fonts/). Subset `latin` (U+0000-00FF)
 cubre el español sin `latin-ext`.
 
-Familias en los tokens `--sn-font-text` / `--sn-font-display` /
-`--sn-font-serif` / `--sn-font-mono`; la escala fluida y la medida de
-lectura en `--sn-fs-*` / `--sn-measure`
-([`tokens.css`](../resources/tokens.css)).
+Dos capas de tokens en [`tokens.css`](../resources/tokens.css):
+**primitivas** (las dos familias reales) y **semánticas** (alias que
+consume el resto del skin, y que el menú del usuario invierte para
+alternar la familia del cuerpo entre sans y serif).
 
-`--sn-font-display` es **alias** de `--sn-font-text`: la doctrina del
-skin es "todo sans en cabeceras". Si en el futuro quieres reintroducir
-un display distinto, cambia la línea del alias y nada más.
+- `--sn-font-sans` (primitiva) — IBM Plex Sans.
+- `--sn-font-serif` (primitiva) — Source Serif 4.
+- `--sn-font-mono` (primitiva) — IBM Plex Mono.
+- `--sn-font-text` = `var(--sn-font-sans)` por defecto. Cambia a
+  `var(--sn-font-serif)` cuando `data-sn-family="serif"`. Lo consumen el
+  cuerpo, el chrome, los botones, los menús y las cabeceras.
+- `--sn-font-display` = `var(--sn-font-text)`. Alias: la doctrina del
+  skin es "todo sans en cabeceras". Si en el futuro quieres reintroducir
+  un display distinto, cambia la línea del alias y nada más.
+- `--sn-font-quote` = `var(--sn-font-serif)` por defecto. Cambia a
+  `var(--sn-font-sans)` cuando `data-sn-family="serif"`. Lo consumen
+  `<blockquote>` y `.poem` para mantener el contraste editorial frente
+  al cuerpo.
+
+El alternador (botón "Aa / Aa" con specimens en cada familia) vive en
+el menú del usuario junto al tema y al tamaño de letra; persiste como
+opción de cuenta `stellanova-family` para registrados y en localStorage
+(`sn-pref-family`) para anónimo/temporal. La resolución antes del primer
+paint la hace el script de pre-pintado en
+[`Hooks.php`](../includes/Hooks.php#L284-L302).
 
 ## Íconos
 

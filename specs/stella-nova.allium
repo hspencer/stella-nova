@@ -5,8 +5,9 @@
 -- ALCANCE. Allium describe comportamiento observable, no presentación.
 -- Por eso este spec NO modela (y deliberadamente lo deja a ARCHITECTURE.md /
 -- tokens.css / CSS):
---   · tipografía (IBM Plex Sans + IBM Plex Serif + IBM Plex Mono): cargar vs.
---     clonar es decisión de empaquetado,
+--   · tipografía (IBM Plex Sans + Source Serif 4 + IBM Plex Mono): cargar vs.
+--     clonar es decisión de empaquetado. La preferencia "family" (sans|serif)
+--     que alterna cuerpo↔citas SÍ se modela abajo en SkinPreferences,
 --   · feather icons, la metáfora "página de papel", fondo gris ahuesado,
 --   · tokens semánticos en archivos separados, layout/posiciones exactas,
 --   · la PRESENTACIÓN de la navegación: que el chrome del sitio se muestre
@@ -26,18 +27,21 @@
 --   · la búsqueda y el logo→home (comportamiento de MediaWiki core, no del skin).
 --
 -- Sí modela los núcleos con estado y decisión condicional:
---   1. Preferencias de skin (2: tema y tamaño de letra): resolución por
---      campo explícito > SO (donde aplica) > default. EXCEPCIÓN tema:
---      default claro; el SO sólo aplica si la elección es `auto`
---      (decisión de producto 2026-05-18). Persistencia híbrida por
---      identidad — registrado → cuenta MediaWiki (BBDD, cross-device);
+--   1. Preferencias de skin (3: tema, tamaño de letra y familia tipográfica):
+--      resolución por campo explícito > SO (donde aplica) > default.
+--      EXCEPCIÓN tema: default claro; el SO sólo aplica si la elección
+--      es `auto` (decisión de producto 2026-05-18). Persistencia híbrida
+--      por identidad — registrado → cuenta MediaWiki (BBDD, cross-device);
 --      anónimo/temporal → sesión del navegador (por-navegador).
 --      HISTÓRICO: el conjunto fue 7 → 5 (2026-05-26: fuera ContentWidth y
 --      LineHeight, que participan del baseline grid) → 2 (2026-05-31: fuera
 --      TocMode y CollapsibleSections —eran preferencias-stub sin realización
---      en CSS— y ReducedMotion como toggle de usuario). El panel aparte de
---      preferencias se eliminó: las dos restantes cuelgan ahora del menú de
---      usuario (ver UserTools.HostsReadingPreferences). La señal del SO de
+--      en CSS— y ReducedMotion como toggle de usuario) → 3 (2026-06-03: entra
+--      family — sans|serif — para alternar la familia del cuerpo entre IBM
+--      Plex Sans y Source Serif 4; al elegir serif, citas/<poem> voltean a
+--      sans para preservar el contraste editorial). El panel aparte de
+--      preferencias se eliminó: las tres cuelgan ahora del menú de usuario
+--      (ver UserTools.HostsReadingPreferences). La señal del SO de
 --      movimiento reducido (prefers-reduced-motion) se sigue respetando, pero
 --      sólo a nivel CSS (@media) — sin estado ni override de usuario, ya no es
 --      preferencia del skin y queda como presentación (lista de exclusión).
@@ -271,25 +275,34 @@ enum ChromeSlot { footer | sidebar | notice }
 
 enum LayoutMode { standard | fullscreen }
 
--- Las 2 preferencias de skin (estilo Citizen/Vector-2022): tema (enum
--- ThemeChoice, arriba) y tamaño de letra. Histórico de recortes en la nota
--- de ALCANCE: 7 → 5 (ContentWidth, LineHeight) → 2 (TocMode,
--- CollapsibleSections, ReducedMotion). Los enums Toggle/TocMode/Motion se
--- retiraron al quedar sin uso.
+-- Las 3 preferencias de skin (estilo Citizen/Vector-2022): tema (enum
+-- ThemeChoice, arriba), tamaño de letra y familia tipográfica. Histórico
+-- de recortes en la nota de ALCANCE: 7 → 5 (ContentWidth, LineHeight)
+-- → 2 (TocMode, CollapsibleSections, ReducedMotion) → 3 (entra family,
+-- 2026-06-03). Los enums Toggle/TocMode/Motion se retiraron al quedar
+-- sin uso.
 enum FontSize { small | medium | large }
+
+-- Familia tipográfica del cuerpo (decisión editorial del lector).
+-- `sans` = IBM Plex Sans (default; citas y <poem> en serif por contraste).
+-- `serif` = Source Serif 4 en cuerpo + UI + cabeceras; citas y <poem>
+-- voltean a sans para preservar el contraste editorial. La realización
+-- vive en los alias --sn-font-text / --sn-font-quote (tokens.css).
+enum FontFamily { sans | serif }
 
 ------------------------------------------------------------
 -- Value Types
 ------------------------------------------------------------
 
--- El conjunto de 2 preferencias de skin. Cada campo es opcional: null =
+-- El conjunto de 3 preferencias de skin. Cada campo es opcional: null =
 -- "sin elección explícita" → se resuelve por default (y, donde aplica,
 -- por SO). El tema es el caso especial: null → claro (el SO NO aplica);
--- el SO sólo influye si theme = auto. El tamaño de letra no toma señal del
--- SO: null → medium.
+-- el SO sólo influye si theme = auto. El tamaño de letra y la familia
+-- tipográfica no toman señal del SO: null → medium / sans.
 value Preferences {
     theme: ThemeChoice?
     font_size: FontSize?
+    font_family: FontFamily?
 }
 
 ------------------------------------------------------------
@@ -325,6 +338,7 @@ entity ViewingSession {
         else if saved?.theme = light: light
         else: light
     active_font_size: saved?.font_size ?? medium
+    active_font_family: saved?.font_family ?? sans
 }
 
 -- Conjunto cerrado de tres regiones (footer, sidebar, notice). No es un

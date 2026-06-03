@@ -122,9 +122,9 @@ a.new, a[href].new { color: var(--sn-link-new); }
 
 .sn-header {
 	position: sticky; top: 0; z-index: var(--sn-z-header);
-	background: color-mix(in oklab, var(--sn-field) 86%, transparent);
-	-webkit-backdrop-filter: saturate(1.4) blur(10px);
-	backdrop-filter: saturate(1.4) blur(10px);
+	background: color-mix(in oklab, var(--sn-field) 60%, transparent);
+	-webkit-backdrop-filter: saturate(1.5) blur(8px);
+	backdrop-filter: saturate(1.5) blur(8px);
 	border-bottom: 1px solid var(--sn-hairline-soft);
 }
 /* Cabecera despejada: isotipo · pestañas de página · buscador · usuario.
@@ -188,7 +188,7 @@ a.new, a[href].new { color: var(--sn-link-new); }
    trigger (.sn-search-trigger) lo abre como modal — ver media query
    al final del archivo, sección Responsive. */
 .sn-searchbox {
-	flex: 0 1 24rem; max-width: 32rem; min-width: 0;
+	flex: 1 1 auto; max-width: none; min-width: 0;
 	display: flex; align-items: center;
 }
 /* Trigger y close: especificidad bumpeada (.sn-searchbox …) para ganarle
@@ -229,10 +229,14 @@ a.new, a[href].new { color: var(--sn-link-new); }
 	background: var(--sn-sunk); color: var(--sn-icon-active);
 }
 
-/* — Zona 5 · Herramientas del usuario — */
+/* — Zona 5 · Herramientas del usuario —
+   Se pega al .sn-pagecluster (mismo cluster de íconos a la derecha): el
+   gap del header-bar es --sn-s-5, y aquí lo compensamos con un margen
+   negativo para dejar exactamente --sn-s-1 entre ambos. Search ya tiene
+   `flex: 1 1 auto` y devora todo el espacio entre la marca y este cluster. */
 .sn-usertools {
 	display: flex; align-items: center; gap: var(--sn-s-1);
-	flex: none; margin-left: var(--sn-s-2);
+	flex: none; margin-left: calc(var(--sn-s-1) - var(--sn-s-5));
 }
 .sn-tempbadge {
 	display: grid; place-items: center; width: 2rem; height: 2rem;
@@ -769,21 +773,22 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 .sn-body a.external:is(.image, .no-icon)::after,
 .sn-body a.external:has(img)::after { content: none; }
 
-/* Citas y poemas: única familia serif del skin (IBM Plex Serif). El
-   <poem> de la extensión Poem se renderiza como .poem dentro de
-   mw-parser-output. Line-height y márgenes en baselines: el ritmo se
-   mantiene aunque el cuerpo cambie a Serif puntualmente. */
+/* Citas y poemas: familia "de contraste" frente al cuerpo. Consumen
+   --sn-font-quote (default = serif Source Serif 4; sans Plex cuando el
+   lector alterna familia desde el menú). El <poem> de la extensión Poem
+   se renderiza como .poem dentro de mw-parser-output. Line-height y
+   márgenes en baselines: el ritmo se mantiene aunque el cuerpo cambie. */
 .sn-body blockquote {
 	margin: var(--sn-baseline) 0;
 	padding: 0 0 0 var(--sn-s-5);
-	font-family: var(--sn-font-serif); font-optical-sizing: auto;
+	font-family: var(--sn-font-quote); font-optical-sizing: auto;
 	font-size: var(--sn-fs-md);
 	color: var(--sn-ink-soft); line-height: var(--sn-baseline);
 }
 .sn-body blockquote p:last-child { margin-bottom: 0; }
 .sn-body .poem {
-	font-family: var(--sn-font-serif); font-optical-sizing: auto;
-	font-size: var(--sn-fs-sm); line-height: var(--sn-baseline);
+	font-family: var(--sn-font-quote); font-optical-sizing: auto;
+	font-size: var(--sn-fs-md); line-height: var(--sn-baseline);
 	color: var(--sn-ink);
 	white-space: pre-wrap;
 }
@@ -1254,6 +1259,21 @@ canvas, iframe,
 .sn-seg-sz button[data-v="small"]  { font-size: calc(var(--sn-fs-sm) * .82); }
 .sn-seg-sz button[data-v="medium"] { font-size: var(--sn-fs-sm); }
 .sn-seg-sz button[data-v="large"]  { font-size: calc(var(--sn-fs-sm) * 1.22); }
+
+/* Familia Aa/Aa: cada botón muestra UNA 'a' en su propia familia primitiva
+   (sans / serif) para que la elección sea visual, no textual. Forzamos las
+   primitivas --sn-font-sans/--sn-font-serif, NO los alias --sn-font-text/
+   --sn-font-quote — esos cambian con la preferencia y los specimens
+   quedarían iguales al alternar (el bug a evitar). El glifo va a mayor
+   tamaño que las S·M·L para que el contraste de familia se lea bien. */
+.sn-seg-fam button { line-height: 1; padding: 0; }
+.sn-fam-spec {
+	font-size: calc(var(--sn-fs-sm) * 1.3);
+	font-weight: 500; line-height: 1;
+	display: inline-block;
+}
+.sn-fam-sans  { font-family: var(--sn-font-sans);  font-feature-settings: "ss01"; }
+.sn-fam-serif { font-family: var(--sn-font-serif); font-optical-sizing: auto; }
 
 /* ─────────── ExperimentalCanvas + UnifiedMenuAffordance ───────────
    Pantalla completa (__PANTALLACOMPLETA__): la página POSEE el viewport.

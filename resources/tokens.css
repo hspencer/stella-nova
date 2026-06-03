@@ -2,8 +2,9 @@
  *
  * Metáfora rectora: "página de papel". Una hoja cálida flota sobre un campo
  * gris ahuesado (el atelier de la e[ad]); un único punto de luz carmín es la
- * nova. Editorial, sobrio, cálido. IBM Plex Sans (cuerpo · UI · cabeceras,
- * variable) · IBM Plex Serif (citas, poemas — único uso editorial) ·
+ * nova. Editorial, sobrio, cálido. IBM Plex Sans (sans del cuerpo · UI ·
+ * cabeceras, variable de dos ejes) · Source Serif 4 (serif del cuerpo cuando
+ * el lector la elige desde el menú, citas y poemas; variable wght 200–900) ·
  * IBM Plex Mono (código).
  * Ritmo vertical sobre la interlínea del cuerpo: la unidad es
  * `--sn-baseline`, todo line-height/margen vertical de bloque es un múltiplo.
@@ -109,17 +110,30 @@
 	/* Velo de diálogos modales */
 	--sn-scrim:             color-mix(in oklab, var(--sn-ink) 45%, transparent);
 
-	/* — Tipografía — familia única IBM Plex. IBM Plex Sans (cuerpo, UI y
-	   TODAS las cabeceras; VARIABLE, eje wght 100–700: cualquier peso del
-	   diseño interpola de verdad), IBM Plex Serif (estática, único uso
-	   editorial: citas y <poem>), IBM Plex Mono (código). Auto-alojadas
-	   (fonts.css). `--sn-font-display` queda como alias de `--sn-font-text`:
-	   la doctrina del skin es "todo sans en cabeceras"; el alias permite
-	   reintroducir un display distinto tocando solo el token. */
-	--sn-font-text: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	/* — Tipografía — dos familias para texto. IBM Plex Sans (sans del cuerpo,
+	   UI y TODAS las cabeceras; VARIABLE, dos ejes wght 100–700 + wdth 75–100)
+	   y Source Serif 4 (serif del cuerpo cuando el lector la elige desde el
+	   menú; siempre en citas/poemas; VARIABLE, eje wght 200–900). IBM Plex
+	   Mono para código. Auto-alojadas (fonts.css). `--sn-font-display` queda
+	   como alias de `--sn-font-text`: la doctrina del skin es "todo sans en
+	   cabeceras"; el alias permite reintroducir un display distinto tocando
+	   solo el token. */
+	/* Primitivas: las dos familias reales (no se redefinen al alternar). */
+	--sn-font-sans:  'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--sn-font-serif: 'Source Serif 4', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
+	--sn-font-mono:  'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
+	/* Semánticas: alias que el resto del skin consume.
+	   --sn-font-text  → familia del cuerpo + UI + cabeceras (default: sans).
+	   --sn-font-quote → familia de citas y <poem>            (default: serif).
+	   Al activar data-sn-family="serif" desde el menú del usuario, ambos
+	   se invierten en el bloque al final de este archivo:
+	     · cuerpo + UI    → serif
+	     · citas/<poem>   → sans
+	   Mantener este patrón al introducir nuevos componentes editoriales:
+	   consumir --sn-font-text o --sn-font-quote, NUNCA las primitivas. */
+	--sn-font-text:  var(--sn-font-sans);
 	--sn-font-display: var(--sn-font-text);
-	--sn-font-serif: 'IBM Plex Serif', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
-	--sn-font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
+	--sn-font-quote: var(--sn-font-serif);
 
 	/* Ancho del cuerpo (eje wdth de IBM Plex Sans, vía font-stretch). 100% =
 	   normal, 75% = lo más condensado que ofrece Plex. Aplica a párrafos,
@@ -398,6 +412,19 @@
 :root[data-sn-font="small"]  { --sn-font-scale: .92; }
 :root[data-sn-font="medium"] { --sn-font-scale: 1; }
 :root[data-sn-font="large"]  { --sn-font-scale: 1.14; }
+
+/* ── Familia tipográfica (preferencia del lector). Default = sans
+   (cuerpo+UI en IBM Plex Sans, citas/<poem> en Source Serif 4). Al elegir
+   "serif" desde el menú del usuario, se invierten los dos alias y, en
+   cascada, todos los componentes que los consumen voltean a la vez:
+     · cuerpo + UI + cabeceras → Source Serif 4
+     · citas + <poem>          → IBM Plex Sans
+   Las primitivas --sn-font-sans/--sn-font-serif no se tocan: las dos
+   familias siguen disponibles, sólo cambia QUIÉN consume cuál. ── */
+:root[data-sn-family="serif"] {
+	--sn-font-text:  var(--sn-font-serif);
+	--sn-font-quote: var(--sn-font-sans);
+}
 
 /* ── Movimiento: sólo la señal del SO (ya no es preferencia del usuario;
    reduced-motion sigue siendo 1ª clase). ── */

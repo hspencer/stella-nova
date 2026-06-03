@@ -29,5 +29,8 @@
 	"stellanova-pref-font": "Font size",
 	"stellanova-sz-s": "Small",
 	"stellanova-sz-m": "Medium",
-	"stellanova-sz-l": "Large"
+	"stellanova-sz-l": "Large",
+	"stellanova-pref-family": "Type family",
+	"stellanova-family-sans": "Sans (IBM Plex Sans)",
+	"stellanova-family-serif": "Serif (Source Serif 4)"
 }

@@ -96,18 +96,21 @@
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-text);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>IBM Plex Sans</strong> · variable, eje wght 100–700<br>
-          Token <code>--sn-font-text</code> · cuerpo, UI y TODAS las cabeceras<br>
-          (<code>--sn-font-display</code> es alias de <code>--sn-font-text</code>:
-          la doctrina del skin es "todo sans en cabeceras")
+          <strong>IBM Plex Sans</strong> · variable, dos ejes wght 100–700 + wdth 75–100<br>
+          Token <code>--sn-font-sans</code> (primitiva). Alias semánticos:
+          <code>--sn-font-text</code> = cuerpo + UI + cabeceras,
+          <code>--sn-font-display</code> = alias de text.
         </div>
       </div>
       <div class="colophon-row">
         <div class="colophon-name" style="font-family: var(--sn-font-serif);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
-          <strong>IBM Plex Serif</strong> · serif editorial, pesos 400 / 700<br>
-          Token <code>--sn-font-serif</code> · único uso editorial<br>
-          Uso: <code>&lt;blockquote&gt;</code>, <code>&lt;poem&gt;</code>
+          <strong>Source Serif 4</strong> · variable, eje wght 200–900<br>
+          Token <code>--sn-font-serif</code> (primitiva). Alias semántico:
+          <code>--sn-font-quote</code> = citas + <code>&lt;poem&gt;</code> por defecto.<br>
+          Activable como familia del cuerpo desde el menú del usuario
+          (<code>data-sn-family="serif"</code>): cuerpo + UI voltean a Serif y
+          citas/<code>&lt;poem&gt;</code> voltean a Sans.
         </div>
       </div>
       <div class="colophon-row">
@@ -308,8 +311,11 @@ Filete horizontal: cuatro guiones al inicio: ----</pre>
 <section class="comp">
   <h2>Cita y poema</h2>
   <p class="meta"><code>&lt;blockquote&gt;</code> y <code>&lt;poem&gt;</code>
-  (extensión Poem) van en serif <code>--sn-font-serif</code>: IBM Plex
-  Serif, el único uso editorial del skin. El poema lleva
+  (extensión Poem) consumen <code>--sn-font-quote</code>, que por defecto
+  apunta a Source Serif 4 (la serif del skin, variable wght 200–900). Si
+  el lector alterna la familia del cuerpo a serif desde el menú del
+  usuario, citas y poemas voltean a sans para mantener el contraste
+  editorial. El poema lleva
   <code>white-space: pre-wrap</code>, lo que conserva los espacios del
   wikitexto como materia significante (no son adorno: son la
   espacialidad del verso). Fragmento de la <em>Aventura de Amereida</em>

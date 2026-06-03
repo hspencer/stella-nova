@@ -109,19 +109,25 @@ Decidir herramienta (pendiente del PLAN del proyecto).
   cuerpo se condensa vía `font-stretch` (eje wdth) sin variantes extra. (La
   build `@fontsource-variable` antigua solo exponía wght — esos
   `plexsans-latin-wght-*.woff2` ignoraban `font-stretch` y se retiraron.)
-  **IBM Plex Serif** (estática, pesos 400/700 normal+italic; único uso
-  editorial: citas y `<poem>`) + **IBM Plex Mono** (código). Auto-alojadas
-  en `resources/fonts/` (sin CDN en runtime; **versionadas en git** — su
-  ausencia rompía el tema). Las URLs las calcula
-  `Hooks::onResourceLoaderRegisterModules` de la carpeta real (robusto al
-  nombre del directorio). Subset latin: U+0000-00FF cubre el español sin
-  latin-ext. `--sn-font-display` queda como alias de `--sn-font-text` para que
-  la doctrina "todo sans en cabeceras" se exprese en un solo token. IBM Plex
-  Sans tope en 700: pesos > 700 se recortan al máximo del eje. Historial:
+  **Source Serif 4** (serif del cuerpo cuando el lector la elige desde el
+  menú; citas y `<poem>` por defecto) — **variable**, eje **wght 200–900**
+  (`sourceserif4-latin-wght-*.woff2`, build de Google Fonts) + **IBM Plex
+  Mono** (código). Auto-alojadas en `resources/fonts/` (sin CDN en runtime;
+  **versionadas en git** — su ausencia rompía el tema). Las URLs las
+  calcula `Hooks::onResourceLoaderRegisterModules` de la carpeta real
+  (robusto al nombre del directorio). Subset latin: U+0000-00FF cubre el
+  español sin latin-ext. Tokens en dos capas: primitivas
+  (`--sn-font-sans`, `--sn-font-serif`, `--sn-font-mono`) y semánticas
+  (`--sn-font-text` = sans del cuerpo, `--sn-font-quote` = serif de citas,
+  `--sn-font-display` = alias de text). La preferencia `family` (sans|serif)
+  invierte los dos alias en cascada: cuerpo+UI voltean a serif y
+  citas/`<poem>` voltean a sans. IBM Plex Sans tope en 700; Source Serif 4
+  tope en 900: pesos fuera del eje se recortan al máximo. Historial:
   Work Sans + Newsreader → Anthropic Sans + Anthropic Serif → Alegreya Sans +
   Alegreya (2026-05-25, rama `fonts`) → IBM Plex Sans (variable wght) + IBM
   Plex Serif (2026-05-29) → IBM Plex Sans variable de dos ejes wght+wdth
-  (2026-05-31).
+  (2026-05-31) → IBM Plex Sans + **Source Serif 4 variable** + alternador
+  sans/serif desde el menú del usuario (2026-06-03).
 - **Sin `text-transform: uppercase` en cabeceras del cuerpo** (rev.
   2026-05-25): h3 (subsección en nova) y h5/h6 (labels secundarios)
   perdieron el uppercase; ahora la jerarquía visual la hacen tamaño,

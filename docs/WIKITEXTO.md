@@ -234,10 +234,12 @@ cuando reconoce el patrón:
 - **Tablas `.wikitable`** y **`.toccolours`**: ya quedan tematizadas
   (fondo paper, bordes hairline, headers en sunk). No hace falta hacer
   nada.
-- **`<blockquote>`** y **`<poem>`** (extensión Poem): la única familia
-  serif del skin (IBM Plex Serif) se aplica automáticamente. No usar
-  `<blockquote>` para "destacar texto general" — está reservado para
-  citas reales.
+- **`<blockquote>`** y **`<poem>`** (extensión Poem): consumen la
+  familia editorial de contraste (`--sn-font-quote`). Por defecto es
+  Source Serif 4 (la serif variable del skin). Si el lector elige serif
+  como familia del cuerpo desde el menú, citas y poemas voltean a sans
+  para mantener el contraste. No usar `<blockquote>` para "destacar
+  texto general" — está reservado para citas reales.
 - **Enlaces externos:** ícono Feather "external-link" al final como
   máscara teñida con `currentColor`. No usar pseudo-classes propias.
 - **Imágenes en general:** `max-width: 100 %` y `height: auto`

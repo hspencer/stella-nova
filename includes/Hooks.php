@@ -29,11 +29,13 @@ use User;
 class Hooks {
 
 	/** Opción de cuenta → valor por defecto ('' = sin elección explícita).
-	 *  Sólo dos preferencias: tema y tamaño de letra. Índice, secciones
-	 *  colapsables y reducción de movimiento se retiraron como preferencia. */
+	 *  Tres preferencias: tema, tamaño de letra y familia tipográfica
+	 *  (sans|serif — alternancia editorial). Índice, secciones colapsables
+	 *  y reducción de movimiento se retiraron como preferencia. */
 	private const PREFS = [
-		'stellanova-theme' => '',
-		'stellanova-font'  => '',
+		'stellanova-theme'  => '',
+		'stellanova-font'   => '',
+		'stellanova-family' => '',
 	];
 
 	/**
@@ -290,7 +292,7 @@ class Hooks {
 		);
 		$script = '<script>(function(){try{' .
 			'var C=' . $cfgJson . ';' .
-			'var d=document.documentElement,K=["theme","font"];' .
+			'var d=document.documentElement,K=["theme","font","family"];' .
 			'function g(k){if(C.identity==="registered"){return (C.server&&C.server[k])||"";}' .
 			'try{return localStorage.getItem("sn-pref-"+k)||"";}catch(e){return "";}}' .
 			'K.forEach(function(k){var v=g(k);if(!v)return;' .

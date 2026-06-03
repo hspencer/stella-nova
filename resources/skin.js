@@ -10,7 +10,7 @@
 	var cfg = ( window.mw && mw.config && mw.config.get( 'wgStellaNova' ) ) || {
 		identity: 'anonymous', persist: 'browser', apiPrefix: 'stellanova-', server: {}
 	};
-	var KEYS = [ 'theme', 'font' ];
+	var KEYS = [ 'theme', 'font', 'family' ];
 
 	/* ── Persistencia: cuenta (cross-device) vs navegador ── */
 	function readPref( k ) {
@@ -54,6 +54,7 @@
 			var k = seg.getAttribute( 'data-sn-pref' );
 			var cur = readPref( k );
 			var fallback = k === 'theme' ? 'light' : k === 'font' ? 'medium'
+				: k === 'family' ? 'sans'
 				: seg.querySelector( 'button[data-v]' ).getAttribute( 'data-v' );
 			seg.querySelectorAll( 'button[data-v]' ).forEach( function ( b ) {
 				var on = b.getAttribute( 'data-v' ) === ( cur || fallback );
