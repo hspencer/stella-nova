@@ -100,22 +100,86 @@ sobre un `::after` teñido con `currentColor`.
 
 ## Color
 
-Acento único (la *nova*, carmín) en `--sn-nova`; tinta y campo en
-`--sn-ink*` / `--sn-field` / `--sn-paper`. Light/dark se resuelven en
-[`tokens.css`](../resources/tokens.css) con `prefers-color-scheme`
-+ `[data-sn-theme]`:
+El sistema cromático vive en tres capas, en el orden Material 3
+(*reference → system → component*). La regla operativa: **tocá la capa
+más alta que resuelva tu problema**. Cambiar primitivas afecta todo el
+skin; cambiar semánticas reasigna un rol sin tocar la paleta; cambiar
+componentes ajusta un widget sin tocar nada más.
 
-- **Sin preferencia guardada** → claro (decisión de producto;
-  diverge del comportamiento "seguir al SO siempre").
-- `data-sn-theme="dark"` → oscuro forzado.
+### 1. Primitivas (paleta agnóstica del tema)
+
+Nombradas por **qué es el color**, no por su uso. Stops 50–950 donde
+el número crece con la oscuridad. Familias:
+
+| Familia | Qué es | Stops |
+|---|---|---|
+| **papel** | neutros cálidos claros (la hoja, sus pliegues) | 50–800 |
+| **tinta** | neutros cálidos oscuros (pizarra y tinta china del atelier) | 300–950 |
+| **rojo** | la sangre del carmín (nova y links del claro) | 500–900 |
+| **coral** | el rosa cálido del modo noche | 300–400 |
+| **azul** | único frío del skin (link en oscuro) | 200–300 |
+| **malva** | gris-violeta del visitado en oscuro | 400 |
+| **verde** | la "ok" del taller | 400–500 |
+| **masking** | la cinta amarilla del taller (warn, notice) | 300–900 |
+| **blanco** | papel químicamente puro (solo nova-ink claro) | (sin stop) |
+
+Se definen una sola vez en `:root`. **No agregar primitivas
+especulativas** — solo si el color ya existe en otra parte del archivo
+y conviene ponerle nombre. Si vas a cambiar la paleta, este es el lugar.
+
+### 2. Semánticas (roles del skin)
+
+Cada rol del skin (`--sn-paper`, `--sn-ink`, `--sn-nova`, `--sn-link`,
+`--sn-danger`, …) apunta a **una primitiva por tema**, con
+`light-dark()` resolviendo el flip:
+
+```css
+--sn-paper: light-dark(var(--sn-papel-50), var(--sn-tinta-800));
+--sn-link:  light-dark(var(--sn-rojo-500), var(--sn-azul-300));
+```
+
+El conmutador es `color-scheme`. El skin lo decide en cuatro selectores:
+
+- **Sin preferencia guardada** → claro (decisión de producto; diverge
+  del comportamiento "seguir al SO siempre").
 - `data-sn-theme="light"` → claro forzado.
-- `data-sn-theme="auto"` → sigue al SO.
+- `data-sn-theme="dark"`  → oscuro forzado (el SO no participa).
+- `data-sn-theme="auto"`  → `color-scheme: light dark`; `light-dark()`
+  sigue al `prefers-color-scheme` del SO.
 
-Variables Codex / WikimediaUI están aliasadas a los tokens del skin en
-el bloque "Capa de compatibilidad Codex" de `tokens.css`: cuando OOUI
-pide `var(--color-base, #202122)` lee `var(--sn-ink)` y voltea con el
-tema automáticamente. Si añades un nuevo control de OOUI y queda con
-color hardcodeado, posiblemente falte un alias ahí.
+Tocá esta capa cuando quieras **reasignar un rol** sin cambiar la paleta:
+por ejemplo, si decidís que el danger del claro pase de `--sn-rojo-600`
+a `--sn-rojo-500` para igualarlo a la nova. Una línea, sin tocar
+primitivas, sin tocar componentes.
+
+Cuatro tokens — `--sn-field-grain` y los tres `--sn-lift*` — varían
+**geometría** además de color entre temas, así que no encajan en
+`light-dark()`. Quedan duplicados (4 declaraciones) en los selectores
+`[data-sn-theme="dark"]` y `@media (prefers-color-scheme: dark)
+[data-sn-theme="auto"]` al final del archivo. Es la única duplicación
+intencional del sistema.
+
+### 3. Componentes (controles + Codex)
+
+Tokens de control (`--sn-btn-*`, `--sn-field-*`, `--sn-on-*`,
+`--sn-opt-*`, `--sn-focus-*`) y la capa de alias Codex / WikimediaUI
+(`--color-*`, `--background-color-*`, `--border-color-*`). Consumen
+**variables semánticas, nunca primitivas directas**. Heredan el flip de
+tema automáticamente.
+
+La capa Codex existe porque OOUI (oojs-ui-core/widgets/windows) y
+algunas extensiones consumen `var(--color-base, #202122)` etc.; si la
+variable no está definida en el documento, cae al hex hardcodeado y NO
+respeta el tema. Acá los aliasamos a los tokens semánticos. Si añadís
+un control OOUI nuevo y queda con color hardcodeado, posiblemente falte
+un alias en esta capa.
+
+### Contratos externos (no romper)
+
+Los nombres `--sn-*` semánticos y los alias Codex los consumen los
+TemplateStyles por plantilla (`Plantilla:X/style.css`), un espejo en
+producción de `MediaWiki:Common.css` y OOUI. **No renombrar ni eliminar
+ninguno**. La capa primitiva es puramente aditiva por debajo.
 
 ## Espécimen gráfico — mini-sitio para iterar
 
@@ -159,6 +223,21 @@ Bootstrap nos enseñó qué pasa cuando crece sin freno. Antes de añadir:
    `.plantilla`, `.img-circle`, `.sn-notice`)?
 3. Si la respuesta a ambas es no, conversar antes — no a regañadientes,
    simplemente para mantener coherencia.
+
+Si vas a tocar un color, además decidí **en qué capa**:
+
+- **¿El color que necesitás ya existe en otra parte del archivo?** No
+  agregues una primitiva nueva: reusá la que ya está.
+- **¿Estás reasignando un rol del skin** (p. ej. cambiar a qué primitiva
+  apunta `--sn-danger`)? Es la capa semántica. Una línea, sin tocar
+  paleta ni componentes.
+- **¿Es un acento específico de un widget** (un botón, un campo)? Es la
+  capa de componentes; consumí variables semánticas, nunca primitivas
+  directas.
+
+Si la primitiva genuinamente no existe (un hue nuevo que el taller
+necesita), añadirla con el siguiente stop libre de su familia (50–950)
+y dejar comentado dónde se consume.
 
 Para ver las clases editoriales actuales, [`WIKITEXTO.md`](WIKITEXTO.md) §2.
 Para ver las variables, [`tokens.css`](../resources/tokens.css) (todas

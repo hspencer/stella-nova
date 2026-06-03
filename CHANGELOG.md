@@ -9,6 +9,46 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.2.3] — 2026-06-03
+
+### Changed
+- **Sistema de tokens en tres capas (refactor de `tokens.css`).** Material 3
+  aplicado al sistema cromático: **primitivas** (paleta agnóstica del tema,
+  nombrada por hue en castellano de taller: `papel`, `tinta`, `rojo`,
+  `coral`, `azul`, `malva`, `verde`, `masking`, `blanco`; stops 50–950
+  donde el número crece con la oscuridad), **semánticas** (roles del skin:
+  `--sn-paper`, `--sn-ink`, `--sn-nova`, `--sn-link`, … cada rol → una
+  primitiva por tema vía `light-dark()`) y **componente** (`--sn-btn-*`,
+  `--sn-field-*`, capa Codex/WikimediaUI: consumen semánticas, nunca
+  primitivas). 36 primitivas para 22 roles semánticos de color. Sin
+  renombres ni eliminaciones en los nombres públicos del skin: capa
+  primitiva **puramente aditiva** por debajo.
+- **Conmutación de tema con `light-dark()`.** Los dos bloques duplicados de
+  modo oscuro (`[data-sn-theme="dark"]` + `@media (prefers-color-scheme:
+  dark) [data-sn-theme="auto"]`, 14 declaraciones idénticas con riesgo de
+  desincronización) se reducen a tres líneas de `color-scheme`. El mapeo
+  rol → primitiva por tema vive una sola vez en `:root`. Quedan duplicadas
+  sólo las 4 declaraciones no-color (grano del campo + tres sombras) que
+  varían geometría además de color con el tema.
+- **`--sn-nova` claro unificado con `--sn-link` claro** (`#b22f1e` →
+  `#ae2d13`). La diferencia de 4 puntos en R era imperceptible; el carmín
+  del foco/firstHeading y el del link son la misma sangre en claro. En
+  oscuro siguen divergiendo a propósito (nova = coral cálido, link = azul
+  frío) para preservar identidad y afordancia de link.
+- **`--sn-nova-ink` y `--sn-warn-ink` oscuros unificados** (`#1a0b0d` y
+  `#1a140a` → `#1a0f0b`, promedio). Ambos eran "casi-negro cálido para
+  texto sobre acento saturado"; un solo color cubre los dos casos.
+
+### Added
+- **`docs/DISENO.md`**: sección "Color" reescrita para documentar las tres
+  capas (qué es cada una, cuándo tocar cuál) y los nombres de la paleta.
+  Nueva guía en "Antes de añadir un token" sobre cómo elegir la capa
+  correcta.
+- Espécimen regenerado con secciones nuevas (`Primitiva · papel`,
+  `Primitiva · tinta`, …) que listan los 36 swatches navegables; los
+  grupos semánticos quedan visibles aparte para diferenciar las capas a
+  primera vista.
+
 ## [0.2.1] — 2026-06-02
 
 ### Added

@@ -9,75 +9,189 @@
  * Ritmo vertical sobre la interlínea del cuerpo: la unidad es
  * `--sn-baseline`, todo line-height/margen vertical de bloque es un múltiplo.
  *
- * Tema: prefers-color-scheme + override [data-sn-theme]. Las 5 preferencias
- * del spec se enchufan por data-attributes en <html> (resueltas server-side
- * para registrados, pre-paint para anónimo/temporal). Aquí solo los valores;
- * el contrato de resolución (explícito > SO > default) vive en el spec.
+ * ── Tres capas (Material 3: reference → system → component) ──────────────
+ *
+ *   1. PRIMITIVAS (reference). Paleta cromática nombrada por lo que el
+ *      color ES (papel, tinta, rojo, coral, azul, malva, verde, masking,
+ *      blanco), con stops 50–950 donde el número crece con la oscuridad.
+ *      Agnósticas del tema: se definen UNA SOLA VEZ en :root. No tocar
+ *      salvo para añadir/retirar un color del taller.
+ *
+ *   2. SEMÁNTICA (system). Roles del skin (--sn-paper, --sn-ink,
+ *      --sn-nova, --sn-link, --sn-danger, …): cada rol apunta a UNA
+ *      primitiva por tema vía light-dark(). El conmutador es color-scheme,
+ *      conducido por [data-sn-theme]. Aquí se decide CUÁL es la tinta del
+ *      cuerpo en cada tema, qué papel sostiene el chrome, etc. Capa que
+ *      un diseñador del taller tocaría para reasignar un acento sin
+ *      cambiar primitivas.
+ *
+ *   3. COMPONENTE (system, suprasemántica). Tokens de control
+ *      (--sn-btn-*, --sn-field-*, --sn-on-*, --sn-opt-*, --sn-focus-*) y
+ *      la capa Codex / WikimediaUI (--color-*, --background-color-*,
+ *      --border-color-*). Consumen variables semánticas, NUNCA primitivas
+ *      directas. Heredan automáticamente el flip de tema.
+ *
+ * Contratos externos en niveles SEMÁNTICA y COMPONENTE: los consumen los
+ * TemplateStyles por plantilla (Plantilla:X/style.css), un espejo en
+ * producción de MediaWiki:Common.css y OOUI. NO renombrar ni eliminar
+ * variables --sn-* semánticas existentes, ni los alias Codex. La capa
+ * primitiva es PURAMENTE ADITIVA por debajo.
+ *
+ * ── Conmutación de tema ──────────────────────────────────────────────────
+ *
+ * DEFAULT = CLARO. El esquema del SO NO oscurece por sí solo: solo se
+ * aplica oscuro si el usuario lo elige explícitamente
+ * (data-sn-theme="dark") o si elige seguir al SO (data-sn-theme="auto") y
+ * el SO está en oscuro. Sin preferencia guardada → claro. (Diverge del
+ * paso `os_scheme` del spec para el tema; decisión de producto del
+ * usuario, 2026-05-18.)
+ *
+ * El flip lo conduce `color-scheme` en :root y light-dark() en cada rol
+ * de color. Cada rol semántico de color se escribe UNA sola vez. Solo
+ * cuatro tokens NO usan light-dark() (--sn-field-grain y los tres
+ * --sn-lift*): varían en geometría además de color, y se redefinen
+ * explícitamente en los selectores de tema al final del archivo.
  */
 
 :root {
-	/* — Campo y papel (luz cálida, no #fff puro: el papel tiene cuerpo) — */
-	--sn-field:        #e8e4da;   /* gris ahuesado: el escritorio/atelier   */
-	--sn-field-grain:  0.035;     /* opacidad del grano de papel sobre field */
-	--sn-paper:        #fcfbf7;   /* la hoja: superficie del contenido       */
-	--sn-paper-edge:   #f3f0e7;   /* borde/sombra interna de la hoja         */
-	--sn-sunk:         #efece2;   /* hundido: inputs, code, celdas alternas  */
+	/* ═══════════════════════════════════════════════════════════════════
+	   CAPA 1 — PRIMITIVAS (REFERENCE)
+	   Paleta cromática agnóstica del tema. Nombrada por hue (qué ES el
+	   color), no por uso. Stops 50–950 con luminancia creciente.
+	   ═══════════════════════════════════════════════════════════════════ */
 
-	/* — Tinta — */
-	--sn-ink:          #221f1a;   /* texto: negro cálido, no #000            */
-	--sn-ink-soft:     #6b6357;   /* secundario, metadatos, captions         */
-	--sn-ink-faint:    #968c7c;   /* terciario, placeholders, deshabilitado  */
-	--sn-hairline:     #ddd6c7;   /* filete: bordes de 1px, separadores      */
-	--sn-hairline-soft:#e7e1d3;   /* filete aún más tenue                    */
+	/* — Primitiva · papel — neutros cálidos claros (la hoja, sus pliegues, su sombra) */
+	--sn-papel-50:  #fcfbf7;
+	--sn-papel-100: #f3f0e7;
+	--sn-papel-200: #efece2;
+	--sn-papel-300: #ece7da;
+	--sn-papel-400: #e8e4da;
+	--sn-papel-500: #e7e1d3;
+	--sn-papel-600: #ddd6c7;
+	--sn-papel-700: #a39a86;
+	--sn-papel-800: #968c7c;
 
-	/* — La nova: único acento agudo, usado con avaricia — */
-	--sn-nova:         #b22f1e;   /* carmín: foco, activo, marca de posición */
-	--sn-nova-ink:     #ffffff;   /* texto sobre nova                        */
-	--sn-nova-wash:    #f7e9e6;   /* lavado tenue: selección, fondo activo   */
+	/* — Primitiva · tinta — neutros cálidos oscuros (pizarra y tinta china del atelier) */
+	--sn-tinta-300: #756d5d;
+	--sn-tinta-400: #6b6357;
+	--sn-tinta-500: #353123;
+	--sn-tinta-600: #2c2410;
+	--sn-tinta-650: #2a2719;
+	--sn-tinta-700: #262318;
+	--sn-tinta-750: #221f1a;   /* la tinta canónica del cuerpo (claro) */
+	--sn-tinta-800: #1e1c15;
+	--sn-tinta-850: #1a0f0b;   /* casi-negro para tinta sobre acento (oscuro) */
+	--sn-tinta-900: #181610;
+	--sn-tinta-950: #141209;
 
-	/* — Enlaces (AA sobre papel cálido) — */
-	--sn-link:         #ae2d13;
-	--sn-link-hover:   #962c08;
-	--sn-link-visited: #612403;
-	/* Enlace a página inexistente (redlink). En claro: tinta muy
-	   apagada (replica el aire de producción, faded-grey sobre cream).
-	   En oscuro se redefine al final con un coral cálido que sí cumple
-	   contraste sobre paper/sunk. */
-	--sn-link-new:     rgba(34, 31, 26, .42);
+	/* — Primitiva · rojo — sangre del carmín (single source para nova y link claros) */
+	--sn-rojo-500: #ae2d13;    /* la nova y el link nacen del mismo carmín */
+	--sn-rojo-600: #b21e3e;    /* danger claro (vino más profundo, menos cálido) */
+	--sn-rojo-700: #962c08;    /* link-hover claro */
+	--sn-rojo-900: #612403;    /* link-visited claro */
 
-	/* Íconos de UI: nunca negro pleno ni acento; tinta al ~70% en reposo,
-	   tinta plena al hover/activo. Nunca carmín. */
+	/* — Primitiva · coral — el rosa cálido del modo noche */
+	--sn-coral-300: #c8a89a;   /* link-new oscuro */
+	--sn-coral-400: #ff6b7e;   /* nova + danger oscuros (un coral, dos roles) */
+
+	/* — Primitiva · azul — único frío del skin, link de noche */
+	--sn-azul-200: #b3cef2;
+	--sn-azul-300: #8fb4e8;
+
+	/* — Primitiva · malva — visitado en la noche */
+	--sn-malva-400: #a99cae;
+
+	/* — Primitiva · verde — la "ok" del taller */
+	--sn-verde-400: #6cc18a;
+	--sn-verde-500: #2f6f43;
+
+	/* — Primitiva · masking — la cinta amarilla del taller y sus parientes */
+	--sn-masking-300: #f7db7e;
+	--sn-masking-500: #d9a14b;
+	--sn-masking-700: #8a5a12;
+	--sn-masking-900: #5a4416;
+
+	/* — Primitiva · blanco — papel químicamente puro (solo donde la nova exige) */
+	--sn-blanco: #ffffff;
+
+
+	/* ═══════════════════════════════════════════════════════════════════
+	   CAPA 2 — SEMÁNTICA (SYSTEM)
+	   Roles del skin. Cada rol → primitiva, con flip de tema vía
+	   light-dark(claro, oscuro). El default es claro (color-scheme: light);
+	   los selectores [data-sn-theme] al final del archivo conmutan
+	   color-scheme y light-dark() resuelve a la rama correspondiente.
+	   ═══════════════════════════════════════════════════════════════════ */
+
+	color-scheme: light;
+
+	/* — Semántica · campo y papel — luz cálida (el papel tiene cuerpo, no es #fff puro) */
+	--sn-field:        light-dark(var(--sn-papel-400), var(--sn-tinta-950));
+	--sn-field-grain:  0.035;          /* opacidad del grano de papel; override por tema al final */
+	--sn-paper:        light-dark(var(--sn-papel-50),  var(--sn-tinta-800));
+	--sn-paper-edge:   light-dark(var(--sn-papel-100), var(--sn-tinta-700));
+	--sn-sunk:         light-dark(var(--sn-papel-200), var(--sn-tinta-900));
+
+	/* — Semántica · tinta — texto, secundarios, filetes */
+	--sn-ink:          light-dark(var(--sn-tinta-750), var(--sn-papel-300));
+	--sn-ink-soft:     light-dark(var(--sn-tinta-400), var(--sn-papel-700));
+	--sn-ink-faint:    light-dark(var(--sn-papel-800), var(--sn-tinta-300));
+	--sn-hairline:     light-dark(var(--sn-papel-600), var(--sn-tinta-500));
+	--sn-hairline-soft:light-dark(var(--sn-papel-500), var(--sn-tinta-650));
+
+	/* — Semántica · la nova — único acento agudo, usado con avaricia */
+	--sn-nova:         light-dark(var(--sn-rojo-500),  var(--sn-coral-400));
+	--sn-nova-ink:     light-dark(var(--sn-blanco),    var(--sn-tinta-850));
+	/* nova-wash: lavados muy específicos (selección, fondo activo, foco-ring).
+	   No promovidos a primitivas con nombre porque no se reutilizan en otro rol. */
+	--sn-nova-wash:    light-dark(#f7e9e6,             #2b1c1d);
+
+	/* — Semántica · enlaces — AA sobre papel cálido (carmín en claro, azul en oscuro) */
+	--sn-link:         light-dark(var(--sn-rojo-500),  var(--sn-azul-300));
+	--sn-link-hover:   light-dark(var(--sn-rojo-700),  var(--sn-azul-200));
+	--sn-link-visited: light-dark(var(--sn-rojo-900),  var(--sn-malva-400));
+	/* Enlace a página inexistente (redlink). En claro: tinta apagada (replica el
+	   aire de producción, faded-grey sobre cream); rgba preservada literal para
+	   no introducir desviación por la operación color-mix. En oscuro: coral
+	   cálido que sí cumple contraste sobre paper/sunk. */
+	--sn-link-new:     light-dark(rgba(34, 31, 26, .42), var(--sn-coral-300));
+
+	/* Íconos de UI: nunca negro pleno ni acento; tinta al ~55% en reposo,
+	   tinta plena al hover/activo. Nunca carmín. (Color-mix sobre --sn-ink
+	   ya voltea con el tema porque --sn-ink lo hace.) */
 	--sn-icon:         color-mix(in oklab, var(--sn-ink) 55%, transparent);
 	--sn-icon-active:  var(--sn-ink);
 
-	/* — Señales — */
-	--sn-ok:           #2f6f43;
-	--sn-warn:         #8a5a12;
-	--sn-warn-ink:     #fcfbf7;   /* texto sobre --sn-warn (claro: ámbar oscuro → tinta clara) */
-	--sn-danger:       #b21e3e;
+	/* — Semántica · señales — ok / warn / danger / notice */
+	--sn-ok:           light-dark(var(--sn-verde-500),   var(--sn-verde-400));
+	--sn-warn:         light-dark(var(--sn-masking-700), var(--sn-masking-500));
+	--sn-warn-ink:     light-dark(var(--sn-papel-50),    var(--sn-tinta-850));
+	--sn-danger:       light-dark(var(--sn-rojo-600),    var(--sn-coral-400));
 
 	/* Aviso editorial (banner .sn-notice gestionado desde Stella-Nova:Aviso):
-	   fondo ámbar pálido propio (no se confunde con --sn-warn-wash, que es
-	   un derivado de --sn-warn y se usa para badges/borders). Tinta tostada
-	   para contrastar sin estridencia. */
-	--sn-notice-bg:    #f7db7e;
-	--sn-notice-ink:   #2c2410;
+	   fondo ámbar pálido propio (no se confunde con --sn-warn-wash). En claro
+	   fondo masking-300 y tinta tinta-600; en oscuro se invierte (fondo
+	   masking-900, tinta masking-300) — la misma primitiva ámbar reaparece. */
+	--sn-notice-bg:    light-dark(var(--sn-masking-300), var(--sn-masking-900));
+	--sn-notice-ink:   light-dark(var(--sn-tinta-600),   var(--sn-masking-300));
 
 	/* Washes de señales: fondos suaves para badges, banners, drop-targets,
-	   bloques de información y aviso. Derivados con color-mix para que
-	   el modo oscuro voltee solo. (Reemplazan a colores hardcoded como
-	   #d5fdf4, #fef6e7, #fee7e6, #fcfada/#fffded del Common.css original.) */
+	   bloques de información y aviso. Derivados con color-mix sobre tokens
+	   semánticos para que el flip oscuro venga gratis. (Reemplazan a colores
+	   hardcoded como #d5fdf4, #fef6e7, #fee7e6, #fcfada/#fffded del
+	   Common.css original.) */
 	--sn-ok-wash:     color-mix(in oklab, var(--sn-ok)     14%, var(--sn-paper));
 	--sn-warn-wash:   color-mix(in oklab, var(--sn-warn)   14%, var(--sn-paper));
 	--sn-danger-wash: color-mix(in oklab, var(--sn-danger) 12%, var(--sn-paper));
 	--sn-info-wash:   color-mix(in oklab, var(--sn-warn)    8%, var(--sn-paper));
 
-	/* — Controles / formularios (capa SEMÁNTICA) —
-	   Único origen de verdad para botones, campos, casillas y diálogos
-	   (los consume tanto stella-nova.css como skinStyles/oojs-ui.css —
-	   ahí se reskinea OOUI). Todo se deriva de las primitivas de arriba,
-	   así claro/oscuro voltea solo (no se redefine en los bloques de
-	   tema). La nova NO rellena controles: solo foco. */
+
+	/* ═══════════════════════════════════════════════════════════════════
+	   CAPA 3a — COMPONENTE: controles del skin
+	   Botones, campos, casillas, foco. Único origen de verdad para
+	   stella-nova.css y skinStyles/oojs-ui.css. Consumen SOLO variables
+	   semánticas (capa 2), nunca primitivas: heredan el flip automático.
+	   ═══════════════════════════════════════════════════════════════════ */
 	/* Botón neutro (enmarcado, acción secundaria) */
 	--sn-btn-bg:            var(--sn-sunk);
 	--sn-btn-bg-hover:      var(--sn-paper);
@@ -118,7 +232,7 @@
 	   como alias de `--sn-font-text`: la doctrina del skin es "todo sans en
 	   cabeceras"; el alias permite reintroducir un display distinto tocando
 	   solo el token. */
-	/* Primitivas: las dos familias reales (no se redefinen al alternar). */
+	/* Primitivas tipográficas: las dos familias reales (no se redefinen al alternar). */
 	--sn-font-sans:  'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--sn-font-serif: 'Source Serif 4', 'Iowan Old Style', Palatino, 'Times New Roman', Georgia, serif;
 	--sn-font-mono:  'IBM Plex Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
@@ -207,11 +321,13 @@
 	--sn-radius-pill: 999px;        /* badges, chips, contadores             */
 	--sn-hair: 1px solid var(--sn-hairline);
 
-	/* Sombra de la hoja: muy sutil, apenas un asentamiento sobre el campo. */
+	/* Sombra de la hoja: muy sutil, apenas un asentamiento sobre el campo.
+	   Estos tres tokens varían geometría además de color entre temas, así
+	   que NO usan light-dark(): se redefinen en los selectores de tema al
+	   final del archivo. */
 	--sn-lift-paper:
 		0 1px 1px rgba(40, 33, 20, .03),
 		0 3px 8px rgba(40, 33, 20, .04);
-	/* Sombra para popovers/diálogos (necesitan despegar más). */
 	--sn-lift:
 		0 1px 2px rgba(40, 33, 20, .05),
 		0 8px 24px rgba(40, 33, 20, .08);
@@ -229,30 +345,27 @@
 	--sn-z-panel: 40;
 	--sn-z-skip: 60;
 
-	color-scheme: light;
-}
 
-/* ── Capa de compatibilidad Codex / WikimediaUI ─────────────────────
- *
- * OOUI (oojs-ui-core/widgets/windows) y algunas extensiones consumen
- * variables del design system Codex de Wikimedia con la forma
- *   var(--color-base, #202122)
- *   var(--background-color-progressive--active, #233566)
- *   …etc.
- *
- * Si la variable Codex no está definida en el documento, el var() cae
- * al hex hardcodeado — y esos hex NO respetan el tema (vienen del tema
- * claro Codex). Resultado en modo oscuro: texto #202122 sobre fondo
- * #181610 (contraste <1.1:1, ilegible), fondos #eaf3ff dentro de
- * controles oscuros, etc.
- *
- * Aquí declaramos las variables Codex como ALIAS a los tokens del
- * skin (--sn-*). Como --sn-* ya voltea entre claro/oscuro, los alias
- * Codex voltean con él automáticamente — sin duplicar este bloque por
- * tema. Estas reglas no tocan nada que YA defina explícitamente cada
- * --codex-* (si el día de mañana añadimos Codex completo, gana lo más
- * específico). */
-:root {
+	/* ═══════════════════════════════════════════════════════════════════
+	   CAPA 3b — COMPONENTE: alias Codex / WikimediaUI
+	   OOUI (oojs-ui-core/widgets/windows) y algunas extensiones consumen
+	   variables del design system Codex de Wikimedia con la forma
+	     var(--color-base, #202122)
+	     var(--background-color-progressive--active, #233566)
+	     …etc.
+	   Si la variable Codex no está definida en el documento, el var() cae
+	   al hex hardcodeado — y esos hex NO respetan el tema (vienen del tema
+	   claro Codex). Resultado en modo oscuro: texto #202122 sobre fondo
+	   #181610 (contraste <1.1:1, ilegible), fondos #eaf3ff dentro de
+	   controles oscuros, etc.
+	   Aquí declaramos las variables Codex como ALIAS a tokens semánticos
+	   (--sn-*). Como --sn-* ya voltea entre claro/oscuro vía light-dark(),
+	   los alias Codex voltean con él automáticamente — sin redeclarar.
+	   Estas reglas no tocan nada que YA defina explícitamente cada
+	   --codex-* (si el día de mañana añadimos Codex completo, gana lo más
+	   específico).
+	   ═══════════════════════════════════════════════════════════════════ */
+
 	/* Texto */
 	--color-base:           var(--sn-ink);
 	--color-base--hover:    var(--sn-ink);
@@ -364,46 +477,46 @@
 	--box-shadow-color-inverted:            var(--sn-paper);
 }
 
-/* ── Tema oscuro: la noche que Tycho miró. La hoja sigue siendo la luz. ──
- *
- * DEFAULT = CLARO. El esquema del SO NO oscurece por sí solo: solo se
- * aplica oscuro si el usuario lo elige explícitamente (data-sn-theme="dark")
- * o si elige seguir al SO (data-sn-theme="auto") y el SO está en oscuro.
- * Sin preferencia guardada → claro. (Nota: diverge del paso `os_scheme`
- * del spec para el tema; decisión de producto del usuario, 2026-05-18.)
- */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Conmutación de tema. Solo dos responsabilidades:
+     1. Setear `color-scheme` para que light-dark() resuelva al lado correcto.
+     2. Sobrescribir los CUATRO tokens NO-color que varían por tema
+        (`--sn-field-grain` y los tres `--sn-lift*`): mezclan geometría y
+        color, así que no encajan en light-dark().
+
+   La duplicación de los 4 overrides entre [data-sn-theme="dark"] y
+   @media (prefers-color-scheme: dark) [data-sn-theme="auto"] es inevitable
+   con CSS estándar: ambos selectores activan oscuro pero en condiciones
+   diferentes (el primero ignora al SO, el segundo lo sigue). La duplicación
+   pasó de 14 declaraciones a 4 y queda CONTENIDA aquí.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Forzado claro (sobreescribe cualquier preferencia del SO). */
+:root[data-sn-theme="light"] { color-scheme: light; }
+
+/* Forzado oscuro (el SO no participa). */
 :root[data-sn-theme="dark"] {
-	--sn-field:#141209; --sn-field-grain:.05; --sn-paper:#1e1c15;
-	--sn-paper-edge:#262318; --sn-sunk:#181610;
-	--sn-ink:#ece7da; --sn-ink-soft:#a39a86; --sn-ink-faint:#756d5d;
-	--sn-hairline:#353123; --sn-hairline-soft:#2a2719;
-	--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
-	--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#a99cae;
-	--sn-link-new:#c8a89a;
-	--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-warn-ink:#1a140a; --sn-danger:#ff6b7e;
-	--sn-notice-bg:#5a4416; --sn-notice-ink:#f7db7e;
-	--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
-	--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
-	--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
 	color-scheme: dark;
+	--sn-field-grain: .05;
+	--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
+	--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+	--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
 }
+
+/* Auto: sigue al SO. `color-scheme: light dark` deja a light-dark() honrar
+   el `prefers-color-scheme`. Los 4 no-color se aplican solo cuando el SO
+   está en oscuro. */
+:root[data-sn-theme="auto"] { color-scheme: light dark; }
 @media (prefers-color-scheme: dark) {
 	:root[data-sn-theme="auto"] {
-		--sn-field:#141209; --sn-field-grain:.05; --sn-paper:#1e1c15;
-		--sn-paper-edge:#262318; --sn-sunk:#181610;
-		--sn-ink:#ece7da; --sn-ink-soft:#a39a86; --sn-ink-faint:#756d5d;
-		--sn-hairline:#353123; --sn-hairline-soft:#2a2719;
-		--sn-nova:#ff6b7e; --sn-nova-ink:#1a0b0d; --sn-nova-wash:#2b1c1d;
-		--sn-link:#8fb4e8; --sn-link-hover:#b3cef2; --sn-link-visited:#a99cae;
-		--sn-link-new:#c8a89a;
-		--sn-ok:#6cc18a; --sn-warn:#d9a14b; --sn-warn-ink:#1a140a; --sn-danger:#ff6b7e;
-		--sn-notice-bg:#5a4416; --sn-notice-ink:#f7db7e;
-		--sn-lift:0 1px 2px rgba(0,0,0,.35),0 8px 22px rgba(0,0,0,.45),0 24px 60px rgba(0,0,0,.4);
-		--sn-lift-soft:0 2px 12px rgba(0,0,0,.4);
-		--sn-lift-paper:0 1px 1px rgba(0,0,0,.25),0 3px 10px rgba(0,0,0,.35);
-		color-scheme: dark;
+		--sn-field-grain: .05;
+		--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
+		--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+		--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
 	}
 }
+
 
 /* ── Preferencia: tamaño de fuente (spec FontSize) ──
    Única preferencia tipográfica modulable por el usuario. Ancho de hoja
