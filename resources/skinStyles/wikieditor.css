@@ -326,79 +326,11 @@ form#editform {
 	--box-shadow-color-progressive--active:  color-mix(in oklab, var(--sn-nova) 65%, var(--sn-ink));
 }
 
-/* ─── Caja .editOptions: cromo del CORE de MediaWiki, NO OOUI ───────
- * El módulo `mediawiki.action.edit.styles` (core) trae:
- *   .editOptions { background-color:#eaecf0; color:#222; border:1px solid #ccc; }
- * Estas hex son producto de compilar @background-color-neutral / @border-subtle
- * de Less a literales — NO pasan por var() y por tanto NO voltean con
- * data-sn-theme. La única vía es sobreescribir la regla con los tokens
- * del skin (especificidad (0,1,0) basta porque core también es (0,1,0)
- * y nuestro CSS carga DESPUÉS por el prefijo `+` de ResourceModuleSkinStyles).
- * La caja envuelve resumen + checkboxes + botones de guardar/previsualizar. */
-.editOptions {
-	background-color: var(--sn-sunk);
-	color: var(--sn-ink);
-	border: 1px solid var(--sn-hairline);
-	border-top: 0;
-}
-
-/* ─── Caja .mw-editTools: shortcuts de caracteres especiales ────────
- * Contenedor que aparece bajo el textarea, poblado desde la página wiki
- * MediaWiki:Edittools (signaturas, símbolos, plantillas frecuentes). El
- * core no le pone fondo, pero el contenido suele traer cajas con
- * `background:#f0f0f0` inline. Le damos un marco propio para que se
- * integre con el papel del editor. */
-.mw-editTools {
-	margin: var(--sn-s-3) 0;
-	padding: var(--sn-s-3) var(--sn-s-4);
-	background: var(--sn-sunk);
-	color: var(--sn-ink);
-	border: 1px solid var(--sn-hairline-soft);
-	border-radius: var(--sn-radius);
-	font-size: var(--sn-fs-sm);
-}
-.mw-editTools:empty { display: none; }
-
-/* ─── Aviso de previsualización + advertencia de copyright ─────────
- * `.previewnote` aparece sobre el preview ("Esto es solo una previsualización").
- * `#editpage-copywarn` es el bloque legal entre la caja de resumen y los
- * botones. Sin fondo propio en core pero con tipografía algo perdida:
- * homologamos a la voz secundaria del skin. */
-.previewnote {
-	margin-bottom: var(--sn-baseline);
-	padding: var(--sn-s-3) var(--sn-s-4);
-	background: var(--sn-info-wash);
-	border-left: 3px solid var(--sn-warn);
-	border-radius: 0 var(--sn-radius) var(--sn-radius) 0;
-	color: var(--sn-ink);
-	font-size: var(--sn-fs-sm);
-}
-#editpage-copywarn {
-	color: var(--sn-ink-soft);
-	font-size: var(--sn-fs-sm);
-}
-#editpage-copywarn a { color: var(--sn-nova); }
-
-/* ─── Lista "Plantillas usadas en esta página" ─────────────────────
- * `.templatesUsed` aparece bajo los botones de guardar cuando la página
- * transcluye plantillas. Es metadata — voz secundaria. */
-.templatesUsed {
-	margin-top: var(--sn-baseline);
-	color: var(--sn-ink-soft);
-	font-size: var(--sn-fs-sm);
-}
-.templatesUsed h6 { color: var(--sn-ink); margin: 0 0 var(--sn-s-2); }
-.templatesUsed ul { margin: 0; padding-left: var(--sn-s-5); }
-.templatesUsed li { margin: 0; }
-.templatesUsed a { color: var(--sn-nova); }
-
-/* ─── #wpSummary: el input de resumen de edición ───────────────────
- * Lo envuelve OOUI (`.oo-ui-textInputWidget`) y hereda los tokens
- * --codex-* aliasados en tokens.css; pero algunos navegadores aplican
- * el background del UA antes de OOUI. Fijamos el input por si acaso. */
-#wpSummary,
-input#wpSummary {
-	background: var(--sn-field-bg);
-	color: var(--sn-field-fg);
-	border-color: var(--sn-field-border);
-}
+/* ─── Cromo del formulario de edición del CORE: MOVIDO ──────────────
+ * Las reglas de `.editOptions`, `.mw-editTools`, `.previewnote`,
+ * `#editpage-copywarn`, `.templatesUsed` y `#wpSummary` se trasladaron a
+ * `skinStyles/edit.css` (registrado contra `+mediawiki.action.edit.styles`).
+ * Razón: son cromo del CORE, presente en TODA página de edición; aquí, bajo
+ * `+ext.wikiEditor.styles`, solo cargaban en wikitexto, dejando el editor de
+ * CSS/JS/JSON (p. ej. `…/style.css`) sin tokenizar y roto en modo oscuro.
+ * Este archivo conserva únicamente el cromo propio de WikiEditor (.wikiEditor-ui*). */

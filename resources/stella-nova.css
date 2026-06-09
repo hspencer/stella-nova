@@ -1575,11 +1575,13 @@ canvas, iframe,
 	border: 0;
 	border-radius: 0;
 	font: inherit;
-	/* El enlace es una UNIDAD: su whitespace interno NO rompe (p. ej.
-	   "Biblioteca Con§tel" no se parte por su espacio). Los saltos ocurren
-	   ENTRE enlaces, en el espacio del separador-coma. El grid de 3 columnas
-	   se protege con `min-width: 0` en `.sn-fs-sec`: un enlace que no quepa
-	   desborda dentro de su columna sin ensancharla ni romper la retícula. */
+	/* El enlace es una UNIDAD INQUEBRANTABLE: `white-space: nowrap` impide
+	   que se parta por su espacio interno (p. ej. "Biblioteca Con§tel" salta
+	   ENTERO a la fila siguiente, no se divide en "Biblioteca" / "Con§tel").
+	   Los saltos ocurren ENTRE enlaces, en el espacio del separador-coma. El
+	   grid de 3 columnas se protege con `min-width: 0` en `.sn-fs-sec`: un
+	   enlace más ancho que su columna desborda dentro de ella sin ensancharla
+	   ni romper la retícula. */
 	white-space: nowrap;
 	transition: color var(--sn-dur-1);
 }
@@ -2247,9 +2249,14 @@ canvas, iframe,
 
 /* ─── Editor: tipografía monoespaciada recién instalada (IBM Plex Mono),
    un pelo más grande, padding 1ex; legible también en modo oscuro. ─── */
-/* Sin borde ni radio: el textarea va envuelto por el chrome de
-   WikiEditor, que ya aporta borde/redondez (si los duplicamos se ve
-   doble). El skin solo aporta tipografía/espacio/color. */
+/* Marco tokenizado POR DEFECTO. Cuando se edita una página que NO es
+   wikitexto —CSS/JS/JSON, p. ej. `Plantilla:…/style.css`— WikiEditor no
+   realza el área: el textarea queda desnudo (`#wpTextbox1.mw-editfont-
+   monospace`), sin el chrome `.wikiEditor-ui` que aportaba el borde. Antes
+   este bloque forzaba `border:0` asumiendo ese chrome, así que el editor de
+   esas páginas se veía sin marco (no "respetaba" el estilo tokenizado). Ahora
+   el textarea trae SU PROPIO marco (borde + radio + papel); cuando WikiEditor
+   sí lo envuelve, la regla de más abajo se lo quita para no duplicarlo. */
 #wpTextbox1,
 .mw-editfont-monospace,
 .wikiEditor-ui-text textarea,
@@ -2260,11 +2267,23 @@ textarea.mw-editfont-monospace {
 	padding: 1ex !important;
 	color: var(--sn-ink);
 	background: var(--sn-paper);
-	border: 0 !important;
-	border-radius: 0 !important;
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius);
 	box-shadow: none !important;
 }
+/* WikiEditor SÍ envuelve el textarea (edición de wikitexto): el frame del
+   chrome ya da borde y redondez → el textarea interior va sin marco para no
+   duplicarlos. Especificidad mayor + después en orden → gana sobre la base. */
+.wikiEditor-ui .wikiEditor-ui-text #wpTextbox1,
+.wikiEditor-ui .wikiEditor-ui-text textarea {
+	border: 0;
+	border-radius: 0;
+}
+/* El anillo de foco lo da el chrome de WikiEditor cuando envuelve; en el
+   textarea desnudo (CSS/JS/JSON) el foco lo marca su propio borde en nova
+   (border:0 en contexto WikiEditor → ahí no se ve, no estorba). */
 #wpTextbox1:focus, .wikiEditor-ui-text textarea:focus { outline: none; }
+#wpTextbox1:focus { border-color: var(--sn-nova); }
 /* Los componentes OOUI (botones, campos, casillas, diálogos) del editor
    y de todo el wiki se reskinea de forma centralizada y token-driven en
    resources/skinStyles/oojs-ui.css (registrado contra los módulos

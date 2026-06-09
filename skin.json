@@ -105,6 +105,7 @@
 			"+ext.categoryTree.styles": "skinStyles/categorytree.less",
 			"+ext.cite.styles": "skinStyles/cite.less",
 			"+ext.cite.ux-enhancements": "skinStyles/cite.less",
+			"+ext.codeEditor.styles": "skinStyles/codeeditor.css",
 			"+ext.confirmEdit.editPreview.ipwhitelist.styles": "skinStyles/confirmedit.css",
 			"+ext.confirmEdit.simpleCaptcha": "skinStyles/confirmedit.css",
 			"+ext.echo.special": "skinStyles/echo.base.less",
@@ -142,6 +143,7 @@
 			"+ext.templateData": "skinStyles/templatedata.css",
 			"+ext.timeline.styles": "skinStyles/easytimeline.css",
 			"+ext.wikiEditor.styles": "skinStyles/wikieditor.css",
+			"+mediawiki.action.edit.styles": "skinStyles/edit.css",
 			"+oojs-ui-core.styles": "skinStyles/oojs-ui.css",
 			"+oojs-ui-widgets.styles": "skinStyles/oojs-ui.css",
 			"+oojs-ui-windows.styles": "skinStyles/oojs-ui.css"

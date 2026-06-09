@@ -1,0 +1,186 @@
+/* ============================================================
+ * skinStyles/codeeditor.css — Stella Nova
+ *
+ * Tokeniza el editor de código (extensión CodeEditor, basado en
+ * Ace) que MediaWiki usa al editar páginas de contenido CSS/JS/JSON
+ * — p. ej. `Plantilla:Publicación/style.css` (modelo sanitized-css).
+ *
+ * POR QUÉ HACE FALTA. CodeEditor NO trae su paleta como CSS de
+ * ResourceLoader: el tema lo inyecta Ace en runtime con
+ * `dom.importCssString(cssText, "ace-tm")`, que escribe un <style>
+ * con la paleta «textmate» HARDCODEADA (fondo #FFFFFF, keywords en
+ * `blue`, strings verdes RGB, etc.). Ese <style> ignora los tokens
+ * del skin. Además CodeEditor solo cambia a tema oscuro cuando ve la
+ * clase `skin-theme-clientpref-night`; Stella Nova conmuta el tema
+ * por `[data-sn-theme]` + `color-scheme`/`light-dark()`, así que para
+ * CodeEditor SIEMPRE es «textmate» (claro), incluso en modo noche.
+ *
+ * CÓMO LO RESUELVE. Reescribimos `.ace-tm` con tokens `var(--sn-…)`.
+ * Como esos tokens usan `light-dark()` y `color-scheme` es heredado
+ * (lo fija :root según [data-sn-theme]), el editor SIGUE el tema del
+ * skin sin depender de la detección rota de CodeEditor: una sola
+ * paleta que voltea sola en claro/oscuro.
+ *
+ * Cargado vía ResourceModuleSkinStyles en skin.json sobre
+ * `+ext.codeEditor.styles` (módulo que CodeEditor añade con
+ * addModuleStyles en toda página de edición de código).
+ *
+ * ESPECIFICIDAD. El <style> «ace-tm» de Ace se inyecta en runtime y
+ * casi siempre queda DESPUÉS de nuestro <link> en el <head>, así que
+ * a igualdad de especificidad ganaría él por orden de fuente. Por eso
+ * TODO selector va prefijado con `.skin-stellanova` (clase del <body>):
+ * `.skin-stellanova .ace-tm .ace_x` (0,3,0) gana a `.ace-tm .ace_x`
+ * (0,2,0) pase lo que pase con el orden. (Ver memoria
+ * skinstyles-cascade-gotcha.)
+ *
+ * PALETA. Restringida y editorial, fiel a la doctrina del skin (un
+ * solo acento usado con avaricia), no un arcoíris: la nova para
+ * keywords, verde-ok para cadenas, ámbar-warn para números/constantes,
+ * tinta tenue para comentarios, tinta para el resto. Los cinco roles
+ * ya voltean con el tema (todos definidos con light-dark()).
+ * ============================================================ */
+
+/* ─── Superficie del editor ─── */
+.skin-stellanova .ace-tm {
+	background-color: var(--sn-paper);
+	color: var(--sn-ink);
+}
+/* Fuente: monoespaciada del skin, al tamaño del cuerpo menor. El prefijo
+   `.wikiEditor-ui` sube la especificidad para ganarle a la regla propia de
+   CodeEditor (`.wikiEditor-ui .ace_editor { font: 13px monospace }`). */
+.skin-stellanova .wikiEditor-ui .ace_editor,
+.skin-stellanova .ace-tm {
+	font-family: var(--sn-font-mono);
+	font-size: var(--sn-fs-sm);
+}
+
+/* ─── Canalón (números de línea) ─── */
+.skin-stellanova .ace-tm .ace_gutter {
+	background: var(--sn-sunk);
+	color: var(--sn-ink-faint);
+}
+.skin-stellanova .ace-tm .ace_gutter-active-line {
+	background-color: var(--sn-nova-wash);
+	color: var(--sn-ink);
+}
+/* Marca de error/anotación del worker (T271956 fija un gris fijo). */
+.skin-stellanova .ace_gutter-cell {
+	color: var(--sn-ink-faint);
+}
+
+/* ─── Cursor, selección, línea activa ─── */
+.skin-stellanova .ace-tm .ace_cursor {
+	color: var(--sn-ink);
+}
+.skin-stellanova .ace-tm .ace_marker-layer .ace_selection {
+	background: var(--sn-nova-wash);
+}
+.skin-stellanova .ace-tm .ace_marker-layer .ace_active-line {
+	background: color-mix(in oklab, var(--sn-ink) 4%, transparent);
+}
+.skin-stellanova .ace-tm .ace_marker-layer .ace_selected-word {
+	border: 1px solid var(--sn-hairline);
+}
+.skin-stellanova .ace-tm .ace_invisible {
+	color: var(--sn-ink-faint);
+}
+.skin-stellanova .ace-tm .ace_indent-guide {
+	/* Guía de sangría como filete vertical tenue, no la imagen por defecto. */
+	background: none;
+	box-shadow: inset -1px 0 0 0 var(--sn-hairline-soft);
+}
+.skin-stellanova .ace-tm .ace_print-margin {
+	width: 1px;
+	background: var(--sn-hairline-soft);
+}
+.skin-stellanova .ace-tm .ace_fold {
+	background-color: var(--sn-nova);
+	border-color: var(--sn-nova);
+}
+
+/* ─── Sintaxis — paleta editorial restringida (cinco roles que voltean) ─── */
+/* Keywords y almacenamiento → la nova (acento). */
+.skin-stellanova .ace-tm .ace_keyword,
+.skin-stellanova .ace-tm .ace_storage,
+.skin-stellanova .ace-tm .ace_meta.ace_tag,
+.skin-stellanova .ace-tm .ace_heading,
+.skin-stellanova .ace-tm .ace_entity.ace_name.ace_function {
+	color: var(--sn-nova);
+}
+/* Cadenas y regex → verde del taller. */
+.skin-stellanova .ace-tm .ace_string,
+.skin-stellanova .ace-tm .ace_string.ace_regex {
+	color: var(--sn-ok);
+}
+/* Números, constantes y valores → ámbar (buen contraste en ambos temas). */
+.skin-stellanova .ace-tm .ace_constant,
+.skin-stellanova .ace-tm .ace_constant.ace_numeric,
+.skin-stellanova .ace-tm .ace_constant.ace_language,
+.skin-stellanova .ace-tm .ace_support.ace_constant {
+	color: var(--sn-warn);
+}
+/* Comentarios → tinta tenue, en cursiva (de-énfasis). */
+.skin-stellanova .ace-tm .ace_comment {
+	color: var(--sn-ink-faint);
+	font-style: italic;
+}
+/* Operadores y puntuación → tinta secundaria. */
+.skin-stellanova .ace-tm .ace_keyword.ace_operator,
+.skin-stellanova .ace-tm .ace_punctuation {
+	color: var(--sn-ink-soft);
+}
+/* Propiedades/tipos/funciones de soporte (p. ej. nombres de propiedad CSS)
+   y variables → tinta del cuerpo: legibles, sin sumar otro color. */
+.skin-stellanova .ace-tm .ace_support.ace_type,
+.skin-stellanova .ace-tm .ace_support.ace_class,
+.skin-stellanova .ace-tm .ace_support.ace_function,
+.skin-stellanova .ace-tm .ace_variable,
+.skin-stellanova .ace-tm .ace_xml-pe,
+.skin-stellanova .ace-tm .ace_list {
+	color: var(--sn-ink);
+}
+/* Inválido → wash de peligro, fiel al lenguaje de señales del skin. */
+.skin-stellanova .ace-tm .ace_invalid {
+	background-color: var(--sn-danger-wash);
+	color: var(--sn-danger);
+}
+
+/* ─── Barra de estado (línea/columna, mensajes del worker) ─── */
+.skin-stellanova .codeEditor-status {
+	background-color: var(--sn-field);
+	border-top: 1px solid var(--sn-hairline);
+	color: var(--sn-ink-soft);
+}
+.skin-stellanova .codeEditor-status-message,
+.skin-stellanova .codeEditor-status-line {
+	border-color: var(--sn-hairline-soft);
+}
+
+/* ─── Diálogo de búsqueda/reemplazo de Ace ─── */
+.skin-stellanova .ace_search {
+	background: var(--sn-field);
+	border-color: var(--sn-hairline);
+	color: var(--sn-ink);
+}
+.skin-stellanova .ace_search_field {
+	background: var(--sn-paper);
+	border-color: var(--sn-hairline);
+	color: var(--sn-ink);
+}
+.skin-stellanova .ace_searchbtn,
+.skin-stellanova .ace_button {
+	background: var(--sn-sunk);
+	border-color: var(--sn-hairline);
+	color: var(--sn-ink-soft);
+}
+.skin-stellanova .ace_searchbtn:hover,
+.skin-stellanova .ace_button:hover {
+	color: var(--sn-nova);
+}
+
+/* ─── Fallback FOUC: el <textarea> mientras Ace carga ─── */
+.skin-stellanova .codeeditor-loading #wpTextbox1 {
+	font-family: var(--sn-font-mono);
+	color: var(--sn-ink);
+	background: var(--sn-paper);
+}

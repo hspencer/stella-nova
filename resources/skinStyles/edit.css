@@ -1,0 +1,91 @@
+/* ============================================================
+ * skinStyles/edit.css — Stella Nova
+ *
+ * Tokeniza el CROMO DEL FORMULARIO DE EDICIÓN DEL CORE: la caja de
+ * opciones (resumen + casillas + botones), los caracteres especiales,
+ * el aviso de copyright, las plantillas usadas y el input de resumen.
+ *
+ * POR QUÉ ESTÁ AQUÍ Y NO EN wikieditor.css. Antes estas reglas vivían
+ * en `skinStyles/wikieditor.css`, registrado contra `+ext.wikiEditor.styles`.
+ * Ese módulo SOLO se carga cuando WikiEditor realza el área —es decir,
+ * en páginas de WIKITEXTO—. Al editar una página que NO es wikitexto
+ * (CSS/JS/JSON: `Plantilla:…/style.css`, modelo sanitized-css) WikiEditor
+ * no carga, así que el cromo del formulario se quedaba con los colores
+ * HARDCODEADOS del core (`.editOptions { background:#eaecf0; color:#222;
+ * border:#ccc }`, hex compilados de Less que NO pasan por var() y NO
+ * voltean con [data-sn-theme]) → el editor de estilos «no pescaba los
+ * tokens» y no funcionaba en modo oscuro como el de wikitexto.
+ *
+ * Estas reglas son del CORE (no de WikiEditor), presentes en TODA página
+ * de edición, así que se registran contra `+mediawiki.action.edit.styles`
+ * (módulo que el core añade en cualquier action=edit, sea o no wikitexto).
+ * El marco del propio <textarea> #wpTextbox1 ya se tokeniza —y voltea—
+ * en `stella-nova.css` (CSS global del skin), así que aquí no se repite.
+ *
+ * ESPECIFICIDAD. El `+` de ResourceModuleSkinStyles carga este CSS DESPUÉS
+ * del módulo del core, así que (0,1,0) basta para ganarle a su (0,1,0).
+ * ============================================================ */
+
+/* ─── Caja .editOptions: resumen + casillas + botones de guardar ───
+ * Core la pinta `background:#eaecf0; color:#222; border:1px solid #ccc`
+ * (literales que no voltean). La reescribimos con tokens del skin. */
+.editOptions {
+	background-color: var(--sn-sunk);
+	color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline);
+	border-top: 0;
+}
+
+/* ─── Caja .mw-editTools: atajos de caracteres especiales ──────────
+ * Poblada desde MediaWiki:Edittools. El core no le da fondo y su
+ * contenido suele traer cajas grises inline; le damos marco propio. */
+.mw-editTools {
+	margin: var(--sn-s-3) 0;
+	padding: var(--sn-s-3) var(--sn-s-4);
+	background: var(--sn-sunk);
+	color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius);
+	font-size: var(--sn-fs-sm);
+}
+.mw-editTools:empty { display: none; }
+
+/* ─── Aviso de previsualización + advertencia de copyright ─────────
+ * `.previewnote` corona el preview; `#editpage-copywarn` es el bloque
+ * legal entre el resumen y los botones. Voz secundaria del skin. */
+.previewnote {
+	margin-bottom: var(--sn-baseline);
+	padding: var(--sn-s-3) var(--sn-s-4);
+	background: var(--sn-info-wash);
+	border-left: 3px solid var(--sn-warn);
+	border-radius: 0 var(--sn-radius) var(--sn-radius) 0;
+	color: var(--sn-ink);
+	font-size: var(--sn-fs-sm);
+}
+#editpage-copywarn {
+	color: var(--sn-ink-soft);
+	font-size: var(--sn-fs-sm);
+}
+#editpage-copywarn a { color: var(--sn-nova); }
+
+/* ─── Lista "Plantillas usadas en esta página" ─────────────────────
+ * Aparece bajo los botones cuando la página transcluye plantillas. */
+.templatesUsed {
+	margin-top: var(--sn-baseline);
+	color: var(--sn-ink-soft);
+	font-size: var(--sn-fs-sm);
+}
+.templatesUsed h6 { color: var(--sn-ink); margin: 0 0 var(--sn-s-2); }
+.templatesUsed ul { margin: 0; padding-left: var(--sn-s-5); }
+.templatesUsed li { margin: 0; }
+.templatesUsed a { color: var(--sn-nova); }
+
+/* ─── #wpSummary: el input de resumen de edición ───────────────────
+ * Lo envuelve OOUI y hereda los tokens --codex-* aliasados, pero algún
+ * navegador aplica el background del UA antes; lo fijamos por si acaso. */
+#wpSummary,
+input#wpSummary {
+	background: var(--sn-field-bg);
+	color: var(--sn-field-fg);
+	border-color: var(--sn-field-border);
+}
