@@ -1,7 +1,7 @@
 {
 	"@metadata": { "authors": [ "Herbert Spencer" ] },
 	"skinname-stellanova": "Stella Nova",
-	"stellanova-desc": "Modern, responsive, SMW-aware skin for Casiopea (EAD PUCV).",
+	"stellanova-desc": "Modern, responsive, SMW-aware skin for Casiopea (EAD PUCV), by [https://herbertspencer.net Herbert Spencer]. Repository: [https://github.com/hspencer/stella-nova GitHub].",
 	"stellanova-skip-to-content": "Skip to content",
 	"stellanova-skip-to-nav": "Skip to navigation",
 	"stellanova-sidebar": "Site navigation",

@@ -9,6 +9,89 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.2.9] — 2026-06-09
+
+### Added
+- **Achicado de tablas unificado por token.** Nuevo `--sn-fs-table`
+  (`calc(--sn-fs-base * .8)`, ≈80% de base, ABSOLUTO): única fuente del tamaño
+  de todas las tablas de contenido. `table.plantilla` y
+  `wikitable/smwtable/broadtable` lo comparten (antes la ficha iba a
+  `--sn-fs-xs` y las generales a `80%` relativo, que componía en anidación).
+- **Affordance de colapso en cabeceras de sección.** Las secciones colapsables
+  (`mw-customtoggle` + `.title-toggle`) muestran un signo feather `+`/`−` tras
+  el título según estado, con `:hover`. Se keyea con `:has(+ .mw-collapsible…)`
+  sobre el colapsable hermano, porque `makeCollapsible` no marca el toggler
+  a medida con clases de estado.
+- **Disclosure animado genérico.** Todo `<details>` del skin anima
+  apertura/cierre vía `::details-content` + `interpolate-size: allow-keywords`
+  (degrada a toggle instantáneo donde no haya soporte; la duración se apaga con
+  `prefers-reduced-motion` vía `--sn-motion`).
+
+### Changed
+- **`.plantilla` afinada.** Cabeceras `th` en gris neutro, `font-weight: 355`,
+  sin el padding que desalineaba el texto con la fila; tamaño y line-height
+  reajustados. `.smwpre` (p. ej. campo Código) despojado a texto monospaced
+  del skin, sin la caja/borde/fondo `#f9f9f9` que le pone SMW.
+- **Pie — primera columna tipográficamente uniforme.** Herramientas, enlaces de
+  sitio, licencia y el summary leen igual que `.sn-foot-lastedit`
+  (`--sn-fs-xs`, peso 400, stretch normal). El toollist ya no añade margen al
+  expandir, que rompía la interlínea.
+- **Menú de pantalla completa — enlaces de navegación.** `enlace + ','` se trata
+  como unidad indivisible (enlace `white-space: nowrap`, coma pegada en el
+  `::after` con espacio ESCAPADO `\0020` para sobrevivir al minificador de
+  ResourceLoader); ninguna fila empieza con coma. Tamaño y `font-stretch`
+  igualados con los nav-pills (`--sn-fs-xs`).
+- **Enlaces a páginas inexistentes (`a.new`) menos pálidos** en claro:
+  `--sn-link-new` sube de 42% a 55% de opacidad.
+- **Barra superior en móvil: íconos equidistantes.** Los grupos se aplanan con
+  `display: contents` para que cada ícono sea ítem directo de la barra y
+  `space-between` los reparta con gaps iguales.
+
+### Fixed
+- **Menús y búsqueda modales en móvil que congelaban la página.** El
+  `backdrop-filter` del header sticky lo convertía en bloque contenedor de los
+  modales `position: fixed`, que se abrían fuera del viewport (anclados al
+  origen del sticky) con el scroll bloqueado al estar desplazado hacia abajo.
+  Se anula el filtro mientras hay un modal abierto (`html[data-sn-modal]`), así
+  el `fixed` vuelve a ser relativo al viewport.
+- **`<hr>` con caja gris `#aaa` del core.** El separador del menú
+  (`.sn-menu-sep`) neutraliza `height`/`background` del `hr` por defecto de
+  `elements.less`; deduplicada la regla `.sn-body hr`.
+
+## [0.2.8] — 2026-06-08
+
+### Added
+- **Formularios HTMLForm legacy tokenizados** (`skinStyles/htmlform.css` ←
+  `+mediawiki.htmlform.styles`). `Especial:SubirArchivo` y demás páginas no-OOUI
+  rendían el form con los controles por defecto del navegador; ahora: `<fieldset>`
+  sin recuadro, `<legend>` en versalitas, campos `--sn-field-*`, file picker y
+  botón de envío con `--sn-btn-*` (envío = primario), casillas con
+  `accent-color: --sn-nova`, pistas en voz secundaria. Acotado a
+  `.mw-htmlform:not(.mw-htmlform-ooui)` para no tocar los forms OOUI.
+
+## [0.2.7] — 2026-06-08
+
+### Changed
+- **Pie: «Herramientas» como disclosure nativo en toda página.** El pie normal
+  envuelve las herramientas en `<details>`/`<summary>` NATIVO (sin JS, como el
+  de pantalla completa) al comienzo de la línea de enlaces de sitio; antes iban
+  siempre expandidas y un intento con toggle JS solo rendía donde el módulo
+  estaba fresco. En `.sn-footer-main` el `<details>` es `column-reverse` para
+  que la lista crezca hacia arriba; el toollist pasa al mismo tamaño que los
+  enlaces de sitio.
+
+## [0.2.6] — 2026-06-08
+
+### Added
+- **Editor de CSS/JS/JSON tokenizado.** `skinStyles/edit.css` (←
+  `+mediawiki.action.edit.styles`) reparte el cromo del core del editor
+  (`.editOptions`, `.mw-editTools`, `.previewnote`, `.templatesUsed`,
+  `#wpSummary`), antes mal anclado en `wikieditor.css` (solo cargaba en
+  wikitexto). `skinStyles/codeeditor.css` (← `+ext.codeEditor.styles`) reescribe
+  la paleta Ace `.ace-tm` con `light-dark()` y la conmuta por `[data-sn-theme]`,
+  sin depender de la detección rota de CodeEditor. El `<textarea>` `#wpTextbox1`
+  trae su marco tokenizado y lo cede cuando WikiEditor lo envuelve.
+
 ## [0.2.5] — 2026-06-06
 
 ### Added

@@ -257,15 +257,10 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
 .sn-wash :is(strong, span, p) { color: var(--sn-ink); }
 .sn-wash > strong:first-child { color: inherit; }
 
-/* Badges */
-.sn-badge { display: inline-flex; align-items: center; padding: 2px var(--sn-s-2);
-            font-size: var(--sn-fs-xs); font-weight: 500;
-            background: var(--sn-sunk); color: var(--sn-ink-soft);
-            border-radius: var(--sn-radius); }
-.sn-badge-nova   { background: var(--sn-nova-wash); color: var(--sn-nova); }
-.sn-badge-ok     { background: var(--sn-ok-wash);     color: var(--sn-ok); }
-.sn-badge-warn   { background: var(--sn-warn-wash);   color: var(--sn-warn); }
-.sn-badge-danger { background: var(--sn-danger-wash); color: var(--sn-danger); }
+/* Badges: .sn-badge (+ variantes -nova/-ok/-warn/-danger) ahora es componente
+   REAL del skin (resources/stella-nova.css), no specimen-only. El especimen
+   carga stella-nova.css → los ejemplos se pintan con el componente shippeado;
+   no se redefine aquí para no duplicar/divergir. */
 .sn-pill { display: inline-flex; align-items: center; padding: 2px var(--sn-s-3);
            font-size: var(--sn-fs-xs); background: var(--sn-sunk);
            color: var(--sn-ink-soft); border-radius: var(--sn-radius-pill);

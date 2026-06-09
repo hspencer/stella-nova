@@ -155,7 +155,7 @@
 	   aire de producción, faded-grey sobre cream); rgba preservada literal para
 	   no introducir desviación por la operación color-mix. En oscuro: coral
 	   cálido que sí cumple contraste sobre paper/sunk. */
-	--sn-link-new:     light-dark(rgba(34, 31, 26, .42), var(--sn-coral-300));
+	--sn-link-new:     light-dark(rgba(34, 31, 26, .55), var(--sn-coral-300));
 
 	/* Íconos de UI: nunca negro pleno ni acento; tinta al ~55% en reposo,
 	   tinta plena al hover/activo. Nunca carmín. (Color-mix sobre --sn-ink
@@ -259,7 +259,7 @@
 	   cuerpo+UI cuando el lector alterna a familia serif. Default 0; sube en
 	   modo oscuro para compensar el aclaramiento óptico del texto claro sobre
 	   fondo negro (los overrides de tema más abajo). */
-	--sn-serif-grade: 0;
+	--sn-serif-grade: 70;
 	font-variation-settings: "GRAD" var(--sn-serif-grade);
 
 	/* Ancho del cuerpo (eje wdth, vía font-stretch). 100% = normal, 75% = lo
@@ -303,6 +303,11 @@
 	   — la voz editorial del documento debe leerse mayor que cualquier h1
 	   del cuerpo. */
 	--sn-fs-page-title: calc(clamp(1.85rem, 1.55rem + 1.3vw, 2.5rem) * var(--sn-font-scale));
+	/* Tamaño de TABLA — única fuente del "achicado" de tablas de contenido
+	   (wikitable/smwtable/broadtable Y table.plantilla): 80% de base, ABSOLUTO
+	   (no compone con anidamiento, a diferencia de un `font-size: 80%` relativo).
+	   Tunear aquí cambia todas las tablas a la vez. */
+	--sn-fs-table: calc(var(--sn-fs-base) * .8);
 
 	/* — Baseline grid — la unidad del ritmo vertical es la interlínea del
 	   cuerpo: `--sn-baseline` = fs-base × leading. Escala SOLO con la
@@ -567,6 +572,20 @@
 :root[data-sn-family="serif"] {
 	--sn-font-text:  var(--sn-font-serif);
 	--sn-font-quote: var(--sn-font-sans);
+	/* Normaliza el TAMAÑO aparente de la serif al de la sans. Con
+	   `font-optical-sizing: auto`, a tamaño de cuerpo el eje opsz de Roboto
+	   Serif baja y su x-height REAL sube (≈0.53–0.56) → "crece" frente a IBM
+	   Plex Sans (x-height ≈0.516). `font-size-adjust` fuerza la x-height
+	   RENDERIZADA al objetivo de la sans, conservando el trazo óptico. Solo
+	   en modo serif (el modo sans por defecto queda intacto). El valor es la
+	   relación x-height/em de IBM Plex Sans; ajústalo para afinar. */
+	--sn-serif-size-adjust: 0.516;
+	font-size-adjust: var(--sn-serif-size-adjust);
+}
+/* El monoespaciado (IBM Plex Mono) conserva su propio tamaño en modo serif:
+   no se normaliza a la x-height de la sans. */
+:root[data-sn-family="serif"] :is(code, pre, kbd, samp, tt, .mw-code) {
+	font-size-adjust: none;
 }
 
 /* ── Movimiento: sólo la señal del SO (ya no es preferencia del usuario;

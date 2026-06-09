@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fundamentos — Stella Nova v0.2.5</title>
+<title>Fundamentos — Stella Nova v0.2.9</title>
 <link rel="icon" href="assets/icons/casiopea-icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/tokens.css">
@@ -66,7 +66,7 @@
 	</g>
 </svg>
     <span class="spec-brand-name">Stella Nova</span>
-    <span class="spec-brand-ver">v0.2.5</span>
+    <span class="spec-brand-ver">v0.2.9</span>
   </a>
   <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html" aria-current="page">Fundamentos</a><a href="components.html">Componentes</a><a href="layout.html">Layout</a></nav>
   <div class="spec-controls">
@@ -483,7 +483,7 @@
   <span class="sh-box" style="box-shadow: var(--sn-link-new);"></span>
   <figcaption>
     <code class="sh-var">--sn-link-new</code>
-    <span class="sh-val">light-dark(rgba(34, 31, 26, .42), var(--sn-coral-300))</span>
+    <span class="sh-val">light-dark(rgba(34, 31, 26, .55), var(--sn-coral-300))</span>
     
   </figcaption>
 </figure><figure class="sw" style="--sw-c: var(--sn-icon);">
@@ -688,7 +688,7 @@
   
 </div><div class="kv">
   <code class="kv-var">--sn-serif-grade</code>
-  <span class="kv-val">0</span>
+  <span class="kv-val">70</span>
   
 </div><figure class="sz">
   <span class="sz-bar" style="--sz-w: var(--sn-text-width);"></span>
@@ -784,6 +784,13 @@
   <figcaption>
     <code class="ts-var">--sn-fs-page-title</code>
     <span class="ts-val">calc(clamp(1.85rem, 1.55rem + 1.3vw, 2.5rem) * var(--sn-font-scale))</span>
+    
+  </figcaption>
+</figure><figure class="ts" style="font-size: var(--sn-fs-table);">
+  <span class="ts-sample">Lorem ipsum dolor sit amet</span>
+  <figcaption>
+    <code class="ts-var">--sn-fs-table</code>
+    <span class="ts-val">calc(var(--sn-fs-base) * .8)</span>
     
   </figcaption>
 </figure>
@@ -1022,7 +1029,7 @@
 <footer class="spec-foot">
   <p>
     Espécimen generado por <code>scripts/build-specimen.py</code> ·
-    Stella Nova v0.2.5 ·
+    Stella Nova v0.2.9 ·
     <a href="notes.md">notes.md</a> (notas del taller de diseño) ·
     <a href="https://wiki.ead.pucv.cl">wiki.ead.pucv.cl</a>
   </p>
