@@ -1,0 +1,176 @@
+/* ============================================================
+ * skinStyles/htmlform.css — Stella Nova
+ *
+ * Tokeniza los formularios HTMLForm LEGACY (tabla label/input), que el core
+ * usa en páginas especiales no-OOUI como Especial:SubirArchivo, Especial:
+ * Exportar, Especial:Importar, etc. Sin esto el formulario queda con los
+ * controles por defecto del navegador (cajas azuladas de <fieldset>, inputs
+ * y botones del UA) que no respetan el lenguaje del skin ni voltean en oscuro.
+ *
+ * Registrado contra `+mediawiki.htmlform.styles` (skin.json): carga en toda
+ * página que monte un HTMLForm. Se EXCLUYE `.mw-htmlform-ooui` —esos formularios
+ * usan widgets OOUI y ya se reskinea en skinStyles/oojs-ui.css—; aquí solo
+ * tocamos los controles HTML crudos del formulario de tabla.
+ *
+ * ESPECIFICIDAD. El borde del <fieldset> y el aspecto del <legend> vienen de
+ * los estilos de elementos del core (otro módulo), así que prefijamos con
+ * `.skin-stellanova` (clase del <body>) para ganarles por especificidad, no
+ * solo por orden de fuente. (Ver memoria skinstyles-cascade-gotcha.)
+ *
+ * Doctrina: SIN filetes de caja. Los grupos del formulario se separan por
+ * aire + un rótulo en versalitas (igual que las secciones del menú, .sn-fs-h),
+ * no por un recuadro. Campos y botones usan los tokens --sn-field-* / --sn-btn-*.
+ * ============================================================ */
+
+/* ─── Grupos: <fieldset> sin recuadro, <legend> como rótulo de sección ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) fieldset {
+	margin: 0 0 var(--sn-s-6);
+	padding: 0;
+	border: 0;
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) legend {
+	float: none; width: auto;
+	margin: 0 0 var(--sn-s-3); padding: 0;
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); font-weight: 600;
+	text-transform: uppercase; letter-spacing: .08em;
+	color: var(--sn-ink-faint);
+}
+
+/* ─── Retícula tabla: etiqueta a la izquierda, campo a la derecha ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) table {
+	border-collapse: collapse;
+	width: 100%; margin: 0;
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) td.mw-label {
+	vertical-align: top;
+	padding: var(--sn-s-2) var(--sn-s-4) var(--sn-s-2) 0;
+	color: var(--sn-ink-soft);
+	font-size: var(--sn-fs-sm);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) td.mw-label label {
+	color: inherit;
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) td.mw-input {
+	padding: var(--sn-s-2) 0;
+}
+
+/* ─── Campos de texto, área y selección ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is(
+	input[type="text"], input[type="search"], input[type="number"],
+	input[type="email"], input[type="url"], input[type="password"],
+	input:not([type]), textarea, select
+) {
+	box-sizing: border-box;
+	font: inherit;
+	color: var(--sn-field-fg);
+	background: var(--sn-field-bg);
+	border: 1px solid var(--sn-field-border);
+	border-radius: var(--sn-radius);
+	padding: var(--sn-s-2) var(--sn-s-3);
+	transition: border-color var(--sn-dur-1), box-shadow var(--sn-dur-1);
+}
+/* Ancho cómodo sin estirarse de lado a lado: la columna de lectura del campo. */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) td.mw-input :is(
+	input[type="text"], input[type="search"], input[type="number"],
+	input[type="email"], input[type="url"], input[type="password"],
+	input:not([type]), textarea, select
+) {
+	width: 100%; max-width: 34rem;
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) td.mw-input textarea {
+	min-height: 6em; resize: vertical; line-height: var(--sn-leading);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is( input, textarea, select ):focus {
+	outline: none;
+	border-color: var(--sn-focus-border);
+	box-shadow: var(--sn-focus-ring);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is( input, textarea )::placeholder {
+	color: var(--sn-field-placeholder);
+}
+
+/* ─── Input de archivo: el textito + el botón del navegador como botón skin ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) input[type="file"] {
+	font: inherit; color: var(--sn-ink-soft); max-width: 100%;
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) input[type="file"]::file-selector-button {
+	font: inherit; cursor: pointer;
+	margin-right: var(--sn-s-3);
+	padding: var(--sn-s-2) var(--sn-s-3);
+	color: var(--sn-btn-fg);
+	background: var(--sn-btn-bg);
+	border: 1px solid var(--sn-btn-border);
+	border-radius: var(--sn-radius);
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) input[type="file"]::file-selector-button:hover {
+	background: var(--sn-btn-bg-hover);
+	border-color: var(--sn-btn-border-hover);
+}
+
+/* ─── Casillas y radios: el acento del skin marca el estado ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is(
+	input[type="checkbox"], input[type="radio"]
+) {
+	accent-color: var(--sn-nova);
+	width: 1em; height: 1em; vertical-align: -.1em;
+	margin-right: var(--sn-s-1);
+}
+
+/* ─── Pistas y notas (tamaño máx., tipos permitidos): voz secundaria ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) .htmlform-tip {
+	color: var(--sn-ink-soft);
+	font-size: var(--sn-fs-sm);
+	padding-top: var(--sn-s-1);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) #mw-upload-permitted {
+	margin-top: var(--sn-s-1);
+	padding: var(--sn-s-2) var(--sn-s-3);
+	background: var(--sn-sunk);
+	border-radius: var(--sn-radius);
+	color: var(--sn-ink-soft);
+	font-size: var(--sn-fs-sm);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) #mw-upload-permitted p { margin: 0; }
+
+/* "Editar las opciones de licencia": enlace común del skin. */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) .mw-upload-editlicenses {
+	margin-top: var(--sn-s-2); font-size: var(--sn-fs-sm);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) .mw-upload-editlicenses a {
+	color: var(--sn-link); text-decoration: none;
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) .mw-upload-editlicenses a:hover {
+	color: var(--sn-link-hover); text-decoration: underline;
+}
+
+/* ─── Botón de envío: la acción primaria (tinta llena, como --sn-btn-primary) ─── */
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) .mw-htmlform-submit-buttons {
+	margin-top: var(--sn-s-5);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is(
+	.mw-htmlform-submit, .mw-htmlform-submit-buttons button,
+	.mw-htmlform-submit-buttons input[type="submit"]
+) {
+	font: inherit; font-weight: 600; cursor: pointer;
+	padding: var(--sn-s-2) var(--sn-s-5);
+	color: var(--sn-btn-primary-fg);
+	background: var(--sn-btn-primary-bg);
+	border: 1px solid var(--sn-btn-primary-bg);
+	border-radius: var(--sn-radius);
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is(
+	.mw-htmlform-submit, .mw-htmlform-submit-buttons button,
+	.mw-htmlform-submit-buttons input[type="submit"]
+):hover {
+	background: var(--sn-btn-primary-bg-hover);
+	border-color: var(--sn-btn-primary-bg-hover);
+}
+.skin-stellanova .mw-htmlform:not( .mw-htmlform-ooui ) :is(
+	.mw-htmlform-submit, .mw-htmlform-submit-buttons button,
+	.mw-htmlform-submit-buttons input[type="submit"]
+):focus-visible {
+	outline: none; box-shadow: var(--sn-focus-ring);
+}

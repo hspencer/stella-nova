@@ -144,6 +144,7 @@
 			"+ext.timeline.styles": "skinStyles/easytimeline.css",
 			"+ext.wikiEditor.styles": "skinStyles/wikieditor.css",
 			"+mediawiki.action.edit.styles": "skinStyles/edit.css",
+			"+mediawiki.htmlform.styles": "skinStyles/htmlform.css",
 			"+oojs-ui-core.styles": "skinStyles/oojs-ui.css",
 			"+oojs-ui-widgets.styles": "skinStyles/oojs-ui.css",
 			"+oojs-ui-windows.styles": "skinStyles/oojs-ui.css"
