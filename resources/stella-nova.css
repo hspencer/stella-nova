@@ -985,6 +985,18 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	border-start-end-radius:   var(--sn-radius-paper);
 	overflow: hidden;
 }
+/* Variante TemplateStyles: cuando el contenedor de contenido arranca con un
+   <style> inyectado por <templatestyles>, ese nodo ocupa el :first-child y
+   desplaza al <p> que lleva la imagen-hero, rompiendo la cadena :first-child
+   de la regla de arriba. Reconocemos ese <style> líder con `style:first-child + *`
+   para que el bleed-top igual se dispare cuando el primer elemento de flujo
+   es una imagen .full-width. Mismo cuerpo de declaraciones que la regla base. */
+.sn-body style:first-child + * > :is(.full-width, [class~="'full-width'"]):first-child {
+	margin-block-start: calc(-1 * var(--sn-paper-py));
+	border-start-start-radius: var(--sn-radius-paper);
+	border-start-end-radius:   var(--sn-radius-paper);
+	overflow: hidden;
+}
 .sn-body > :is(.full-width, [class~="'full-width'"]):last-child,
 .sn-body > *:last-child > :is(.full-width, [class~="'full-width'"]):last-child,
 .sn-body > *:last-child > *:last-child > :is(.full-width, [class~="'full-width'"]):last-child,
