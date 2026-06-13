@@ -120,6 +120,17 @@ sup.reference:target {
 	unicode-bidi: embed;
 }
 
+/* Cuerpo de cada nota al pie. El texto del skin va condensado
+   (font-stretch + --sn-text-width); en las referencias volvemos al ancho
+   pleno (100%) y a un grado tipográfico menor, con un pelo de tracking para
+   compensar la densidad del cuerpo pequeño. */
+.reference-text {
+	font-stretch: 100%;
+	font-size: var(--sn-fs-sm);
+	letter-spacing: 0.0483ex;
+	color: var(--sn-ink);
+}
+
 /* archivo origen: modules/ext.cite.print.less */
 /* opciones del módulo: {'media': 'print'} */
 .mw-cite-backlink {

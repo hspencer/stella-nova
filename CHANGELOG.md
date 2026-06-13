@@ -9,6 +9,29 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.3.1] — 2026-06-12
+
+### Added
+- **Grilla `flujo-v` en columnas (multicol).** El modificador de pila vertical
+  ahora fluye su contenido en columnas reales, y se permite posicionar
+  imágenes dentro del flujo.
+- **Pie y cromo del core afinados.** Vestimenta Stella Nova para
+  notificaciones (Echo), leyendas de páginas especiales, el escritorio y el
+  menú «Herramientas».
+
+### Changed
+- **Cuerpo de las referencias (`.reference-text`).** Vuelve al ancho pleno
+  (`font-stretch: 100%`) frente al cuerpo condensado del skin, baja al grado
+  `--sn-fs-sm` y suma un pelo de tracking (`letter-spacing: .0483ex`) sobre
+  `--sn-ink`.
+
+### Fixed
+- **`full-width` bleed-top con `<style>` líder de TemplateStyles.** Cuando el
+  contenido arranca con un `<style>` inyectado por `<templatestyles>`, ese
+  nodo ocupaba el `:first-child` y rompía la cadena del sangrado superior. Un
+  selector `style:first-child + *` reconoce el `<style>` líder y dispara el
+  bleed-top sobre la imagen-hero que le sigue.
+
 ## [0.3.0] — 2026-06-10
 
 ### Added
