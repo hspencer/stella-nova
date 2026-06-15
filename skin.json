@@ -2,9 +2,9 @@
 	"manifest_version": 2,
 	"name": "StellaNova",
 	"namemsg": "skinname-stellanova",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"author": [
-		"Herbert Spencer"
+		"[https://herbertspencer.net Herbert Spencer González], e[ad] Escuela de Arquitectura y Diseño, Pontificia Universidad Católica de Valparaíso"
 	],
 	"url": "https://github.com/hspencer/stella-nova",
 	"descriptionmsg": "stellanova-desc",

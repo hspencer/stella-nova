@@ -2087,6 +2087,18 @@ details[open]::details-content { block-size: auto; opacity: 1; }
    izquierda, celdas y cabeceras por igual. Enrutado por tokens para ser
    coherente en claro y oscuro. ─── */
 .sn-body :is(table.wikitable, table.smwtable, table.broadtable) {
+	/* En viewport angosto las tablas anchas se vuelven una CAJA DE SCROLL
+	   horizontal propia: `display: block` convierte la <table> en un bloque
+	   con overflow-x; sus filas/celdas siguen maquetando como tabla (cajas
+	   de tabla anónimas dentro del bloque), así que las columnas se alinean
+	   igual. Cuando la suma de anchos mínimos de columna excede el ancho
+	   disponible, la tabla desborda el bloque y aparece scroll-x interno —el
+	   scroll vertical de la página NO se ve afectado. `overscroll-behavior-x:
+	   contain` evita el encadenamiento del gesto al hacer pan horizontal.
+	   En tablas que caben, el bloque se ajusta al contenido (sin scroll). */
+	display: block;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
 	border-collapse: collapse;
 	border: 0;                       /* sin contorno exterior */
 	background: var(--sn-paper);
@@ -2109,6 +2121,17 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	   que duplicaría el alto de celda; aquí el aire ya está en la línea. */
 	padding: 0 var(--sn-s-3);
 	border: 0;
+	/* Ancho mínimo de celda: impide que una columna se estruje por debajo de
+	   lo legible cuando la tabla excede el viewport (es lo que disparaba el
+	   scroll-x del contenedor de arriba). Ajustable. */
+	min-width: 7em;
+	/* Sin partición de palabra dentro de celdas: .sn-body hereda `hyphens:
+	   auto`, que en una columna estrujada parte el texto LETRA A LETRA en
+	   vertical (el síntoma reportado). Aquí el texto sólo quiebra en espacios
+	   → el ancho mínimo real de la columna es la palabra más larga. */
+	hyphens: manual;
+	overflow-wrap: normal;
+	word-break: normal;
 	/* Filete como box-shadow: NO ocupa layout, así el 1px no se acumula
 	   fila a fila ni desplaza la retícula (un border real sí lo haría). */
 	box-shadow: inset 0 -1px 0 var(--sn-hairline-soft);  /* filete fino entre filas */

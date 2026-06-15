@@ -1,7 +1,7 @@
 {
 	"@metadata": { "authors": [ "Herbert Spencer" ] },
 	"skinname-stellanova": "Stella Nova",
-	"stellanova-desc": "Skin moderno, responsive y compatible con SMW para Casiopea (e[ad] PUCV), por [https://herbertspencer.net Herbert Spencer]. Repositorio: [https://github.com/hspencer/stella-nova GitHub].",
+	"stellanova-desc": "Apariencia editorial para la wiki Casiopea de la e[ad] PUCV: una hoja de papel sobre un campo cálido, tipografía variable (IBM Plex · Roboto Serif), temas claro y oscuro, y soporte para Semantic MediaWiki. Escrita desde cero sobre SkinMustache. Repositorio: [https://github.com/hspencer/stella-nova GitHub].",
 	"stellanova-skip-to-content": "Saltar al contenido",
 	"stellanova-skip-to-nav": "Saltar a la navegación",
 	"stellanova-sidebar": "Navegación del sitio",

@@ -9,6 +9,28 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.4.1] — 2026-06-15
+
+### Added
+- **Tablas de datos responsivas.** Las tablas anchas (`wikitable`, `smwtable`,
+  `broadtable`) se vuelven una caja de scroll horizontal propia en viewport
+  angosto (`display: block; overflow-x: auto`), con ancho mínimo de celda
+  (`min-width`) y sin partición de palabra dentro de celdas. En teléfono ya no
+  se estrujan apilando el texto letra a letra; el scroll vertical de la página
+  no se ve afectado.
+
+### Changed
+- **Metadatos en `Special:Version`.** El autor pasa a la columna *Authors* como
+  enlace con su filiación (e[ad] Escuela de Arquitectura y Diseño, PUCV); la
+  descripción (`stellanova-desc`, es/en) se reescribe sin el nombre del autor y
+  conservando el enlace al repositorio.
+
+## [0.4.0] — 2026-06-13
+
+### Added
+- **Marcos de imagen, miniaturas y galerías en modo oscuro.** Afinado del
+  tratamiento de imágenes (marcos, thumbnails y galerías) bajo tema oscuro.
+
 ## [0.3.1] — 2026-06-12
 
 ### Added
