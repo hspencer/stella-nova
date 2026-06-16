@@ -2229,6 +2229,12 @@ details[open]::details-content { block-size: auto; opacity: 1; }
    clave→valor (NO es tabla de datos; migrada desde MediaWiki:Common.css).
    Cabecera = etiqueta a la derecha en versalita tenue; sin filetes. */
 .sn-body table:is(.template, .plantilla) {
+	/* `display: table` REAFIRMA el modelo de tabla: la regla de tablas de datos
+	   anchas (`table.wikitable…`) le pone `display:block` para el scroll-x, y
+	   una ficha (wikitable + plantilla) lo heredaba → con block, `width:100%`
+	   solo estira la caja y las celdas se encogen al contenido. Las fichas
+	   verticales clave→valor no necesitan scroll: vuelven a `table` y llenan. */
+	display: table;
 	width: 100%; margin: var(--sn-s-6) auto;
 	border: 0;
 	/* Mismo achicado que las tablas generales: el token único --sn-fs-table

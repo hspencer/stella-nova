@@ -399,7 +399,7 @@ entity PageRender {
 ------------------------------------------------------------
 
 config {
-    skin_version: String = "0.4.2"      -- debe coincidir con skin.json
+    skin_version: String = "0.4.3"      -- debe coincidir con skin.json
     chrome_namespace: String = "Stella-Nova"
     interface_editor_group: String = "editores-de-interfaz"
 }

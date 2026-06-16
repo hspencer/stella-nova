@@ -9,6 +9,16 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.4.3] — 2026-06-15
+
+### Fixed
+- **Fichas (`table.plantilla`/`.template`) volvían a ancho de contenido.** La
+  regla de tablas de datos responsivas (`table.wikitable…{display:block}`)
+  alcanzaba también a las fichas (que son `wikitable` + `plantilla`); con
+  `display:block`, el `width:100%` solo estiraba la caja y las celdas se
+  encogían. Se reafirma `display:table` en las fichas verticales clave→valor
+  (no necesitan scroll horizontal) para que llenen el 100% otra vez.
+
 ## [0.4.2] — 2026-06-15
 
 ### Changed
