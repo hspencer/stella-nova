@@ -300,8 +300,8 @@
 	--sn-fs-root:  calc(1rem * var(--sn-font-scale));
 	--sn-fs-xs:    clamp(.72rem, .70rem + .10vw, .78rem);
 	--sn-fs-sm:    clamp(.82rem, .79rem + .14vw, .90rem);
-	--sn-fs-base:  calc(clamp(1rem, .97rem + .16vw, 1.05rem) * var(--sn-font-scale));
-	--sn-fs-md:    calc(clamp(1.05rem, 1.01rem + .22vw, 1.18rem) * var(--sn-font-scale));
+	--sn-fs-base:  calc(clamp(1.04rem, 1rem + .18vw, 1.1rem) * var(--sn-font-scale));
+	--sn-fs-md:    calc(clamp(1.15rem, 1.1rem + .24vw, 1.28rem) * var(--sn-font-scale));
 	--sn-fs-lg:    calc(clamp(1.2rem, 1.12rem + .40vw, 1.42rem) * var(--sn-font-scale));
 	--sn-fs-xl:    calc(clamp(1.35rem, 1.22rem + .55vw, 1.62rem) * var(--sn-font-scale));
 	--sn-fs-display: calc(clamp(1.5rem, 1.32rem + .85vw, 2rem) * var(--sn-font-scale));
@@ -310,10 +310,10 @@
 	   del cuerpo. */
 	--sn-fs-page-title: calc(clamp(1.85rem, 1.55rem + 1.3vw, 2.5rem) * var(--sn-font-scale));
 	/* Tamaño de TABLA — única fuente del "achicado" de tablas de contenido
-	   (wikitable/smwtable/broadtable Y table.template/.plantilla): 80% de base, ABSOLUTO
+	   (wikitable/smwtable/broadtable Y table.template/.plantilla): 85% de base, ABSOLUTO
 	   (no compone con anidamiento, a diferencia de un `font-size: 80%` relativo).
 	   Tunear aquí cambia todas las tablas a la vez. */
-	--sn-fs-table: calc(var(--sn-fs-base) * .8);
+	--sn-fs-table: calc(var(--sn-fs-base) * .85);
 
 	/* — Baseline grid — la unidad del ritmo vertical es la interlínea del
 	   cuerpo: `--sn-baseline` = fs-base × leading. Escala SOLO con la
@@ -342,6 +342,10 @@
 	--sn-measure: 64rem;         /* (ex 46~50) medida de lectura: única restricción de ancho de la hoja (~75-80 car. en Plex Sans). Sustituye al viejo truco `width:80%` sobre los <p>. Súbelo/bájalo a gusto. */
 	--sn-rail: 15.5rem;           /* (sin uso; reservado)                   */
 	--sn-shell: 81rem;            /* ancho máximo del conjunto (header/pie) */
+	/* Alto de la cabecera sticky: isotipo (2rem) + padding vertical de
+	   .sn-header-bar (2 × --sn-s-3 = 1.5rem). Alimenta el scroll-padding-top de
+	   la página, para que las anclas (TOC, #target) no queden bajo la barra. */
+	--sn-header-h: 3.5rem;
 
 	/* Ícono de enlace externo (Feather "external-link"), como máscara para
 	   teñirlo con currentColor. Definido por diseño en el skin. */

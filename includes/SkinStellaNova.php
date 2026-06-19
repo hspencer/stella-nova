@@ -96,6 +96,11 @@ class SkinStellaNova extends SkinMustache {
 		't-userrights'          => 'users',
 		// SMW: "Explorar propiedades" (antes degradaba a texto).
 		't-smwbrowselink'       => 'book-open',
+		// Feed de la página (Atom/RSS). El <li> que emite el core lleva
+		// id="feedlinks"; le ponemos el ícono Feather "rss" en vez del PNG de
+		// feed que el skinning del core pinta como background de a.feedlink
+		// (neutralizado en CSS).
+		'feedlinks'             => 'rss',
 	];
 
 	/**
@@ -116,7 +121,7 @@ class SkinStellaNova extends SkinMustache {
 		// Captura: <li … id="t-…" …> … <a …>  → grupo 1 = id, grupo 0 = todo
 		// hasta la apertura del primer <a>. Insertamos el ícono tras el match.
 		return (string)preg_replace_callback(
-			'/<li\b[^>]*\bid="(t-[^"]+)"[^>]*>\s*<a\b[^>]*>/i',
+			'/<li\b[^>]*\bid="(t-[^"]+|feedlinks)"[^>]*>\s*<a\b[^>]*>/i',
 			static function ( array $m ): string {
 				$icon = self::TOOL_ICONS[$m[1]] ?? null;
 				if ( $icon === null ) {

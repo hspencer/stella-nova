@@ -8,6 +8,13 @@
 
 /* ───────────────────────── Base ───────────────────────── */
 html { box-sizing: border-box; -webkit-text-size-adjust: 100%; }
+/* La cabecera es `position: sticky; top: 0`, así que al saltar a un ancla
+   (clic en la tabla de contenidos, #target en la URL) el encabezado destino
+   quedaba tapado por la barra. `scroll-padding-top` retrae el punto de anclaje
+   del scroll el alto de la barra + un respiro, así el encabezado aterriza justo
+   debajo. Una sola declaración cubre TODO salto de scroll (TOC, :target,
+   anclas de Especial:). */
+html { scroll-padding-top: calc(var(--sn-header-h) + var(--sn-s-3)); }
 *, *::before, *::after { box-sizing: inherit; }
 
 body {
@@ -594,6 +601,9 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	font-stretch: condensed;
 	letter-spacing: .25ex;
 }
+/* #contentSub sin la versalita editorial: texto tal cual, sin interletraje
+   (#contentSub2 conserva el tratamiento de .sn-subtitle). */
+#contentSub.sn-subtitle { text-transform: none; letter-spacing: normal; }
 /* Vacío (caso normal, p. ej. portada: solo el #mw-content-subtitle hueco)
    → cero altura, ninguna inserción visible. Solo cuando trae algo real
    (aviso de redirección, enlace de restaurar) reserva un respiro.
@@ -603,13 +613,22 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 .sn-subtitle:empty,
 .sn-subtitle:has(> *:only-child:empty) { display: none; }
 
-/* #contentSub (avisos de redirección / contexto) cuando aporta contenido:
-   se proyecta arriba del paper como kicker line — sticker editorial, no
-   compite con el cuerpo. inset-inline limitado al padding lateral del
-   paper alinea el kicker con el ancho de la columna interna.
+/* #contentSub cuando aporta contenido. Dos regímenes según altura:
+
+   (a) KICKER — subtítulo de UNA línea (aviso de redirección / contexto): se
+       proyecta arriba del paper como kicker editorial, fuera de flujo.
+       inset-inline limitado al padding lateral del paper lo alinea con la
+       columna interna.
+   (b) FLUJO — subtítulo ALTO (special pages con bloques anidados, p. ej.
+       Especial:Contribuciones: tools del usuario + "N ediciones"). El kicker
+       lo subía -100% por encima de la hoja y chocaba con la barra de
+       navegación, así que este caso vive DENTRO de la hoja, en flujo normal.
+
+   Discriminador: el caso rico mete <div> dentro de #mw-content-subtitle; el
+   aviso de redirección es texto/enlace inline directo.
    #contentSub2 (undelete admin) queda con la regla del flujo normal. */
-.sn-paper > #contentSub:has(a),
-.sn-paper > #contentSub:has(*:not(:empty)) {
+.sn-paper > #contentSub:has(a):not(:has(#mw-content-subtitle > div)),
+.sn-paper > #contentSub:has(*:not(:empty)):not(:has(#mw-content-subtitle > div)) {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline: var(--sn-paper-px);
@@ -621,14 +640,32 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	color: var(--sn-ink-soft);
 	z-index: 1;
 }
+/* (b) Subtítulo alto → cabecera en flujo, separada del listado por un filete. */
+.sn-paper > #contentSub:has(#mw-content-subtitle > div) {
+	margin: 0 0 var(--sn-s-4);
+	padding-block-end: var(--sn-s-2);
+	border-block-end: 1px solid var(--sn-hairline);
+	font-size: var(--sn-fs-sm);
+	line-height: 1.4;
+	color: var(--sn-ink-soft);
+}
+.sn-paper > #contentSub .mw-contributions-editor-info {
+	margin-block-start: var(--sn-s-1);
+	font-size: var(--sn-fs-xs);
+}
+/* En el subtítulo alto los enlaces SÍ se ven como enlaces (no el apagado
+   --sn-ink-soft del kicker): el token de link manda, como en el cuerpo. */
+.sn-paper > #contentSub:has(#mw-content-subtitle > div) a { color: var(--sn-link); }
+.sn-paper > #contentSub:has(#mw-content-subtitle > div) a:hover { color: var(--sn-link-hover); }
+.sn-paper > #contentSub:has(#mw-content-subtitle > div) a:visited { color: var(--sn-link-visited); }
 .sn-paper > #contentSub2:has(a),
 .sn-paper > #contentSub2:has(*:not(:empty)) {
 	margin: 0 0 var(--sn-s-3);
 }
 @media (max-width: 36rem) {
-	/* Móvil: kicker vuelve al flujo */
-	.sn-paper > #contentSub:has(a),
-	.sn-paper > #contentSub:has(*:not(:empty)) {
+	/* Móvil: el kicker corto también vuelve al flujo */
+	.sn-paper > #contentSub:has(a):not(:has(#mw-content-subtitle > div)),
+	.sn-paper > #contentSub:has(*:not(:empty)):not(:has(#mw-content-subtitle > div)) {
 		position: static; transform: none;
 		padding: 0; margin: 0 0 var(--sn-s-3);
 		font-size: var(--sn-fs-sm);
@@ -1354,6 +1391,11 @@ canvas, iframe,
 }
 /* El ícono escala con el texto del item (queda pequeño en --sn-fs-xs). */
 .sn-foot-ico { width: 1em; height: 1em; }
+/* El skinning del core pinta el enlace de feed (Atom/RSS) con un PNG de feed
+   como background-image + padding-left. Lo neutralizamos: ya le inyectamos el
+   ícono Feather "rss" delante (sn-foot-ico), así que el item lee igual que el
+   resto de la lista. */
+.sn-foot-toollist li a.feedlink { background: none; padding-left: 0; }
 
 /* Enlaces de sitio (privacidad/acerca/descargos): a 80% del cuerpo de pie. */
 .sn-foot-places {
@@ -1840,7 +1882,7 @@ canvas, iframe,
 
 /* El summary se ve como un enlace de .sn-foot-places (mismo color, tamaño y
    peso normal), sin el marcador del UA, con su ícono de estado delante:
-   `+` colapsado, `↑` (chevron-up) abierto con la lista ya asomada arriba. */
+   `+` colapsado, `↑` (arrow-up) abierto con la lista ya asomada arriba. */
 .sn-foot-tools-summary {
 	cursor: pointer; list-style: none;
 	/* `align-items: baseline` (no `center`): con center NINGÚN item del flex
@@ -2310,28 +2352,30 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	   solo estira la caja y las celdas se encogen al contenido. Las fichas
 	   verticales clave→valor no necesitan scroll: vuelven a `table` y llenan. */
 	display: table;
-	width: 100%; margin: var(--sn-s-6) auto;
+	width: 100%; margin: var(--sn-baseline-2) auto;
 	border: 0;
-	/* Mismo achicado que las tablas generales: el token único --sn-fs-table
-	   (≈80% de base, absoluto). Una sola fuente para ambas. */
-	font-size: var(--sn-fs-table);
-	/* Interlínea cómoda atada a la fuente (unitless): entre medio baseline
-	   (apretado) y baseline completo (aireado) no hay valor que tile la
-	   grilla, así que la ficha va fuera de grilla a 1.4 × fs-table. */
-	line-height: 1.4;
+	/* Tamaño en un solo lugar: --sn-fs-sm (sin el font-size:89% del tr, que
+	   componía 0.8×0.89≈0.71×base). La ficha es texto auxiliar → escalón sm. */
+	font-size: var(--sn-fs-sm);
+	/* Interlínea SUB-MÚLTIPLO de la grilla: un baseline completo se ve aireado
+	   a este tamaño, así que la ficha corre a 3/4 de baseline. La retícula se
+	   reencuentra cada 4 líneas (4 × 0.75 = 3 baselines), así que sigue on-grid
+	   en bloques de 4 — y los márgenes exteriores son baselines enteros. */
+	line-height: calc(var(--sn-baseline) * 3 / 4);
 }
-.sn-body table:is(.template, .plantilla) > tbody > tr { vertical-align: top; font-size: 89%; letter-spacing: 0.045ex;}
+.sn-body table:is(.template, .plantilla) > tbody > tr { vertical-align: top; letter-spacing: 0.045ex;}
 .sn-body table:is(.template, .plantilla) > tbody > tr > :is(th, td) { border: 0; }
 /* `:first-child` para empatar la especificidad (0,3,4) de la regla de
    "fila de cabecera" de wikitable, que si no marca esta primera th a 600.
    En una ficha la primera fila es un par clave→valor, no una cabecera. */
 .sn-body table:is(.template, .plantilla) > tbody > tr > th,
 .sn-body table:is(.template, .plantilla) > tbody > tr:first-child > th {
-	width: 20%; min-width: 110px;
+	width: auto; min-width: 110px;
 	padding-right: 1ex;
+	font-size: var(--sn-fs-xs);
 	text-transform: uppercase;
 	text-align: right;
-	font-weight: 355;
+	font-weight: 400;
 	letter-spacing: .03ex;
 	/* gris neutro (sin la calidez café de --sn-ink-faint), misma luminosidad */
 	color: light-dark(#8c8c8c, #6f6f6f); background: transparent;
