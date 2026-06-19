@@ -9,6 +9,32 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.4.7] — 2026-06-19
+
+### Added
+- **Afordancia de estado expandido en las secciones colapsables (EXPERIMENTAL).**
+  Cuando el `.mw-collapsible` hermano deja de estar `.mw-collapsed`: (1) el filete
+  inferior de la cabecera desaparece, y (2) cabecera y cuerpo comparten un borde
+  vertical derecho (`var(--sn-hair)`, misma ley que el filete y el `<hr>`) que
+  corre continuo y los aúna como bloque, sin fondo ni esquinas redondeadas.
+  Marcado EXPERIMENTAL en el CSS; puede revertirse.
+
+### Changed
+- **Icono de cabecera toggle al expandir:** pasa de `minus` a `arrow-down`
+  (flecha completa) — "esto está abierto / hay contenido debajo".
+- **Placeholder del buscador de la barra superior:** ahora usa `--sn-hairline`,
+  el mismo color que el borde del campo (antes `--sn-ink-faint`).
+
+### Fixed
+- **Enlace "Herramientas" del pie desalineado verticalmente** respecto a los
+  enlaces de sitio de su misma fila. Raíz: el `<summary>` es `inline-flex` con
+  `align-items: center`, así que ningún item exponía línea base y el contenedor
+  sintetizaba su baseline desde el borde de la caja (que el icono de 13px hacía
+  más alta que el texto). Se cambia el summary y `.sn-foot-places` a
+  `align-items: baseline` (el icono se recentra con `align-self: center`) y la
+  fila del grid `.sn-foot-line` a `align-items: baseline`. Sin nudges en px:
+  escala con la tipografía.
+
 ## [0.4.6] — 2026-06-19
 
 ### Added

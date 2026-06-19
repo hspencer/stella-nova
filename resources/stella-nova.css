@@ -231,7 +231,7 @@ html[data-sn-modal] .sn-header {
 	flex: 1; min-width: 0; border: 0; background: transparent;
 	font: inherit; color: var(--sn-ink); padding: 0; line-height: 1.2;
 }
-.sn-search input::placeholder { color: var(--sn-ink-faint); }
+.sn-search input::placeholder { color: var(--sn-hairline); }   /* igual que el borde */
 .sn-search :is(input):focus { outline: none; }
 /* "Buscar" ahora es el ícono (texto → tooltip/aria-label). Botón-ícono
    discreto; el ícono hereda el color del texto, acento al activar. */
@@ -1358,7 +1358,8 @@ canvas, iframe,
 /* Enlaces de sitio (privacidad/acerca/descargos): a 80% del cuerpo de pie. */
 .sn-foot-places {
 	list-style: none; margin: 0; padding: 0;
-	display: flex; flex-wrap: wrap; gap: var(--sn-s-1) var(--sn-s-3);
+	display: flex; flex-wrap: wrap; align-items: baseline;
+	gap: var(--sn-s-1) var(--sn-s-3);
 	font-size: calc(var(--sn-fs-sm) * .8);
 }
 .sn-foot-places li { margin: 0; }
@@ -1855,11 +1856,15 @@ canvas, iframe,
 	grid-template-areas:
 		"tools  tools"
 		"label  places";
-	align-items: end;
+	/* Baseline (no `end`): el summary "Herramientas" lleva un icono de 13px —más
+	   alto que el texto fs-xs— y al ser inline-flex centra icono+texto, así que
+	   alinear por caja dejaba su texto más arriba que los enlaces de sitio de la
+	   misma fila. Baseline cuadra las líneas de texto entre label y places. */
+	align-items: baseline;
 	column-gap: var(--sn-s-3);
 }
 .sn-foot-tools-dd { grid-area: label; margin: 0; }
-.sn-foot-places   { grid-area: places; justify-self: start; align-self: end; }
+.sn-foot-places   { grid-area: places; justify-self: start; align-self: baseline; }
 /* Sin caja de herramientas, los enlaces de sitio ocupan la línea entera
    desde la izquierda (no quedan corridos a la columna derecha). */
 .sn-foot-places:only-child { grid-column: 1 / -1; }
@@ -1882,12 +1887,20 @@ canvas, iframe,
    `+` colapsado, `↑` (chevron-up) abierto con la lista ya asomada arriba. */
 .sn-foot-tools-summary {
 	cursor: pointer; list-style: none;
-	display: inline-flex; align-items: center; gap: var(--sn-s-1);
+	/* `align-items: baseline` (no `center`): con center NINGÚN item del flex
+	   expone línea base, así que el contenedor SINTETIZA su baseline desde el
+	   borde inferior de la caja —que el icono de 13px hace más alta que el
+	   texto—, y el grid de .sn-foot-line la cuadraba contra la baseline real de
+	   los enlaces vecinos → descuadre. Con baseline, el nodo de texto participa
+	   y su línea base ES la del summary; el icono se recentra abajo con
+	   `align-self`. Sin nudges en px: escala con la tipografía. */
+	display: inline-flex; align-items: baseline; gap: var(--sn-s-1);
 	color: var(--sn-ink-soft);
 	font-size: calc(var(--sn-fs-sm) * .8);
 	font-weight: 400;
 	transition: color var(--sn-dur-1);
 }
+.sn-foot-tools-summary .sn-i { align-self: center; }   /* icono óptico al centro del texto */
 .sn-foot-tools-summary::-webkit-details-marker { display: none; }
 .sn-foot-tools-summary::marker { content: ""; }
 .sn-foot-tools-summary:hover { color: var(--sn-nova); }
@@ -2754,6 +2767,7 @@ textarea.mw-editfont-monospace {
 .sn-body :is(h1, h2, h3, h4, h5, h6) .title-toggle {
 	--sn-plus:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
 	--sn-minus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+	--sn-down:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cpolyline points='19 12 12 19 5 12'/%3E%3C/svg%3E");
 	cursor: pointer;
 	color: var(--sn-nova);
 	transition: color var(--sn-dur-1) var(--sn-ease);
@@ -2769,9 +2783,10 @@ textarea.mw-editfont-monospace {
 	mask: var(--sn-plus) no-repeat center / contain;
 	transition: transform var(--sn-dur-1) var(--sn-ease);
 }
-/* Expandida: el collapsible hermano ya no tiene `.mw-collapsed` → minus. */
+/* Expandida: el collapsible hermano ya no tiene `.mw-collapsed` → flecha-abajo
+   (arrow-down completa, no chevron): "esto está abierto / hay contenido debajo". */
 .sn-body :is(h1, h2, h3, h4, h5, h6):has(+ .mw-collapsible:not(.mw-collapsed)) .title-toggle::after {
-	-webkit-mask-image: var(--sn-minus); mask-image: var(--sn-minus);
+	-webkit-mask-image: var(--sn-down); mask-image: var(--sn-down);
 }
 /* Hover (en ambos estados): el título profundiza a nova-hover —el icono lo
    hereda por currentColor— y el signo crece un punto para acusar el recibo. */
@@ -2802,4 +2817,28 @@ textarea.mw-editfont-monospace {
 	bottom: calc(var(--sn-baseline) * -0.5);
 	border-top: var(--sn-hair);                /* 1px solid var(--sn-hairline) */
 	pointer-events: none;
+}
+/* ─── EXPERIMENTAL: estado expandido de la sección toggle ───
+   Al dejar de estar `.mw-collapsed` el collapsible hermano (mismo selector que
+   usa el icono ±):
+     1. El filete inferior de la cabecera DESAPARECE (ya no separa).
+     2. La cabecera y su collapsible comparten un BORDE VERTICAL por la derecha
+        —misma ley que el filete inferior y el <hr>: `var(--sn-hair)` (1px
+        hairline)— que corre continuo de arriba abajo y los aúna como un bloque,
+        en vez de un fondo. Van pegados (margin 0 entre ambos) y SIN esquinas
+        redondeadas. El borde se asienta en el borde derecho de la columna; el
+        texto se separa de él con padding-right. El padding vertical del cuerpo es
+        múltiplo entero de baseline para no romper la retícula. */
+.sn-body :is(h1, h2, h3, h4, h5, h6):has(.title-toggle):has(+ .mw-collapsible:not(.mw-collapsed))::after {
+	display: none;                              /* (1) sin filete cuando está abierto */
+}
+.sn-body :is(h1, h2, h3, h4, h5, h6):has(.title-toggle):has(+ .mw-collapsible:not(.mw-collapsed)) {
+	margin-bottom: 0;                           /* (2) cierra el hueco hacia el cuerpo */
+	padding-right: var(--sn-s-3);               /* separa el texto del filete */
+	border-right: var(--sn-hair);               /* 1px solid var(--sn-hairline) */
+}
+.sn-body :is(h1, h2, h3, h4, h5, h6):has(.title-toggle) + .mw-collapsible:not(.mw-collapsed) {
+	margin-top: 0;
+	padding: var(--sn-baseline) var(--sn-s-3) var(--sn-baseline) 0;  /* baseline arriba/abajo, hueco a la derecha */
+	border-right: var(--sn-hair);
 }
