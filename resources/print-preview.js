@@ -55,22 +55,30 @@
 		return src ? src.cloneNode( true ) : null;
 	}
 
-	/* El TOC se incluye solo si la página lo emite y NO está colapsado (el TOC
-	   nativo colapsa por checkbox `.toctogglecheckbox:checked`). */
-	function visibleToc() {
+	/* Clon del TOC de la página (sin sus controles de plegado), o null si la
+	   página no emite TOC. Se usa cuando el switch «Índice» lo pide, ignorando el
+	   estado colapsado de pantalla (el usuario decide en la barra). */
+	function tocClone() {
 		var toc = doc.querySelector( '#toc, .toc, .mw-table-of-contents' );
 		if ( !toc ) { return null; }
-		var cb = toc.querySelector( '.toctogglecheckbox' );
-		var collapsed = ( cb && cb.checked ) ||
-			toc.classList.contains( 'tochidden' ) ||
-			toc.classList.contains( 'mw-toc-collapsed' ) ||
-			toc.getAttribute( 'aria-hidden' ) === 'true';
-		if ( collapsed ) { return null; }
 		var clone = toc.cloneNode( true );
 		clone.querySelectorAll(
 			'.toctogglecheckbox, .toctogglespan, .toctogglelabel, .togglelist'
 		).forEach( function ( n ) { n.remove(); } );
 		return clone;
+	}
+
+	/* ¿La página trae TOC y NO está colapsado? Determina el estado inicial del
+	   switch «Índice» (el TOC nativo colapsa por checkbox `.toctogglecheckbox`). */
+	function tocVisibleByDefault() {
+		var toc = doc.querySelector( '#toc, .toc, .mw-table-of-contents' );
+		if ( !toc ) { return false; }
+		var cb = toc.querySelector( '.toctogglecheckbox' );
+		var collapsed = ( cb && cb.checked ) ||
+			toc.classList.contains( 'tochidden' ) ||
+			toc.classList.contains( 'mw-toc-collapsed' ) ||
+			toc.getAttribute( 'aria-hidden' ) === 'true';
+		return !collapsed;
 	}
 
 	/* Tamaños de papel y nº de columnas del cuerpo por formato. Editable. */
@@ -87,6 +95,35 @@
 		for ( var i = 0; i < SIZES.length; i++ ) { if ( SIZES[ i ].id === id ) { return SIZES[ i ]; } }
 		return SIZES[ 0 ];
 	}
+
+	/* Cadena `size` del @page resuelta según orientación. Para tamaños CON nombre
+	   (A4/letter/legal/A3) basta añadir `landscape`/`portrait`. Para tamaños con
+	   dos longitudes explícitas (Tabloide, Plóter) se ordenan los lados: vertical
+	   = menor × mayor, horizontal = mayor × menor. */
+	function pageSize( ent, orient ) {
+		var css = ent.css;
+		if ( /\s/.test( css ) ) {
+			var parts = css.split( /\s+/ );
+			var a = parseFloat( parts[ 0 ] ), b = parseFloat( parts[ 1 ] );
+			var unit = ( parts[ 0 ].match( /[a-z%]+$/i ) || [ 'mm' ] )[ 0 ];
+			var lo = Math.min( a, b ), hi = Math.max( a, b );
+			return ( orient === 'landscape' )
+				? hi + unit + ' ' + lo + unit
+				: lo + unit + ' ' + hi + unit;
+		}
+		return css + ( orient === 'landscape' ? ' landscape' : ' portrait' );
+	}
+
+	/* Nº de columnas del cuerpo. En HORIZONTAL el ancho de hoja da para una
+	   columna más que en vertical (flujo vertical siempre): Carta 1→2, A3/Tabloide
+	   2→3, Plóter 4→5… La hoja vertical conserva `ent.cols`. */
+	function colsFor( ent, orient ) {
+		return ent.cols + ( orient === 'landscape' ? 1 : 0 );
+	}
+
+	/* Zoom de la previsualización (escala visual de la hoja en pantalla; no afecta
+	   la salida impresa). Útil para «alejar» y ver completa una hoja grande. */
+	var ZOOM_MIN = 0.25, ZOOM_MAX = 1.5, ZOOM_STEP = 0.25;
 
 	/* Base de archivos del skin (p. ej. «…/skins/StellaNova/resources»), tomada
 	   del <link rel=icon> del isótopo que el skin inyecta con ruta de archivo. */
@@ -124,11 +161,11 @@
 			'	size: ' + ( sizeCss || 'A4' ) + ';',
 			/* OJO: Vivliostyle aplica el margen de @page DOBLE al inset del
 			   contenido (margen M → 2·M por lado: lo reserva como zona de
-			   margin-boxes Y como caja de página). Por eso ponemos la MITAD del
-			   margen visual buscado: 1cm → ~2cm efectivos a los lados; 0.6cm
-			   arriba/abajo → ~1.2cm, suficiente para la cabecera/pie a 8pt sin
-			   desperdiciar alto. El contenido se mete 1cm más por su padding. */
-			'	margin: 0.6cm 1cm;',
+			   margin-boxes Y como caja de página). Margen VERTICAL mayor que el
+			   horizontal: con 1.5cm arriba/abajo la banda de margin-boxes es más
+			   alta y la CABECERA/PIE quedan más despegadas del borde del papel
+			   (~0.75cm en vez de ~0.5cm); los lados siguen a 1cm. */
+			'	margin: 1.5cm 1cm;',
 			'	@top-left { content: element(snRunLogo); }',
 			'	@top-right { content: counter(page) " / " counter(pages);',
 			'		font-family: var(--sn-font-text); font-size: 8pt; color: #000; }',
@@ -152,10 +189,9 @@
 			'.sn-pp-flow :is(figure, .thumb, .thumbinner, .thumbimage, .gallerybox) {',
 			'	overflow: visible !important; border: 0 !important; }',
 			'.sn-pp-flow img { max-width: 100%; height: auto; }',
-			/* El contenedor del contenido llena el área de página; su padding
-			   lateral repone el margen del contenido (2cm @page + 1cm = 3cm),
-			   dejando la cabecera/pie más anchos que la columna de texto. */
-			'.sn-pp-flow { margin: 0; padding: 0 1cm; max-width: none; width: auto; }',
+			/* El contenedor del contenido llena el área de página; el margen del
+			   contenido (~2cm parejos) lo da íntegro el @page, sin padding extra. */
+			'.sn-pp-flow { margin: 0; padding: 0; max-width: none; width: auto; }',
 			'.sn-body, .sn-body .mw-parser-output { max-width: none; width: auto; }',
 			'.sn-body { font-stretch: 100%; }',
 			/* Título de la página: como el flujo no lleva `.sn-paper`, replicamos
@@ -216,7 +252,7 @@
 		inner.className = 'sn-body mw-body-content';
 		outer.appendChild( inner );
 
-		var toc = visibleToc();
+		var toc = state.toc ? tocClone() : null;
 		if ( toc ) { inner.appendChild( toc ); }
 
 		var body = doc.querySelector( '.mw-parser-output' );
@@ -240,28 +276,58 @@
 	}
 
 	var state = { overlay: null, viewer: null, srcUrl: null, lastFocus: null,
-		busy: false, size: DEFAULT_SIZE, page: 0, total: 0 };
+		busy: false, size: DEFAULT_SIZE, orient: 'portrait', zoom: 1, toc: true,
+		page: 0, total: 0, last: false, ready: false };
 
 	/* Vivliostyle (CoreViewer) es un visor PÁGINA-A-PÁGINA: solo dimensiona la
-	   hoja actual (las demás quedan 0×0), por eso no hay scroll continuo de todas
-	   las hojas. Navegamos con Anterior/Siguiente vía `navigateToPage('epage',N)`
-	   (índice 0-based). La impresión (printHTML) sí saca TODAS las hojas. */
+	   hoja actual. Habilitamos la barra en el primer evento `nav` (hoja 1 visible),
+	   SIN esperar a `complete` —lo lento no es la maqueta sino cargar todas las
+	   imágenes—, así el botón se activa en pocos segundos. El evento `nav` da
+	   página actual (epage), total (epageCount) y si es la última (last). La
+	   impresión (printHTML) saca TODAS las hojas. */
 	function updateNav() {
 		var o = state.overlay; if ( !o ) { return; }
 		var ind = o.querySelector( '.sn-pp-pageind' );
 		var prev = o.querySelector( '.sn-pp-prev' );
 		var next = o.querySelector( '.sn-pp-next' );
-		if ( ind ) { ind.textContent = ( state.total ? ( state.page + 1 ) : '—' ) + ' / ' + ( state.total || '—' ); }
-		if ( prev ) { prev.disabled = state.busy || state.page <= 0; }
-		if ( next ) { next.disabled = state.busy || state.page >= state.total - 1; }
+		if ( ind ) {
+			ind.textContent = ( state.ready ? ( state.page + 1 ) : '—' ) + ' / ' +
+				( state.total || ( state.ready ? '…' : '—' ) );
+		}
+		if ( prev ) { prev.disabled = state.busy || !state.ready || state.page <= 0; }
+		// El fin lo manda `state.last` (autoritativo); si no, el total estimado.
+		if ( next ) {
+			next.disabled = state.busy || !state.ready || state.last ||
+				( !!state.total && state.page >= state.total - 1 );
+		}
 	}
 	function navTo( i ) {
-		if ( !state.viewer || state.busy || !state.total ) { return; }
-		i = Math.max( 0, Math.min( state.total - 1, i ) );
-		if ( i === state.page ) { return; }
+		if ( !state.viewer || state.busy || !state.ready ) { return; }
+		if ( i < 0 || i === state.page ) { return; }
+		if ( i > state.page && state.last ) { return; }   // ya en la última
 		state.page = i;
 		try { state.viewer.navigateToPage( 'epage', i ); } catch ( e ) {}
-		updateNav();
+		updateNav();   // el evento `nav` confirmará/corregirá página, total y last
+	}
+
+	/* Aplica el zoom escalando el viewport (propiedad `zoom`: encoge también la
+	   caja de layout → el scroll se ajusta). El `zoom:1 !important` del contenedor
+	   de Vivliostyle es interno y compone, no lo anula. */
+	function applyZoom() {
+		var o = state.overlay; if ( !o ) { return; }
+		var vp = o.querySelector( '.sn-pp-viewport' );
+		if ( vp ) { vp.style.zoom = state.zoom; }
+		var ind = o.querySelector( '.sn-pp-zoomind' );
+		if ( ind ) { ind.textContent = Math.round( state.zoom * 100 ) + '%'; }
+		var zin = o.querySelector( '.sn-pp-zoomin' );
+		var zout = o.querySelector( '.sn-pp-zoomout' );
+		if ( zin ) { zin.disabled = state.zoom >= ZOOM_MAX; }
+		if ( zout ) { zout.disabled = state.zoom <= ZOOM_MIN; }
+	}
+	function zoomBy( delta ) {
+		var z = Math.round( ( state.zoom + delta ) / ZOOM_STEP ) * ZOOM_STEP;
+		state.zoom = Math.max( ZOOM_MIN, Math.min( ZOOM_MAX, z ) );
+		applyZoom();
 	}
 
 	function revokeSrc() {
@@ -286,6 +352,8 @@
 		if ( e.key === 'Escape' ) { e.preventDefault(); teardown(); return; }
 		if ( e.key === 'ArrowRight' || e.key === 'PageDown' ) { e.preventDefault(); navTo( state.page + 1 ); }
 		else if ( e.key === 'ArrowLeft' || e.key === 'PageUp' ) { e.preventDefault(); navTo( state.page - 1 ); }
+		else if ( e.key === '+' || e.key === '=' ) { e.preventDefault(); zoomBy( ZOOM_STEP ); }
+		else if ( e.key === '-' || e.key === '_' ) { e.preventDefault(); zoomBy( -ZOOM_STEP ); }
 	}
 
 	function sizeOptionsHtml() {
@@ -305,13 +373,18 @@
 		var pages = overlay.querySelector( '.sn-pp-pages' );
 		var status = overlay.querySelector( '.sn-pp-status' );
 		var printBtn = overlay.querySelector( '.sn-pp-print' );
+		function setExportEnabled( on ) { printBtn.disabled = !on; }
 		var sizeSel = overlay.querySelector( '.sn-pp-size' );
 		var ent = sizeEntryById( state.size );
 
 		state.busy = true;
 		state.page = 0;
-		printBtn.disabled = true;
+		state.total = 0;
+		state.last = false;
+		state.ready = false;
+		setExportEnabled( false );
 		if ( sizeSel ) { sizeSel.disabled = true; }
+		overlay.classList.add( 'sn-pp-loading' );   // muestra el spinner
 		status.textContent = 'Preparando la vista de impresión…';
 		updateNav();
 
@@ -320,46 +393,88 @@
 		revokeSrc();
 		pages.innerHTML = '<div class="sn-pp-viewport"></div>';
 		var viewport = pages.querySelector( '.sn-pp-viewport' );
+		viewport.style.zoom = state.zoom;
 
-		var src = buildSourceDoc( ent.css, ent.cols );
+		var src = buildSourceDoc( pageSize( ent, state.orient ), colsFor( ent, state.orient ) );
 		state.srcUrl = URL.createObjectURL( new Blob( [ src ], { type: 'text/html' } ) );
+
+		// La hoja 1 ya está visible: habilita la barra y oculta el spinner. Se
+		// llama una sola vez (en el primer `nav`, que llega apenas se muestra la
+		// hoja 1, mucho antes que `complete`).
+		function markReady() {
+			if ( state.ready || viewer !== state.viewer ) { return; }
+			state.ready = true;
+			state.busy = false;
+			setExportEnabled( true );
+			if ( sizeSel ) { sizeSel.disabled = false; }
+			overlay.classList.remove( 'sn-pp-loading' );
+			applyZoom();
+			updateNav();
+		}
+		function showCount() {
+			status.textContent = state.total
+				? ( state.total + ( state.total === 1 ? ' página' : ' páginas' ) )
+				: 'Vista de impresión';
+		}
 
 		var viewer = new window.Vivliostyle.CoreViewer(
 			{ viewportElement: viewport },
-			{ renderAllPages: true }
+			// renderAllPages:true → pagina todo (TOC con números reales y total
+			// exacto), PERO marcamos «listo» en el primer `nav` (hoja 1 visible),
+			// sin esperar a `complete`: el botón se activa rápido y la paginación
+			// del resto sigue en segundo plano.
+			// pageViewMode:'singlePage' → una hoja a la vez. El default de Vivliostyle
+			// es 'autoSpread', que en ventana ancha muestra PLIEGOS de 2 páginas
+			// (confuso para una previsualización página-a-página con Prev/Next).
+			{ renderAllPages: true, pageViewMode: 'singlePage' }
 		);
 		state.viewer = viewer;
+		// `nav`: página actual + total estimado + first/last. Llega apenas se
+		// muestra una hoja, así que es nuestra señal de «listo» y de navegación.
+		viewer.addListener( 'nav', function ( ev ) {
+			if ( viewer !== state.viewer ) { return; }
+			if ( ev && typeof ev.epage === 'number' ) { state.page = Math.max( 0, Math.round( ev.epage ) ); }
+			if ( ev && typeof ev.epageCount === 'number' && ev.epageCount > 0 ) { state.total = Math.round( ev.epageCount ); }
+			if ( ev && typeof ev.last === 'boolean' ) { state.last = ev.last; }
+			showCount();
+			markReady();
+			updateNav();
+		} );
+		// `complete`: la maqueta perezosa terminó en segundo plano → afinamos el
+		// total exacto (no bloquea: la barra ya está usable desde el primer `nav`).
 		viewer.addListener( 'readystatechange', function () {
-			if ( viewer !== state.viewer ) { return; }   // render obsoleto
+			if ( viewer !== state.viewer ) { return; }
 			if ( viewer.readyState !== 'complete' ) { return; }
 			var n = 0;
 			try { n = viewer.getPageCount ? viewer.getPageCount() : 0; } catch ( e ) {}
-			if ( !n ) { n = viewport.querySelectorAll( '[data-vivliostyle-page-container]' ).length; }
-			status.textContent = n + ( n === 1 ? ' página' : ' páginas' );
-			state.total = n;
-			state.page = 0;
-			printBtn.disabled = false;
-			if ( sizeSel ) { sizeSel.disabled = false; }
-			state.busy = false;
+			if ( n ) { state.total = n; showCount(); }
+			markReady();   // respaldo, por si `nav` no hubiera llegado
 			updateNav();
 		} );
 		viewer.addListener( 'error', function () {
+			if ( viewer !== state.viewer ) { return; }
 			status.textContent = 'No se pudo preparar la vista. Usa Imprimir del navegador.';
-			printBtn.disabled = false;
+			setExportEnabled( true );
 			if ( sizeSel ) { sizeSel.disabled = false; }
 			state.busy = false;
+			overlay.classList.remove( 'sn-pp-loading' );
 		} );
 		try { viewer.loadDocument( { url: state.srcUrl } ); }
 		catch ( e ) {
 			status.textContent = 'No se pudo preparar la vista. Usa Imprimir del navegador.';
-			printBtn.disabled = false; if ( sizeSel ) { sizeSel.disabled = false; } state.busy = false;
+			setExportEnabled( true ); if ( sizeSel ) { sizeSel.disabled = false; } state.busy = false;
+			overlay.classList.remove( 'sn-pp-loading' );
 		}
 	}
 
-	/* Imprime re-maquetando el MISMO documento en un iframe oculto (printHTML). */
+	/* Imprime / exporta a PDF re-maquetando el MISMO documento fuente en un iframe
+	   oculto (printHTML) → salida 1:1 correcta. NOTA: el navegador no puede guardar
+	   el PDF sin diálogo (seguridad); el destino «Guardar como PDF» vive dentro del
+	   diálogo. En libros largos e ilustrados la paginación tarda (carga de
+	   imágenes) — es inherente al render en cliente. */
 	function printDocument() {
 		var ent = sizeEntryById( state.size );
-		var src = buildSourceDoc( ent.css, ent.cols );
+		var src = buildSourceDoc( pageSize( ent, state.orient ), colsFor( ent, state.orient ) );
 		try {
 			window.Vivliostyle.printHTML( src, {
 				title: ( mw && mw.config && mw.config.get( 'wgTitle' ) ) || document.title
@@ -381,16 +496,37 @@
 		overlay.setAttribute( 'aria-label', 'Vista de impresión' );
 		overlay.innerHTML =
 			'<div class="sn-pp-bar">' +
-				'<span class="sn-pp-status">Preparando la vista de impresión…</span>' +
+				'<span class="sn-pp-statuswrap">' +
+					'<span class="sn-pp-spinner" aria-hidden="true"></span>' +
+					'<span class="sn-pp-status">Preparando la vista de impresión…</span>' +
+				'</span>' +
 				'<span class="sn-pp-actions">' +
+					/* índice */
+					'<label class="sn-pp-toclabel">' +
+						'<input type="checkbox" class="sn-pp-toc"> Índice' +
+					'</label>' +
+					/* formato: tamaño + orientación */
+					'<label class="sn-pp-sizelabel">Tamaño ' +
+						'<select class="sn-pp-size">' + sizeOptionsHtml() + '</select>' +
+					'</label>' +
+					'<label class="sn-pp-orientlabel">Orientación ' +
+						'<select class="sn-pp-orient">' +
+							'<option value="portrait">Vertical</option>' +
+							'<option value="landscape">Horizontal</option>' +
+						'</select>' +
+					'</label>' +
+					/* páginas: navegación + zoom */
 					'<span class="sn-pp-nav">' +
 						'<button type="button" class="sn-pp-prev" disabled aria-label="Página anterior">‹</button>' +
 						'<span class="sn-pp-pageind">— / —</span>' +
 						'<button type="button" class="sn-pp-next" disabled aria-label="Página siguiente">›</button>' +
 					'</span>' +
-					'<label class="sn-pp-sizelabel">Tamaño ' +
-						'<select class="sn-pp-size">' + sizeOptionsHtml() + '</select>' +
-					'</label>' +
+					'<span class="sn-pp-zoom">' +
+						'<button type="button" class="sn-pp-zoomout" aria-label="Alejar">−</button>' +
+						'<span class="sn-pp-zoomind">100%</span>' +
+						'<button type="button" class="sn-pp-zoomin" aria-label="Acercar">+</button>' +
+					'</span>' +
+					/* botones */
 					'<button type="button" class="sn-pp-print" disabled>Imprimir</button>' +
 					'<button type="button" class="sn-pp-close">Cerrar</button>' +
 				'</span>' +
@@ -402,16 +538,40 @@
 		var printBtn = overlay.querySelector( '.sn-pp-print' );
 		var closeBtn = overlay.querySelector( '.sn-pp-close' );
 		var sizeSel = overlay.querySelector( '.sn-pp-size' );
+		var orientSel = overlay.querySelector( '.sn-pp-orient' );
+		var tocChk = overlay.querySelector( '.sn-pp-toc' );
+
+		// Estado inicial del switch «Índice»: marcado si la página trae TOC
+		// visible; deshabilitado si no hay TOC del todo.
+		state.toc = tocVisibleByDefault();
+		tocChk.checked = state.toc;
+		tocChk.disabled = !tocClone();
+		orientSel.value = state.orient;
 
 		closeBtn.addEventListener( 'click', teardown );
+		// «Imprimir» re-maqueta con printHTML y abre el diálogo. El navegador NO
+		// puede escribir un PDF sin diálogo (seguridad); en el diálogo, destino
+		// «Guardar como PDF» ES la exportación a PDF (no hace falta botón aparte).
 		printBtn.addEventListener( 'click', printDocument );
 		sizeSel.addEventListener( 'change', function () {
 			if ( state.busy ) { return; }
 			state.size = sizeSel.value;
 			render();
 		} );
+		orientSel.addEventListener( 'change', function () {
+			if ( state.busy ) { return; }
+			state.orient = orientSel.value;
+			render();
+		} );
+		tocChk.addEventListener( 'change', function () {
+			if ( state.busy ) { return; }
+			state.toc = tocChk.checked;
+			render();
+		} );
 		overlay.querySelector( '.sn-pp-prev' ).addEventListener( 'click', function () { navTo( state.page - 1 ); } );
 		overlay.querySelector( '.sn-pp-next' ).addEventListener( 'click', function () { navTo( state.page + 1 ); } );
+		overlay.querySelector( '.sn-pp-zoomout' ).addEventListener( 'click', function () { zoomBy( -ZOOM_STEP ); } );
+		overlay.querySelector( '.sn-pp-zoomin' ).addEventListener( 'click', function () { zoomBy( ZOOM_STEP ); } );
 		doc.addEventListener( 'keydown', onKey );
 		closeBtn.focus();
 

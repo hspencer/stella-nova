@@ -26,6 +26,7 @@
 	font-family: var(--sn-font-text, sans-serif);
 	color: var(--sn-ink, #221f1a);
 }
+.sn-pp-statuswrap { display: inline-flex; align-items: center; gap: var(--sn-s-2, .5rem); }
 .sn-pp-status {
 	font-size: var(--sn-fs-sm, .9rem);
 	color: var(--sn-ink-soft, #57514a);
@@ -33,7 +34,24 @@
 	letter-spacing: .12ex;
 	font-stretch: condensed;
 }
-.sn-pp-actions { display: flex; align-items: center; gap: var(--sn-s-3, .75rem); }
+
+/* Spinner: aro girando junto a «Preparando…» mientras se calcula el nº de
+   páginas. Visible solo con .sn-pp-loading en el overlay. */
+.sn-pp-spinner {
+	display: none;
+	flex: 0 0 auto;
+	width: 1em; height: 1em;
+	border: 2px solid var(--sn-hairline, #d8d3ca);
+	border-top-color: var(--sn-nova, #ae2d13);
+	border-radius: 50%;
+	animation: sn-pp-spin .7s linear infinite;
+}
+.sn-pp-loading .sn-pp-spinner { display: inline-block; }
+@keyframes sn-pp-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+	.sn-pp-spinner { animation-duration: 1.6s; }
+}
+.sn-pp-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: var(--sn-s-3, .75rem); }
 
 /* Navegación página-a-página (Vivliostyle es un visor de una hoja a la vez). */
 .sn-pp-nav { display: inline-flex; align-items: center; gap: var(--sn-s-2, .5rem); }
@@ -58,8 +76,47 @@
 	outline: 2px solid var(--sn-nova, #ae2d13); outline-offset: 2px;
 }
 
-/* Selector de tamaño de hoja. */
-.sn-pp-sizelabel {
+/* Zoom de la previsualización (− 100% +). */
+.sn-pp-zoom { display: inline-flex; align-items: center; gap: var(--sn-s-2, .5rem); }
+.sn-pp-zoomind {
+	font-size: var(--sn-fs-sm, .9rem);
+	color: var(--sn-ink-soft, #57514a);
+	min-width: 4ch; text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+.sn-pp-zoomout, .sn-pp-zoomin {
+	font: inherit; line-height: 1; cursor: pointer;
+	width: 1.9rem; height: 1.9rem;
+	display: inline-flex; align-items: center; justify-content: center;
+	border: 1px solid var(--sn-hairline, #d8d3ca);
+	border-radius: var(--sn-radius, 4px);
+	background: var(--sn-field, #f2efe9);
+	color: var(--sn-ink, #221f1a);
+}
+.sn-pp-zoomout:hover, .sn-pp-zoomin:hover { border-color: var(--sn-ink-soft, #57514a); }
+.sn-pp-zoomout:disabled, .sn-pp-zoomin:disabled { opacity: .4; cursor: default; }
+.sn-pp-zoomout:focus-visible, .sn-pp-zoomin:focus-visible {
+	outline: 2px solid var(--sn-nova, #ae2d13); outline-offset: 2px;
+}
+
+/* Switch «Índice» (incluir/excluir la tabla de contenidos). */
+.sn-pp-toclabel {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sn-s-2, .5rem);
+	font-size: var(--sn-fs-sm, .9rem);
+	color: var(--sn-ink-soft, #57514a);
+	text-transform: uppercase;
+	letter-spacing: .12ex;
+	font-stretch: condensed;
+	cursor: pointer;
+}
+.sn-pp-toclabel input { cursor: pointer; }
+.sn-pp-toclabel:has(input:disabled) { opacity: .5; cursor: default; }
+
+/* Selector de tamaño de hoja y de orientación. */
+.sn-pp-sizelabel,
+.sn-pp-orientlabel {
 	display: inline-flex;
 	align-items: center;
 	gap: var(--sn-s-2, .5rem);
@@ -69,7 +126,8 @@
 	letter-spacing: .12ex;
 	font-stretch: condensed;
 }
-.sn-pp-size {
+.sn-pp-size,
+.sn-pp-orient {
 	font: inherit;
 	font-size: var(--sn-fs-sm, .9rem);
 	text-transform: none;
@@ -82,11 +140,13 @@
 	color: var(--sn-ink, #221f1a);
 	cursor: pointer;
 }
-.sn-pp-size:focus-visible {
+.sn-pp-size:focus-visible,
+.sn-pp-orient:focus-visible {
 	outline: 2px solid var(--sn-nova, #ae2d13);
 	outline-offset: 2px;
 }
-.sn-pp-size:disabled { opacity: .5; cursor: default; }
+.sn-pp-size:disabled,
+.sn-pp-orient:disabled { opacity: .5; cursor: default; }
 
 .sn-pp-bar button {
 	font: inherit;
@@ -116,17 +176,31 @@
 	filter: none;
 }
 
-/* Zona de hojas: contenedor scrolleable; dentro va el viewport de Vivliostyle. */
+/* Zona de hojas: contenedor scrolleable; dentro va el viewport de Vivliostyle.
+   Es flex para CENTRAR el viewport — al hacer zoom-out su caja (propiedad `zoom`)
+   se encoge y debe quedar centrada en el área disponible, no colapsar arriba. */
 .sn-pp-pages {
 	flex: 1 1 auto;
 	overflow: auto;
 	padding: 0;
+	display: flex;
 }
 .sn-pp-viewport {
+	/* `margin:auto` centra H y V dentro de .sn-pp-pages; a diferencia de
+	   justify-content:center, NO recorta el borde cuando el contenido (zoom-in /
+	   hoja grande) desborda y hay que scrollear. */
+	margin: auto;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	gap: var(--sn-s-5, 1.5rem);
+	/* Vivliostyle pinta el viewport con su gris «pizarra» (#aaa) por dentro. Eso
+	   asomaba alrededor de la hoja SOLO al navegar (la hoja 1 se veía sobre el
+	   campo beige; al pasar a la 2 aparecía el gris) → discrepancia de fondo entre
+	   páginas. Lo forzamos transparente para que SIEMPRE se vea el campo beige del
+	   overlay, igual en todas las hojas. */
+	background: transparent !important;
 }
 
 /* Vivliostyle (CoreViewer, modo spread) mete TODAS las hojas en un único
@@ -145,12 +219,21 @@
 	transform: none !important;
 	zoom: 1 !important;
 }
-/* Cada hoja: papel blanco con sombra sobre el campo. */
+/* Cada hoja: papel blanco con sombra sobre el campo. La sombra va en el
+   contenedor; el blanco se fuerza en TODAS las capas de Vivliostyle (container /
+   box / area / bleed) para que ninguna quede gris al navegar (al cambiar de
+   página, la capa que toma `display:block` siempre pinta blanco). */
 .sn-pp-viewport [data-vivliostyle-page-container] {
 	flex: 0 0 auto;
-	background: #fff;
 	box-shadow: 0 2px 14px rgba(0, 0, 0, .22);
 	margin: 0 !important;
+}
+.sn-pp-viewport [data-vivliostyle-page-container],
+.sn-pp-viewport [data-vivliostyle-page-box],
+.sn-pp-viewport [data-vivliostyle-page-area-container],
+.sn-pp-viewport [data-vivliostyle-page-area],
+.sn-pp-viewport [data-vivliostyle-bleed-box] {
+	background: #fff !important;
 }
 
 /* Bloquea el scroll del fondo mientras el overlay vive (solo pantalla). */
