@@ -92,6 +92,16 @@ class Hooks {
 			'scripts'      => [ 'skin.js' ],
 			'dependencies' => [ 'mediawiki.api' ],
 		] );
+		// Previsualización de impresión paginada (paged.js). Módulo BAJO DEMANDA:
+		// no entra en la ruta crítica; skin.js lo pide (mw.loader.using) solo al
+		// pulsar «Versión para imprimir». Trae el polyfill vendorizado + la
+		// integración + el cromo en pantalla del overlay. paged.js necesita
+		// `mediawiki.util` (mw.util.getUrl para la URL absoluta de la página).
+		$rl->register( 'skins.stellanova.print', $paths + [
+			'scripts'      => [ 'lib/vivliostyle.global.js', 'print-preview.js' ],
+			'styles'       => [ 'print-preview.css' ],
+			'dependencies' => [ 'mediawiki.util' ],
+		] );
 	}
 
 	/**

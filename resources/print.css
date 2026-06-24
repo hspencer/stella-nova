@@ -2,37 +2,113 @@
    sombra, tinta sobre blanco, enlaces legibles. Sin menú superior y sin pie:
    solo el contenido. El margen lo da @page (como el respiro de lectura en
    pantalla, no de borde a borde). */
+/* @page: el margen de papel. El navegador dibuja SU encabezado/pie (título,
+   URL, fecha y «página X de Y») DENTRO de este margen cuando el usuario activa
+   la casilla «Encabezados y pies» del diálogo de impresión —el CSS no puede
+   estilizar ese contenido ni numerar páginas por sí mismo (los margin-box
+   at-rules de @page no los soporta ningún navegador, solo motores tipo mPDF).
+   Por eso reservamos aire arriba/abajo: 2cm deja sitio cómodo para esa banda
+   nativa sin que choque con el contenido. Los laterales son la medida lateral
+   del papel. Ajusta estos cuatro valores para administrar esos espacios. */
 @page {
-	margin: 2cm;
+	margin: 2cm 3cm 2cm;   /* top | right/left | bottom */
 }
-/* Fuera todo el cromo: menú superior (.sn-header), barra fullscreen, TOC,
-   sprite de íconos, y el PIE COMPLETO (.sn-footer). */
-.sn-header, .sn-skip, .sn-fs-bar, .sn-toc,
-.sn-footer, .sn-iconsprite, .noprint {
+/* Fuera todo el cromo: menú superior (.sn-header), barra y MENÚ fullscreen
+   (.sn-fs-bar / .sn-fs-md / .sn-fs-footer — la maqueta de __PANTALLACOMPLETA__),
+   TOC, sprite de íconos, el PIE COMPLETO (.sn-footer) y las CATEGORÍAS
+   (.catlinks: no van en la versión impresa). `.printfooter` es el pie que
+   inyecta MediaWiki core («Obtenido de "URL"»): redundante —la URL de la página
+   va en el pie de la previsualización paginada— así que también fuera. */
+.sn-header, .sn-skip, .sn-fs-bar, .sn-fs-md, .sn-fs-footer, .sn-toc,
+.sn-footer, .sn-iconsprite, .catlinks, .printfooter, .noprint {
 	display: none !important;
 }
 body { background: #fff !important; color: #000; }
 body::before { display: none !important; }
 .sn-app, .sn-shell { display: block; max-width: none; margin: 0; padding: 0; }
-/* La hoja ocupa el área imprimible; el margen del documento lo fija @page. */
-.sn-paper-wrap { max-width: none; }
-.sn-paper {
+/* La hoja ocupa el área imprimible; el margen del documento lo fija @page.
+   `.sn-canvas`/`.sn-canvas-body` son la maqueta de __PANTALLACOMPLETA__: reciben
+   el MISMO trato que `.sn-paper`/`.sn-body` para que esas páginas impriman igual
+   que cualquier otra (la regla del usuario: el diseño impreso es transversal). */
+.sn-paper-wrap, .sn-canvas { max-width: none; }
+.sn-paper, .sn-canvas, .sn-canvas-body {
+	display: block;
 	box-shadow: none !important; border: 0 !important;
 	border-radius: 0 !important; padding: 0 !important;
+	margin: 0 !important;
 	background: #fff !important;
+}
+/* Tipografía impresa más chica, PROPORCIONAL. `--sn-font-scale` es la escala
+   única de la que derivan TODOS los tokens fs-* y el propio baseline, así que
+   bajarla achica el cuerpo y los títulos por igual sin romper la grilla. DEBE
+   fijarse en :root (donde se declaran los tokens fs-*): si se pone en un
+   descendiente NO se re-resuelve (los tokens ya heredan su valor calculado con
+   la escala de :root). `!important` para ignorar la preferencia de tamaño del
+   usuario en papel. Va dentro de print.css → solo afecta la impresión. Mismo
+   valor que la previsualización paginada (print-preview.css). */
+:root {
+	--sn-font-scale: 0.85 !important;
 }
 .sn-body > :is(p, ul, ol, dl, blockquote, h2, h3, h4, h5, h6, pre) {
 	max-width: none !important;
+}
+/* Tablas sin color de fondo en papel (se conservan los filetes/bordes). Cubre
+   `.wikitable`, plantillas con TemplateStyles y celdas con relleno propio. */
+.sn-body :is(table, thead, tbody, tfoot, tr, th, td, caption) {
+	background: transparent !important;
+	background-color: transparent !important;
 }
 /* En pantalla el cuerpo va condensado/medido; impreso, ancho completo dentro
    del margen de @page. */
 .sn-body { font-stretch: 100% !important; }
 .sn-body > .mw-parser-output > p,
 .sn-body > .mw-parser-output > section > p { width: auto !important; }
-a { color: #000; text-decoration: underline; }
+/* BASELINE EN IMPRESIÓN. MediaWiki core inyecta su propia hoja `commonPrint`
+   (media=print, en toda página) con `p { line-height:1.2 }`, que en impresión
+   le gana a la herencia de `body` (1.65) y aplasta el interlineado SOLO de los
+   párrafos —las listas y títulos siguen en la grilla, así que el párrafo se ve
+   apretado y las listas «sueltas». Reanclamos el interlineado del párrafo al
+   baseline para que el ritmo vertical impreso sea idéntico al de pantalla. (El
+   margen ya lo gana el skin: `.sn-body p { margin:0 0 baseline }` aplica en todo
+   medio.) */
+.sn-body p { line-height: var(--sn-leading) !important; }
+/* Enlaces del contenido: tinta negra subrayada (legible en papel B/N). Core
+   `commonPrint` fuerza `a { color:inherit !important; text-decoration:inherit
+   !important }`, así que para recuperar el subrayado hay que igualar su
+   `!important` y out-especificar con `.sn-body a`. */
+.sn-body a { color: #000 !important; text-decoration: underline !important; }
+a { color: #000; }
 .sn-body a[href^="http"]::after {
 	content: " (" attr(href) ")"; font-size: .85em; color: #555;
 	word-break: break-all;
 }
 :is(h1,h2,h3,h4,h5,h6) { page-break-after: avoid; }
 img, figure, table, pre { page-break-inside: avoid; }
+/* El título de la página (#firstHeading) lleva en pantalla un margin-top
+   NEGATIVO de medio baseline: un ajuste óptico que recorta el aire superior
+   contra el inset (padding) del papel. En impresión el papel va con padding:0
+   (regla .sn-paper de arriba), así que ese negativo ya no recorta nada —solo
+   sube el título medio baseline dentro del margen de @page y descalibra el
+   inicio de la columna. Lo neutralizamos: el título arranca limpio en el borde
+   superior del área imprimible. */
+:is(.sn-paper, .sn-canvas) :is(h1#firstHeading, .firstHeading, .mw-first-heading) {
+	margin-top: 0 !important;
+}
+/* TABLA DE CONTENIDOS — impresión DIRECTA (Ctrl+P, sin la previsualización
+   paginada). El TOC nativo colapsa por checkbox (`.toctogglecheckbox:checked`):
+   · colapsado → NO se imprime (regla del usuario).
+   · expandido → se imprime SIN caja ni fondo, y sin el control de colapsar.
+   Los números de página por entrada solo los da la previsualización paged.js
+   (la «Versión para imprimir»): el motor de impresión del navegador no resuelve
+   `target-counter()`. */
+.sn-body .toc:has(.toctogglecheckbox:checked),
+.mw-parser-output .toc:has(.toctogglecheckbox:checked) {
+	display: none !important;
+}
+.sn-body .toc, .mw-parser-output .toc {
+	background: none !important; border: 0 !important; padding: 0 !important;
+}
+.sn-body .toc .toctogglecheckbox, .sn-body .toc .toctogglelabel,
+.mw-parser-output .toc .toctogglecheckbox, .mw-parser-output .toc .toctogglelabel {
+	display: none !important;
+}

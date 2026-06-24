@@ -273,7 +273,43 @@
 		} );
 	}
 
-	function init() { bindPrefs(); bindMenus(); bindSearch(); bindNotice(); }
+	/* ── «Versión para imprimir» → previsualización paginada (paged.js) ──
+	 *    La herramienta #t-print es por defecto `javascript:print()`. La
+	 *    interceptamos para abrir, en su lugar, la maqueta paginada (Vivliostyle)
+	 *    con cabecera/pie + numeración + TOC + columnas (lo que el motor de
+	 *    impresión del navegador NO sabe hacer). El módulo pesa (~Vivliostyle) y
+	 *    se carga BAJO DEMANDA. Si la carga o el arranque fallan, caemos al print
+	 *    nativo —la hoja print.css garantiza una impresión digna igualmente. */
+	function bindPrint() {
+		if ( !( window.mw && mw.loader ) ) { return; }
+		var link = doc.querySelector( '#t-print a' );
+		// Aviso (opción del usuario): el ícono lleva a la vista paginada
+		// (cabecera/pie/numeración); Cmd+P sigue dando la impresión nativa rápida.
+		if ( link ) {
+			link.setAttribute( 'title',
+				'Versión para imprimir — vista paginada con cabecera, pie y números de página (Cmd/Ctrl+P para impresión rápida)' );
+		}
+		// MediaWiki core (`mediawiki.page.ready`) ENGANCHA su propio handler de
+		// click en `#t-print a` que llama a `window.print()` directamente (no usa
+		// el href). Como es OTRO handler, nuestro `preventDefault` no lo frena: el
+		// diálogo nativo se levantaba ANTES de la previsualización. Lo cortamos en
+		// FASE DE CAPTURA en el documento —corre antes que cualquier handler del
+		// destino— con `stopImmediatePropagation`: el evento nunca llega al
+		// handler de core, y disparamos solo la previsualización. (Independiente
+		// del orden de carga de módulos, por eso captura y no en el elemento.) */
+		doc.addEventListener( 'click', function ( e ) {
+			var a = e.target.closest && e.target.closest( '#t-print a' );
+			if ( !a ) { return; }
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			mw.loader.using( 'skins.stellanova.print' ).then( function () {
+				var ok = window.SN_PrintPreview && window.SN_PrintPreview.open();
+				if ( ok === false ) { window.print(); }
+			}, function () { window.print(); } );
+		}, true );
+	}
+
+	function init() { bindPrefs(); bindMenus(); bindSearch(); bindNotice(); bindPrint(); }
 	if ( doc.readyState === 'loading' ) {
 		doc.addEventListener( 'DOMContentLoaded', init );
 	} else { init(); }

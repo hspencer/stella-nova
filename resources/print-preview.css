@@ -1,0 +1,160 @@
+/* Stella Nova — cromo en PANTALLA de la previsualización de impresión paginada.
+ * Solo presentación del overlay (scrim, barra, sombra de las hojas). La
+ * maqueta de las páginas y sus cabeceras/pies los genera paged.js a partir del
+ * CSS que print-preview.js le pasa como cadena. Al imprimir, una hoja
+ * media=print (inyectada por el JS) oculta este cromo y deja solo las hojas. */
+
+.sn-printpreview {
+	position: fixed;
+	inset: 0;
+	z-index: 2147483646;
+	display: flex;
+	flex-direction: column;
+	background: var(--sn-field, #e9e6e0);
+}
+
+/* Barra superior: estado a la izquierda, acciones a la derecha. */
+.sn-pp-bar {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sn-s-4, 1rem);
+	padding: var(--sn-s-3, .75rem) var(--sn-s-5, 1.5rem);
+	background: var(--sn-paper, #fff);
+	border-bottom: 1px solid var(--sn-hairline, #d8d3ca);
+	font-family: var(--sn-font-text, sans-serif);
+	color: var(--sn-ink, #221f1a);
+}
+.sn-pp-status {
+	font-size: var(--sn-fs-sm, .9rem);
+	color: var(--sn-ink-soft, #57514a);
+	text-transform: uppercase;
+	letter-spacing: .12ex;
+	font-stretch: condensed;
+}
+.sn-pp-actions { display: flex; align-items: center; gap: var(--sn-s-3, .75rem); }
+
+/* Navegación página-a-página (Vivliostyle es un visor de una hoja a la vez). */
+.sn-pp-nav { display: inline-flex; align-items: center; gap: var(--sn-s-2, .5rem); }
+.sn-pp-pageind {
+	font-size: var(--sn-fs-sm, .9rem);
+	color: var(--sn-ink-soft, #57514a);
+	min-width: 4.5ch; text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+.sn-pp-prev, .sn-pp-next {
+	font: inherit; line-height: 1; cursor: pointer;
+	width: 1.9rem; height: 1.9rem;
+	display: inline-flex; align-items: center; justify-content: center;
+	border: 1px solid var(--sn-hairline, #d8d3ca);
+	border-radius: var(--sn-radius, 4px);
+	background: var(--sn-field, #f2efe9);
+	color: var(--sn-ink, #221f1a);
+}
+.sn-pp-prev:hover, .sn-pp-next:hover { border-color: var(--sn-ink-soft, #57514a); }
+.sn-pp-prev:disabled, .sn-pp-next:disabled { opacity: .4; cursor: default; }
+.sn-pp-prev:focus-visible, .sn-pp-next:focus-visible {
+	outline: 2px solid var(--sn-nova, #ae2d13); outline-offset: 2px;
+}
+
+/* Selector de tamaño de hoja. */
+.sn-pp-sizelabel {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sn-s-2, .5rem);
+	font-size: var(--sn-fs-sm, .9rem);
+	color: var(--sn-ink-soft, #57514a);
+	text-transform: uppercase;
+	letter-spacing: .12ex;
+	font-stretch: condensed;
+}
+.sn-pp-size {
+	font: inherit;
+	font-size: var(--sn-fs-sm, .9rem);
+	text-transform: none;
+	letter-spacing: normal;
+	font-stretch: normal;
+	padding: var(--sn-s-1, .25rem) var(--sn-s-2, .5rem);
+	border: 1px solid var(--sn-hairline, #d8d3ca);
+	border-radius: var(--sn-radius, 4px);
+	background: var(--sn-field, #f2efe9);
+	color: var(--sn-ink, #221f1a);
+	cursor: pointer;
+}
+.sn-pp-size:focus-visible {
+	outline: 2px solid var(--sn-nova, #ae2d13);
+	outline-offset: 2px;
+}
+.sn-pp-size:disabled { opacity: .5; cursor: default; }
+
+.sn-pp-bar button {
+	font: inherit;
+	font-size: var(--sn-fs-sm, .9rem);
+	cursor: pointer;
+	padding: var(--sn-s-2, .5rem) var(--sn-s-4, 1rem);
+	border: 1px solid var(--sn-hairline, #d8d3ca);
+	border-radius: var(--sn-radius, 4px);
+	background: var(--sn-field, #f2efe9);
+	color: var(--sn-ink, #221f1a);
+	line-height: 1.2;
+}
+.sn-pp-bar button:hover { border-color: var(--sn-ink-soft, #57514a); }
+.sn-pp-bar button:focus-visible {
+	outline: 2px solid var(--sn-nova, #ae2d13);
+	outline-offset: 2px;
+}
+.sn-pp-print {
+	background: var(--sn-nova, #ae2d13) !important;
+	border-color: var(--sn-nova, #ae2d13) !important;
+	color: #fff !important;
+}
+.sn-pp-print:hover { filter: brightness(1.08); }
+.sn-pp-print[disabled] {
+	opacity: .5;
+	cursor: default;
+	filter: none;
+}
+
+/* Zona de hojas: contenedor scrolleable; dentro va el viewport de Vivliostyle. */
+.sn-pp-pages {
+	flex: 1 1 auto;
+	overflow: auto;
+	padding: 0;
+}
+.sn-pp-viewport {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--sn-s-5, 1.5rem);
+}
+
+/* Vivliostyle (CoreViewer, modo spread) mete TODAS las hojas en un único
+   contenedor flex en FILA → solo se veía la página 1 y el scroll no mostraba el
+   resto. Forzamos ese contenedor a COLUMNA para que las hojas se apilen en
+   vertical y el contenedor (.sn-pp-pages, overflow:auto) scrollee. */
+.sn-pp-viewport [data-vivliostyle-outer-zoom-box],
+.sn-pp-viewport [data-vivliostyle-spread-container] {
+	height: auto !important;
+	min-height: 0 !important;
+}
+.sn-pp-viewport [data-vivliostyle-spread-container] {
+	flex-direction: column !important;
+	align-items: center !important;
+	gap: var(--sn-s-5, 1.5rem) !important;
+	transform: none !important;
+	zoom: 1 !important;
+}
+/* Cada hoja: papel blanco con sombra sobre el campo. */
+.sn-pp-viewport [data-vivliostyle-page-container] {
+	flex: 0 0 auto;
+	background: #fff;
+	box-shadow: 0 2px 14px rgba(0, 0, 0, .22);
+	margin: 0 !important;
+}
+
+/* Bloquea el scroll del fondo mientras el overlay vive (solo pantalla). */
+@media screen {
+	html.sn-pp-active,
+	html.sn-pp-active body { overflow: hidden; }
+}
