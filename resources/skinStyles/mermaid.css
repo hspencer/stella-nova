@@ -128,18 +128,24 @@
 	stroke: var(--sn-ink-soft) !important;
 }
 
-/* Etiquetas sobre las aristas — fondo = papel (para que "tape" la línea) */
-.skin-stellanova .ext-mermaid .edgeLabel rect,
-.skin-stellanova .ext-mermaid .edgeLabel .labelBkg,
-.skin-stellanova .ext-mermaid .edgeLabel foreignObject {
+/* Etiquetas sobre las aristas — fondo del COLOR DE LA PÁGINA (--sn-paper, que
+   voltea claro/oscuro) para TAPAR la arista por detrás del texto; el texto en
+   tinta suave. Mermaid hornea un fondo claro (rect / .labelBkg en SVG y
+   background en el foreignObject/div) y un color oscuro fijo; los sustituimos
+   por tokens del skin. Cubrimos span/p/div/text/tspan porque el texto a veces
+   va en un <span> sin <p>. */
+.skin-stellanova .ext-mermaid .edgeLabel,
+.skin-stellanova .ext-mermaid .edgeLabel foreignObject,
+.skin-stellanova .ext-mermaid .edgeLabel div,
+.skin-stellanova .ext-mermaid .edgeLabel span,
+.skin-stellanova .ext-mermaid .edgeLabel p {
 	background: var(--sn-paper) !important;
+	background-color: var(--sn-paper) !important;
+}
+.skin-stellanova .ext-mermaid .edgeLabel rect,
+.skin-stellanova .ext-mermaid .edgeLabel .labelBkg {
 	fill: var(--sn-paper) !important;
 }
-/* …y su TEXTO en tinta. Mermaid mete el texto de la arista en un
-   <span class="edgeLabel"> (a veces con <p> dentro, a veces no) y le hornea
-   un color oscuro: hay que cubrir span/p/div/text/tspan o el rótulo queda
-   negro en modo oscuro. */
-.skin-stellanova .ext-mermaid .edgeLabel,
 .skin-stellanova .ext-mermaid .edgeLabel .label,
 .skin-stellanova .ext-mermaid .edgeLabel span,
 .skin-stellanova .ext-mermaid .edgeLabel p,
