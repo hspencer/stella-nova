@@ -2937,3 +2937,12 @@ textarea.mw-editfont-monospace {
 .sn-body :is(h1, h2, h3, h4, h5, h6):has(.title-toggle) + .mw-collapsible:not(.mw-collapsed) {
 	margin-top: 0;
 }
+/* ── Acordeón real de colapsables (apertura Y cierre animados) ──
+   Implementado por JS (skin.js → bindCollapse), NO por CSS. makeCollapsible
+   togglea el cuerpo con display seco, así que animamos `height` 0↔scrollHeight
+   midiendo en sus eventos jQuery, con overflow:hidden SOLO durante la transición
+   (al terminar se restaura height:auto/overflow). Se evita a propósito el truco
+   CSS grid-template-rows: exigiría envolver los hijos y forzar display:grid sobre
+   el colapsable, lo que rompería contenedores de contenido que son su propio
+   layout —p.ej. `.curso-fotos`, que es `display:flex`—. Sin wrapper ni override
+   de display, el layout del contenido queda intacto y nada se recorta en reposo. */

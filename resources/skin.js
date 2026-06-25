@@ -309,7 +309,77 @@
 		}, true );
 	}
 
-	function init() { bindPrefs(); bindMenus(); bindSearch(); bindNotice(); bindPrint(); }
+	/* ── Acordeón real para colapsables de BLOQUE (apertura Y cierre animados) ──
+	 * makeCollapsible togglea el cuerpo con display seco (sin animar) y no expone
+	 * hook para reemplazarlo. Lo hacemos midiendo el alto: enganchamos sus eventos
+	 * jQuery y animamos `height` 0↔scrollHeight con overflow:hidden SOLO durante la
+	 * transición (al terminar restauramos height:auto/overflow, sin tocar el
+	 * `display` ni envolver → una grilla flex como `.curso-fotos` conserva su
+	 * layout). Animamos el elemento que la librería oculta: `.mw-collapsible-content`
+	 * si existe, si no el propio `.mw-collapsible` (customtoggle: portada, ficha).
+	 * En el CIERRE la librería pone display:none → lo reanimamos en el mismo tick
+	 * (sin flash) y reocultamos al terminar. Tablas/listas se excluyen (togglean
+	 * filas/ítems). Duración/ease replican --sn-dur-2/--sn-ease; reduced-motion: el
+	 * reset global !important acorta la transición a ~0 y transitionend igual cae. */
+	function bindCollapse() {
+		if ( !window.mw || !mw.loader ) { return; }
+		mw.loader.using( 'jquery.makeCollapsible' ).then( function () {
+			var $ = window.jQuery;
+			if ( !$ ) { return; }
+			var DUR = 220, EASE = 'cubic-bezier(.22, 1, .36, 1)';
+
+			function eligible( el ) {
+				var t = el.tagName.toLowerCase();
+				return t !== 'table' && t !== 'ul' && t !== 'ol';
+			}
+			function body( el ) {
+				return el.querySelector( ':scope > .mw-collapsible-content' ) || el;
+			}
+			function animate( el, from, to, after ) {
+				if ( el._snCleanup ) { el._snCleanup(); }      // interrumpe lo anterior SIN su `after`
+				var done = function ( e ) {
+					if ( e && ( e.target !== el || e.propertyName !== 'height' ) ) { return; }
+					el._snCleanup();
+					if ( after ) { after(); }
+				};
+				el._snCleanup = function () {
+					el.removeEventListener( 'transitionend', done );
+					clearTimeout( el._snT );
+					el._snCleanup = null;
+					el.style.transition = el.style.overflow = el.style.height = '';
+				};
+				el.style.overflow = 'hidden';
+				el.style.height = from + 'px';
+				void el.offsetHeight;                          // reflow: fija el punto de partida
+				el.style.transition = 'height ' + DUR + 'ms ' + EASE;
+				el.style.height = to + 'px';
+				el.addEventListener( 'transitionend', done );
+				el._snT = setTimeout( done, DUR + 80 );        // red de seguridad si no cae transitionend
+			}
+
+			$( doc )
+				.on( 'afterExpand.mw-collapsible', '.mw-collapsible', function () {
+					if ( !eligible( this ) ) { return; }
+					var el = body( this );                     // ya visible, alto auto
+					animate( el, 0, el.scrollHeight );
+				} )
+				.on( 'beforeCollapse.mw-collapsible', '.mw-collapsible', function () {
+					if ( !eligible( this ) ) { return; }
+					var el = body( this );
+					el._snH = el.scrollHeight;                 // mide antes de que la librería oculte
+				} )
+				.on( 'afterCollapse.mw-collapsible', '.mw-collapsible', function () {
+					if ( !eligible( this ) ) { return; }
+					var el = body( this );
+					el.style.display = '';                     // la librería puso display:none; reanimamos
+					animate( el, el._snH || el.scrollHeight, 0, function () {
+						el.style.display = 'none';             // reocultar: estado colapsado
+					} );
+				} );
+		} );
+	}
+
+	function init() { bindPrefs(); bindMenus(); bindSearch(); bindNotice(); bindPrint(); bindCollapse(); }
 	if ( doc.readyState === 'loading' ) {
 		doc.addEventListener( 'DOMContentLoaded', init );
 	} else { init(); }
