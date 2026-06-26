@@ -1675,8 +1675,11 @@ canvas, iframe,
      · ::before — el FROST: el círculo completo aplica el mismo efecto de
        desenfoque + saturación de la barra de menú, PERO sin relleno de color
        (solo `backdrop-filter`), así el cristal se nota aunque no haya disco.
-     · ::after  — el ARO: un `border` punteado (2px dotted) en `--sn-nova`;
-       pinta SOBRE el frost.
+     · ::after  — el ARO: dos líneas finas (1px) en `--sn-nova` separadas por
+       un hueco transparente. `border` pinta la línea interior y `outline` +
+       `outline-offset` la exterior (el offset abre la separación); pinta
+       SOBRE el frost. No se usa `double` porque reparte el ancho en tercios
+       iguales y no deja afinar la línea y ensanchar el hueco por separado.
    Un disco con relleno opaco pesaba sobre fondos claros; el frost sin color no. */
 .sn-fs-trigger::before,
 .sn-fs-trigger::after {
@@ -1693,7 +1696,9 @@ canvas, iframe,
 	backdrop-filter: saturate(1.6) blur(2px);
 }
 .sn-fs-trigger::after {
-	border: 2px dotted var(--sn-nova);
+	border: .5px solid var(--sn-nova);
+	outline: .5px solid var(--sn-nova);
+	outline-offset: 2px;
 }
 .sn-fs-trigger:hover::before, .sn-fs-trigger:focus-visible::before,
 .sn-fs-trigger:hover::after,  .sn-fs-trigger:focus-visible::after {
@@ -1818,14 +1823,14 @@ canvas, iframe,
 @media (min-width: 64rem) {
 	.sn-md.sn-md-fs .sn-modal-body { grid-template-columns: repeat(3, 1fr); }
 }
-/* La sección del buscador atraviesa todas las columnas y centra el form
-   con `max-width: 30em`: lectura cómoda sin estirarse de lado a lado
-   en grids amplios. */
+/* La sección del buscador atraviesa todas las columnas como cabecera del
+   modal y el form se estira a ancho completo (sin tope `max-width`): en
+   pantalla completa el buscador va arriba, de lado a lado, no a un costado. */
 .sn-md.sn-md-fs .sn-fs-sec--search {
 	grid-column: 1 / -1;
 }
 .sn-md.sn-md-fs .sn-fs-sec--search .sn-fs-search {
-	max-width: 30em;
+	max-width: none;
 }
 /* Secciones — bloques discretos. Sin filete horizontal: la separación
    la dan el grid-gap y los encabezados. */
@@ -2587,6 +2592,9 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body :is(figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"]) > figcaption {
 	background-color: var(--sn-papel-100);
 	border: 0;
+	/* Padding parejo en los 4 lados para que la leyenda no se pegue al borde
+	   de la imagen ni a los costados de la tarjeta. */
+	padding: var(--sn-s-2);
 	/* El marco del core es CONTINUO: el <figure> lleva borde salvo abajo y la
 	   leyenda (table-caption) lleva borde salvo arriba, y ambas se tocan. El
 	   `margin-top` genérico de `.sn-body figcaption` (pensado para imágenes SIN
@@ -2619,8 +2627,13 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 }
 
 /* Sin filete en la imagen interna (mw-file-element / .thumbimage / border=):
-   solo el fondo de papel enmarca, ningún borde de píxel. */
-.sn-body :is(.thumbimage, .thumbborder, figure img, .mw-image-border img) {
+   solo el fondo de papel enmarca, ningún borde de píxel. El SEGUNDO selector
+   es imprescindible: core (content.media-screen.less) pinta el filete con
+   `figure[typeof~='mw:File/Thumb'] > :not(figcaption) .mw-file-element`
+   (especificidad 0,2,2); el genérico `figure img` (0,2,1) NO lo gana. Replicamos
+   el selector de core con prefijo `.sn-body` (0,3,2) para vencerlo. */
+.sn-body :is(.thumbimage, .thumbborder, figure img, .mw-image-border img),
+.sn-body :is(figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"]) > :not(figcaption) .mw-file-element {
 	border: 0;
 }
 
