@@ -246,16 +246,9 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
 .sn-tabs li.selected a { color: var(--sn-ink); border-bottom-color: var(--sn-nova); }
 .sn-tabs li.new a { color: var(--sn-link); }
 
-/* Washes */
-.sn-wash { padding: var(--sn-s-3) var(--sn-s-4); border-radius: var(--sn-radius);
-           border-inline-start: 3px solid currentColor; font-size: var(--sn-fs-sm); }
-.sn-wash strong { color: inherit; }
-.sn-wash-ok     { background: var(--sn-ok-wash);     color: var(--sn-ok); }
-.sn-wash-info   { background: var(--sn-info-wash);   color: var(--sn-warn); }
-.sn-wash-warn   { background: var(--sn-warn-wash);   color: var(--sn-warn); }
-.sn-wash-danger { background: var(--sn-danger-wash); color: var(--sn-danger); }
-.sn-wash :is(strong, span, p) { color: var(--sn-ink); }
-.sn-wash > strong:first-child { color: inherit; }
+/* (Los "washes" .sn-wash-* eran clases INVENTADAS por el espécimen: no existen
+   en el skin. Se retiraron. El patrón real de banda con lavado semántico es la
+   familia .fondo-* del skin, documentada en "Bandas de fondo".) */
 
 /* Badges: .sn-badge (+ variantes -nova/-ok/-warn/-danger) ahora es componente
    REAL del skin (resources/stella-nova.css), no specimen-only. El especimen
@@ -312,36 +305,14 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
                        padding: var(--sn-s-6) var(--sn-s-5); }
 .demo-app .sn-paper { background: var(--sn-paper); border-radius: var(--sn-radius-paper);
                        box-shadow: var(--sn-lift-paper); padding: var(--sn-s-6); }
-.demo-app .sn-paper h1.firstHeading {
-  font-family: var(--sn-font-display); font-size: var(--sn-fs-display);
-  font-weight: 400; letter-spacing: -0.02em; margin: 0 0 var(--sn-s-5); }
-.demo-app .sn-paper h2 { font-family: var(--sn-font-display); font-size: var(--sn-fs-lg);
-                          font-weight: 400; margin: var(--sn-s-6) 0 var(--sn-s-3); }
-.demo-app .sn-paper p { margin: 0 0 var(--sn-s-3); }
-.demo-app .sn-paper a { color: var(--sn-link); }
-.demo-app .sn-paper a:visited { color: var(--sn-link-visited); }
-.demo-app .sn-paper a:hover { color: var(--sn-link-hover); }
-.demo-app .sn-paper a.external::after {
-  content: ''; display: inline-block; width: .7em; height: .7em;
-  margin-inline-start: .25em; background-color: currentColor;
-  mask-image: var(--sn-ext-icon); mask-repeat: no-repeat; mask-size: contain;
-  -webkit-mask-image: var(--sn-ext-icon); -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-}
-.demo-app .sn-paper blockquote {
-  margin: var(--sn-s-5) 0; padding: var(--sn-s-3) var(--sn-s-5);
-  font-family: var(--sn-font-display); font-size: var(--sn-fs-md);
-  color: var(--sn-ink); font-style: italic;
-}
-.demo-app .sn-paper blockquote footer { font-style: normal; font-size: var(--sn-fs-sm);
-                                          color: var(--sn-ink-soft); margin-top: var(--sn-s-2); }
-
-.sn-notice {
-  background: var(--sn-info-wash); color: var(--sn-ink);
-  padding: var(--sn-s-3) var(--sn-s-4); border-radius: var(--sn-radius);
-  border-inline-start: 3px solid var(--sn-warn); font-size: var(--sn-fs-sm);
-  margin: 0 0 var(--sn-s-4);
-}
+/* El CONTENIDO del paper (h1/h2/párrafos/enlaces/cita/aviso .sn-notice) NO se
+   re-estila aquí: lo pinta la CSS REAL del skin (stella-nova.css, que el
+   espécimen carga). El contenido del layout vive dentro de `.sn-body`, así que
+   hereda tipografía, jerarquía de cabeceras, enlaces, blockquote y el aviso
+   `.sn-notice` tal cual el skin — sin CSS custom que diverja. Antes esta zona
+   forzaba cabeceras a la familia display (el skin ya usa --sn-font-text) y
+   falseaba `.sn-notice` como caja simple (el real es la banda superior del
+   paper con su token --sn-notice-bg): ambas cosas se retiraron. */
 
 pre, code { font-family: var(--sn-font-mono); }
 pre { background: var(--sn-sunk); padding: var(--sn-s-3) var(--sn-s-4);

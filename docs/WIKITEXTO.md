@@ -130,6 +130,41 @@ borde-a-borde del artículo. Funciona en tres patrones de wikitexto:
   `class=full-width` (canónico) y `class='full-width'` (con apóstrofes,
   resultado del paso a `[[Imagen:|class='…']]`).
 
+### `fondo-*` — bandas de contenido a sangre lateral
+
+Bloque de contenido cuyo **fondo va de lado a lado** de la hoja (misma técnica
+de bleed que `full-width`) pero con el **contenido de vuelta al ancho de
+lectura**. Sirve para destacar una intro, un índice de portada o un aviso sin
+sacarlo del flujo. Cada variante sólo cambia el color, tomado de un **lavado
+pálido semántico** que voltea con el tema:
+
+| Clase | Fondo |
+|---|---|
+| `fondo-ahuesado` | hueso claro (`--sn-papel-400` / `--sn-tinta-700`) |
+| `fondo-coral` | lavado carmín (`--sn-nova-wash`) |
+| `fondo-verde` | lavado verde (`--sn-ok-wash`) |
+| `fondo-ambar` | lavado ámbar (`--sn-warn-wash`) — rol *warn* |
+| `fondo-info` | lavado info (`--sn-info-wash`) |
+
+```wiki
+<div class="fondo-verde">
+Un bloque destacado, a sangre lateral pero con el texto legible.
+</div>
+
+<div class="fondo-coral grilla cols-3">
+… tres columnas: el fondo sangra, la grilla maqueta dentro …
+</div>
+```
+
+**Consecuencias:**
+- **Voltea con el tema** sola (los lavados son semánticos, no literales).
+- Añade una línea base de aire arriba y abajo; el alto es un múltiplo entero de
+  `--sn-baseline`, así que **no rompe la retícula**.
+- Sólo sangra dentro de `.sn-paper` / `.sn-canvas`.
+- **Se combina con `grilla`**: el fondo sangra a los bordes y las columnas
+  quedan al ancho de lectura (`class="fondo-coral grilla cols-3"`). También con
+  las clases de contenido (`class="fondo-verde center serif lg"`).
+
 ### `grid` / `grilla` — framework de layout
 
 Reemplaza el patrón `.row > .col-md-*` del skin anterior (Bootstrap). El
@@ -160,14 +195,24 @@ Los modificadores se **combinan** sumando clases (`class="grid cols-3 gap-l alig
 | `cols1-2` | 1/3 + 2/3 (asimétrica) | → 1 col bajo 48 rem |
 | `cols2-1` | 2/3 + 1/3 (asimétrica) | → 1 col bajo 48 rem |
 
-**Espaciado** (gap entre celdas; default `gap-m` = 1 rem)
+**Espaciado** (gap entre celdas; por defecto **1.5 rem** en ambos ejes)
 
-| Modificador | Gap |
+| Modificador | Gap (ambos ejes) |
 |---|---|
 | `gap-0` | sin separación |
 | `gap-s` | 0.5 rem |
-| `gap-m` | 1 rem (default) |
+| `gap-m` | 1 rem |
 | `gap-l` | 2.25 rem |
+| *(sin clase)* | 1.5 rem (default) |
+
+**Gap por eje** — el espaciado se puede separar en horizontal y vertical, con la
+misma escala `0/s/m/l`. Se combinan entre sí y con `gap-*`
+(`class="grid cols-3 gap-h-0 gap-v-l"` = columnas pegadas, filas aireadas).
+
+| Modificador | Eje |
+|---|---|
+| `gap-h-0/s/m/l` | **horizontal** — entre columnas (dentro de la fila) |
+| `gap-v-0/s/m/l` | **vertical** — entre filas |
 
 **Flujo, alineación, margen y ancho**
 
@@ -184,20 +229,33 @@ Los modificadores se **combinan** sumando clases (`class="grid cols-3 gap-l alig
 **Consecuencias:**
 - Cada hijo directo de la grilla es una celda. URLs largas o bloques de
   código no desbordan (`minmax(0, 1fr)` previene overflow).
+- **Contenido inline** (varios `<span class="wiki-btn">`, `[[enlaces]]`…):
+  MediaWiki envuelve toda la secuencia en **un solo `<p>`**. El skin lo detecta
+  (cuando ese `<p>` es el único hijo) y lo hace transparente para que cada
+  `<span>`/enlace sea una celda real — así `cols-*` y `gap-*` funcionan sin que
+  tengas que hacer nada. Si en cambio separás los ítems con **líneas en
+  blanco**, MediaWiki crea un `<p>` por ítem (cada uno una celda); también
+  funciona, pero suele quedar mejor sin las líneas en blanco.
 - Funciona igual en chrome normal y en `__PANTALLACOMPLETA__`. En pantalla
   completa el contenido es libre (sin columna central), por lo que `grid`
   es la herramienta recomendada para maquetar ahí.
 - `full` / `completa` usan la misma técnica que `full-width`: a sangre del
   viewport en pantalla completa, del paper en chrome normal.
 
-### `template` / `plantilla` — fichas tabulares sin bordes
+### `template` / `plantilla` — ficha vertical clave→valor
 
 Modificador para `<table class="wikitable template">`. Nombre **bilingüe**:
 `template` (canónico) y `plantilla` (alias en español, retrocompatible).
 Pensado para las fichas de plantillas Casiopea (perfiles, fichas técnicas,
-créditos): conserva el contorno exterior del wikitable pero **quita los
-bordes entre celdas y el fondo de los `<th>`**, dejando una tabla más
-silenciosa, propia de ficha y no de datos.
+créditos): convierte la tabla en una **ficha vertical clave→valor** — sin
+filetes, la etiqueta (`!`) a la **derecha en versalita tenue** y el valor (`|`)
+a la izquierda. Llena el ancho de la hoja y corre a ¾ de la línea base. Es una
+tabla *silenciosa*, propia de ficha y no de datos.
+
+Recordá que la tabla `wikitable` normal ya es de diseño mínimo: **solo filetes
+horizontales** (nunca verticales ni contorno exterior), cabecera transparente y
+**sin colores alternados** de fila. `plantilla` va un paso más allá y quita
+todos los filetes. Para tablas ordenables, sumá `sortable`.
 
 ```wiki
 {| class="wikitable template"
@@ -253,6 +311,45 @@ Aviso importante para esta página.
 Una sola variante (no hay `sn-notice-warn` ni `sn-notice-info` — si
 hace falta, conversar antes de añadirla).
 
+### `wiki-btn` — botón de contenido (píldora)
+
+Botón «outline» en forma de píldora: contorno fino que al pasar el cursor se
+rellena y el texto voltea a blanco (`--sn-nova-ink`). Tres variantes: por
+defecto (gris), `red` (carmín del skin) y `green` (verde de éxito).
+
+```wiki
+<span class="wiki-btn">[[Página|Etiqueta]]</span>
+<span class="wiki-btn red">[[…|Rojo]]</span>
+<span class="wiki-btn green">[[…|Verde]]</span>
+```
+
+**Robusto a tres usos:** funciona (1) envolviendo un enlace `[[…]]`, (2) como
+`<span>` **suelto sin enlace** —p. ej. un toggle
+`class="mw-customtoggle-x link-toggle wiki-btn green"`— y (3) aplicado directo a
+un `<a>`. El volteo del texto no depende de que haya un enlace dentro. El alto es
+**exacto de una línea base**, con relleno solo horizontal, así que el interior
+calza igual en los tres casos y no rompe la retícula. Debe vivir dentro de
+`.sn-body`.
+
+### Clases tipográficas de contenido (viven en `MediaWiki:Common.css`)
+
+Utilitarias ortogonales que se **combinan** (`class="lg serif center nova"`).
+Pensadas para envolver el `<p>` que genera la wiki: una clase en el `<div>` se
+hereda al párrafo; la **alineación** además se propaga al `<p>` interno.
+
+> ⚠️ A diferencia de las clases de arriba, éstas **no las define el skin** sino
+> `MediaWiki:Common.css` de cada wiki. El espécimen las replica para mostrarlas,
+> pero para que funcionen en el wikitexto real deben estar en el `Common.css` de
+> la wiki.
+
+| Eje | Clases |
+|---|---|
+| **Tamaño** | `jumbo` (titular) · `lg` · `sm` · `xs` (el cuerpo es el default, sin clase) |
+| **Familia** | `serif` · `sans` · `mono` |
+| **Énfasis** | `uppercase` · `italic` · `bold` |
+| **Alineación** | `left` · `center` · `right` · `justify` |
+| **Color** | `nova` · `ok` · `warn` · `danger` (color de texto por rol; voltea con el tema) |
+
 ## 3. Comportamientos del skin sobre wikitexto estándar
 
 No requieren clases especiales — el skin los aplica automáticamente
@@ -263,9 +360,10 @@ cuando reconoce el patrón:
   `<html>`). Mínimo de 6 caracteres por palabra para partir, 3 antes y
   3 después del guión. Si esto produce ríos visibles en un párrafo
   corto, considere reescribir antes que añadir clases.
-- **Tablas `.wikitable`** y **`.toccolours`**: ya quedan tematizadas
-  (fondo paper, bordes hairline, headers en sunk). No hace falta hacer
-  nada.
+- **Tablas `.wikitable`** (y las semánticas `.smwtable`/`.broadtable`): ya
+  quedan tematizadas — solo filetes horizontales, cabecera transparente, texto
+  a ~80 % y **sin colores alternados** de fila. `.toccolours` va como caja
+  auxiliar (fondo `--sn-sunk`). No hace falta hacer nada.
 - **`<blockquote>`** y **`<poem>`** (extensión Poem): consumen la
   familia editorial de contraste (`--sn-font-quote`). Por defecto es
   Roboto Serif (la serif variable del skin). Si el lector elige serif

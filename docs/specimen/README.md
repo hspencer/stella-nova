@@ -1,4 +1,4 @@
-# Stella Nova — espécimen gráfico v0.5.1
+# Stella Nova — espécimen gráfico v0.6.10
 
 Mini-sitio estático con todos los tokens, componentes y un layout simulado del
 skin **Stella Nova** para iteración con el taller de diseño.

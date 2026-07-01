@@ -253,6 +253,74 @@ html[data-sn-modal] .sn-header {
 	background: var(--sn-sunk); color: var(--sn-icon-active);
 }
 
+/* — Autocomplete del buscador (módulo clásico mediawiki.searchSuggest) —
+   La caja .suggestions la posiciona el JS con `top` = borde inferior del
+   #searchInput (no del pill). Como el input va centrado dentro del pill de
+   --sn-ctl de alto, ese `top` cae ~dentro del pill y el borde superior de la
+   caja queda "sobre" el input. Compensamos con margin-top = mitad del hueco
+   input↔pill + un respiro, para que cuelgue inmediatamente debajo del pill.
+   Sin prefijo .skin-stellanova el CSS del módulo (selectores de 1 clase)
+   ganaría por especificidad. */
+.skin-stellanova .suggestions {
+	margin-top: calc((var(--sn-ctl) - 1.25rem) / 2 + var(--sn-s-1));
+	padding: var(--sn-s-1);
+	background: var(--sn-paper); color: var(--sn-ink);
+	border: 1px solid var(--sn-hairline);
+	border-radius: var(--sn-radius-l);
+	box-shadow: var(--sn-lift-soft);
+	overflow: hidden;
+	font-family: var(--sn-font-text); font-size: var(--sn-fs-sm);
+}
+/* Matar borde + fondo blanco de los wrappers internos del módulo (el borde
+   externo ya lo pone .suggestions): así no hay doble borde y el --sn-paper
+   tokenizado del contenedor manda en claro/oscuro. */
+.skin-stellanova .suggestions-results,
+.skin-stellanova .suggestions-special {
+	background: transparent; border: 0; margin: 0;
+}
+/* CLAVE: el JS pone el texto en el <div.suggestions-result> y LUEGO lo envuelve
+   en <a.mw-searchSuggest-link> (el <a> es el PADRE, no el que lleva el texto).
+   El módulo cablea el color SOBRE EL DIV — .suggestions-result{color:#000} y
+   .suggestions-result-current{color:#fff} — y un color propio del div gana a la
+   herencia desde el <a>. Por eso hay que pintar el DIV: un selector
+   .skin-stellanova .suggestions-result (0,2,0) le gana al (0,1,0) del módulo,
+   sin empates ni pseudo-clases de por medio. (Intentar colorear el <a> no hace
+   nada: el div tiene color propio.) */
+.skin-stellanova .suggestions-result {
+	padding: var(--sn-s-2) var(--sn-s-3);
+	border-radius: var(--sn-radius); cursor: pointer;
+	color: var(--sn-ink); line-height: 1.3;
+	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* El <a> solo envuelve la fila: que la ocupe entera y no subraye; el color lo
+   manda el div de adentro (color:inherit lo deja en paz). */
+.skin-stellanova .suggestions a.mw-searchSuggest-link {
+	display: block; color: inherit; text-decoration: none;
+}
+/* Fila resaltada: el JS añade -current al DIV (teclado y ratón). */
+.skin-stellanova .suggestions-result-current,
+.skin-stellanova .suggestions-result:hover {
+	background: var(--sn-sunk); color: var(--sn-nova);
+}
+.skin-stellanova .suggestions-special {
+	position: relative;
+	padding: var(--sn-s-2) var(--sn-s-3);
+	margin-top: var(--sn-s-1);
+	border-top: 1px solid var(--sn-hairline-soft);
+	border-radius: var(--sn-radius); cursor: pointer;
+	color: var(--sn-ink-soft);
+}
+.skin-stellanova .suggestions-special .special-hover,
+.skin-stellanova .suggestions-special.suggestions-result-current {
+	background: var(--sn-sunk);
+}
+.skin-stellanova .suggestions-special .special-label {
+	color: var(--sn-ink-soft); font-size: var(--sn-fs-sm);
+}
+.skin-stellanova .suggestions-special .special-query {
+	color: var(--sn-ink); font-style: italic;
+}
+
 /* — Zona 5 · Herramientas del usuario —
    Se pega al .sn-pagecluster (mismo cluster de íconos a la derecha): el
    gap del header-bar es --sn-s-5, y aquí lo compensamos con un margen
@@ -676,10 +744,10 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 /* ─────────────── Cuerpo: ritmo editorial ─────────────── */
 /* Ancho condensado del cuerpo vía el eje wdth (token --sn-text-width).
    font-stretch hereda, así que párrafos, listas, tablas y captions lo toman;
-   las cabeceras lo resetean a 100% más abajo. Las DOS familias de texto —IBM
-   Plex Sans y Roboto Serif— declaran el mismo rango wdth 75–100, así que el
-   cuerpo condensa por igual aunque el lector alterne a serif. Mono no tiene
-   eje wdth → lo ignora sin efecto. */
+   las cabeceras lo resetean a 100% más abajo. Las DOS familias de texto lo
+   consumen, pero con pisos distintos: IBM Plex Sans baja a wdth 75, Roboto
+   Serif a 62.5 (re-instanciada para que el modo serif apriete más; el token
+   cambia por familia, ver tokens.css). Mono no tiene eje wdth → lo ignora. */
 .sn-body { min-width: 0; font-stretch: var(--sn-text-width); }
 /* El ancho de la HOJA lo fija --sn-measure (.sn-paper-wrap). Esa es la
    medida de lectura: TODO el contenido —párrafos, cabeceras, listas, tablas,
@@ -782,11 +850,13 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 }
 .sn-body :is(h5, .mw-heading5) {
 	font-size: var(--sn-fs-base);
-	margin: var(--sn-baseline) 0 0; font-weight: 500;   /* mismo tamaño que h6; el acento rojo lo da la regla transversal de abajo */
+	margin: var(--sn-baseline) 0 0; font-weight: 500;   /* el acento rojo lo da la regla transversal de abajo */
+	text-transform: uppercase; font-stretch: 85%;
 }
 .sn-body :is(h6, .mw-heading6) {
-	font-size: var(--sn-fs-base);          /* no menor que el cuerpo */
-	margin: var(--sn-baseline) 0 0; font-weight: 500;
+	font-size: calc(var(--sn-fs-base) * 0.9);
+	margin: var(--sn-baseline) 0 0; font-weight: 400;
+	text-transform: uppercase; font-stretch: 85%;
 	/* tinta del contexto: el nivel más bajo del par no lleva acento. */
 }
 /* Acento carmín del h5 — TRANSVERSAL: el h5 va en --sn-nova en CUALQUIER
@@ -1132,6 +1202,45 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	max-width: 100vw;
 	margin-inline: calc((100% - 100vw) / 2);
 }
+
+/* ─── Bandas de fondo a sangre lateral (.fondo-N) ───────────────────────
+   Bloque de contenido que va de lado a lado de la hoja (bleed con la MISMA
+   técnica que .full-width: margin-inline negativo = padding lateral del papel)
+   pero con el CONTENIDO de vuelta al ancho de lectura (padding inverso) y una
+   línea base de aire arriba y abajo → la banda mide un nº entero de baselines
+   y no rompe la retícula. Cada variante SOLO cambia el color de fondo, tomado
+   de un token PÁLIDO semántico que voltea claro/oscuro:
+
+     .fondo-ahuesado   hueso claro (papel-400 / tinta-700)
+     .fondo-coral      lavado carmín  (--sn-nova-wash)
+     .fondo-verde      lavado verde   (--sn-ok-wash)
+     .fondo-ambar      lavado ámbar   (--sn-warn-wash)   [rol warn]
+     .fondo-info       lavado info    (--sn-info-wash)   [rol info]
+
+   Combinable con .grilla (el FONDO sangra, la grilla maqueta las columnas
+   dentro del ancho de lectura) y con las clases de contenido. El color se
+   enruta por --sn-fondo para que el comportamiento viva en un solo lugar.
+   Uso: <div class="fondo-verde"> … </div> o <div class="fondo-coral grilla cols-3"> … </div>. */
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) {
+	display: block;
+	background: var(--sn-fondo, var(--sn-paper-edge));
+	color: var(--sn-ink);
+	width: auto;
+	max-width: none;
+	margin-inline: calc(-1 * var(--sn-paper-px));
+	padding-inline: var(--sn-paper-px);
+	padding-block: var(--sn-baseline);
+	margin-block: var(--sn-baseline);
+}
+:is(.sn-paper, .sn-canvas) .fondo-ahuesado { --sn-fondo: light-dark(var(--sn-papel-400), var(--sn-tinta-700)); }
+:is(.sn-paper, .sn-canvas) .fondo-coral { --sn-fondo: var(--sn-nova-wash); }
+:is(.sn-paper, .sn-canvas) .fondo-verde { --sn-fondo: var(--sn-ok-wash); }
+:is(.sn-paper, .sn-canvas) .fondo-ambar { --sn-fondo: var(--sn-warn-wash); }
+:is(.sn-paper, .sn-canvas) .fondo-info  { --sn-fondo: var(--sn-info-wash); }
+/* El aire vertical lo da el padding de la banda; el margen del primer/último
+   hijo interno sobra y descuadraría los bordes. */
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) > :first-child { margin-top: 0; }
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) > :last-child  { margin-bottom: 0; }
 
 /* El skin DECRETA que <canvas> e <iframe> embebidos (p5.js, widgets como
    {{#widget:P5js}} que incrustan un sitio externo, lienzos experimentales)
@@ -1605,8 +1714,11 @@ canvas, iframe,
      · ::before — el FROST: el círculo completo aplica el mismo efecto de
        desenfoque + saturación de la barra de menú, PERO sin relleno de color
        (solo `backdrop-filter`), así el cristal se nota aunque no haya disco.
-     · ::after  — el ARO: un `border` punteado (2px dotted) en `--sn-nova`;
-       pinta SOBRE el frost.
+     · ::after  — el ARO: dos líneas finas (1px) en `--sn-nova` separadas por
+       un hueco transparente. `border` pinta la línea interior y `outline` +
+       `outline-offset` la exterior (el offset abre la separación); pinta
+       SOBRE el frost. No se usa `double` porque reparte el ancho en tercios
+       iguales y no deja afinar la línea y ensanchar el hueco por separado.
    Un disco con relleno opaco pesaba sobre fondos claros; el frost sin color no. */
 .sn-fs-trigger::before,
 .sn-fs-trigger::after {
@@ -1623,7 +1735,9 @@ canvas, iframe,
 	backdrop-filter: saturate(1.6) blur(2px);
 }
 .sn-fs-trigger::after {
-	border: 2px dotted var(--sn-nova);
+	border: .5px solid var(--sn-nova);
+	outline: .5px solid var(--sn-nova);
+	outline-offset: 2px;
 }
 .sn-fs-trigger:hover::before, .sn-fs-trigger:focus-visible::before,
 .sn-fs-trigger:hover::after,  .sn-fs-trigger:focus-visible::after {
@@ -1748,14 +1862,14 @@ canvas, iframe,
 @media (min-width: 64rem) {
 	.sn-md.sn-md-fs .sn-modal-body { grid-template-columns: repeat(3, 1fr); }
 }
-/* La sección del buscador atraviesa todas las columnas y centra el form
-   con `max-width: 30em`: lectura cómoda sin estirarse de lado a lado
-   en grids amplios. */
+/* La sección del buscador atraviesa todas las columnas como cabecera del
+   modal y el form se estira a ancho completo (sin tope `max-width`): en
+   pantalla completa el buscador va arriba, de lado a lado, no a un costado. */
 .sn-md.sn-md-fs .sn-fs-sec--search {
 	grid-column: 1 / -1;
 }
 .sn-md.sn-md-fs .sn-fs-sec--search .sn-fs-search {
-	max-width: 30em;
+	max-width: none;
 }
 /* Secciones — bloques discretos. Sin filete horizontal: la separación
    la dan el grid-gap y los encabezados. */
@@ -2209,10 +2323,92 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .mw-redirectedfrom, .mw-revision { color: var(--sn-ink-soft);
 	font-size: var(--sn-fs-sm); }
 .error, .mw-message-box-error { color: var(--sn-danger); }
+/* Cajas de mensaje (Codex `.cdx-message` y legacy `.mw-message-box`).
+   Stella Nova tiene su propio modo oscuro vía `color-scheme`/light-dark(), no
+   la clase `skin-theme-clientpref-night` de Vector, así que los design tokens
+   de Codex (`--color-notice`, `--background-color-error-subtle`, etc.) NUNCA
+   se voltean: quedan congelados en sus valores claros. Resultado en oscuro:
+   texto tinta de Codex (#202122) sobre nuestro fondo oscuro = ilegible, y el
+   ícono enmascarado con `--color-base` desaparece. Re-mapeamos los tokens de
+   Codex que consume la caja a tokens de la skin para que TODO (fondo, texto,
+   borde, ícono) se enrute por light-dark() y sea legible en ambos temas. */
 .mw-message-box, .cdx-message {
+	--color-base: var(--sn-ink);
+	--color-notice: var(--sn-ink);
+	--color-error: var(--sn-danger);
+	--color-warning: var(--sn-warn);
+	--color-success: var(--sn-ok);
+	--background-color-notice-subtle: var(--sn-sunk);
+	--background-color-error-subtle: color-mix(in srgb, var(--sn-danger) 12%, var(--sn-paper));
+	--background-color-warning-subtle: color-mix(in srgb, var(--sn-warn) 12%, var(--sn-paper));
+	--background-color-success-subtle: color-mix(in srgb, var(--sn-ok) 12%, var(--sn-paper));
+	--border-color-notice: var(--sn-hairline);
+	--border-color-error: var(--sn-danger);
+	--border-color-warning: var(--sn-warn);
+	--border-color-success: var(--sn-ok);
 	border-left: 3px solid var(--sn-ink-faint);
+	color: var(--sn-ink);
 	background: var(--sn-sunk); padding: var(--sn-s-3) var(--sn-s-4);
 	border-radius: 0 var(--sn-radius) var(--sn-radius) 0; margin: var(--sn-s-4) 0;
+}
+.cdx-message--error {
+	border-left-color: var(--sn-danger); color: var(--sn-danger);
+	background: var(--background-color-error-subtle);
+}
+.cdx-message--warning {
+	border-left-color: var(--sn-warn);
+	background: var(--background-color-warning-subtle);
+}
+.cdx-message--success {
+	border-left-color: var(--sn-ok);
+	background: var(--background-color-success-subtle);
+}
+
+/* ─── Especial:Buscar — la hoja core `mediawiki.special.search.styles`
+   colorea tabs, opciones y resultados con variables LESS de skin compiladas a
+   hex CLARO fijo (`@background-color-neutral-subtle`, `@border-subtle`,
+   `@color-subtle`…). Son valores de tiempo de compilación: NO responden al
+   flip runtime de `color-scheme`/light-dark() de la skin, así que en oscuro
+   quedan cajas claras y texto gris ilegible. Re-enrutamos por tokens de la
+   skin. Prefijo `.skin-stellanova` para ganar especificidad sobre el módulo
+   core sin depender del orden de carga (ver cascada de skinStyles). ─── */
+.skin-stellanova .mw-search-profile-tabs,
+.skin-stellanova #mw-searchoptions,
+.skin-stellanova .mw-search-interwiki-project,
+.skin-stellanova .searchResultImage-thumbnail-placeholder {
+	background: var(--sn-sunk);
+	border-color: var(--sn-hairline);
+}
+.skin-stellanova #mw-searchoptions .divider { border-bottom-color: var(--sn-hairline); }
+.skin-stellanova .mw-search-interwiki-project { border-top-color: var(--sn-hairline); }
+.skin-stellanova #mw-search-interwiki,
+.skin-stellanova .mw-search-interwiki-header { border-color: var(--sn-hairline); }
+.skin-stellanova .mw-search-result-data,
+.skin-stellanova .results-info { color: var(--sn-ink-soft); }
+.skin-stellanova .search-types .current a { color: var(--sn-ink); }
+
+/* ─── Botón "Exportar PDF" en contenido (.sn-print-pdf) ───
+   Afford de contenido que abre la previsualización Vivliostyle de la página
+   actual (skin.js lo engancha). Estilizado como botón discreto del skin; el
+   cursor y el rol lo hacen sentir accionable aunque sea un <span>. ─── */
+.skin-stellanova .sn-print-pdf {
+	display: inline-flex; align-items: center; gap: var(--sn-s-2);
+	padding: var(--sn-s-2) var(--sn-s-3);
+	font: inherit; font-size: var(--sn-fs-sm); line-height: 1;
+	color: var(--sn-ink); background: var(--sn-sunk);
+	border: 1px solid var(--sn-hairline); border-radius: var(--sn-radius);
+	cursor: pointer; user-select: none;
+	transition: background var(--sn-dur-1), border-color var(--sn-dur-1), color var(--sn-dur-1);
+}
+.skin-stellanova .sn-print-pdf::before {
+	content: ""; width: 1em; height: 1em; flex: none;
+	background: currentColor;
+	-webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 3h12v4H6zM19 8H5a3 3 0 0 0-3 3v6h4v4h12v-4h4v-6a3 3 0 0 0-3-3zm-3 11H8v-5h8zm2-6.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>') center / contain no-repeat;
+	        mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 3h12v4H6zM19 8H5a3 3 0 0 0-3 3v6h4v4h12v-4h4v-6a3 3 0 0 0-3-3zm-3 11H8v-5h8zm2-6.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>') center / contain no-repeat;
+}
+.skin-stellanova .sn-print-pdf:hover,
+.skin-stellanova .sn-print-pdf:focus-visible {
+	background: var(--sn-paper); border-color: var(--sn-nova); color: var(--sn-nova);
 }
 
 /* ─── Tablas de contenido: la skin es dueña del estilo de TODAS las
@@ -2247,7 +2443,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	   line-height absoluto = `--sn-baseline`, toda fila (de una o de
 	   muchas líneas, p. ej. listas con <br>) cae en la grilla, y su
 	   medio-interlineado reparte el aire arriba/abajo del texto. */
-	line-height: var(--sn-baseline);
+	line-height: var(--sn-leading-table);
 	margin: var(--sn-baseline-2) 0;  /* margen de bloque = múltiplo entero de baseline */
 	max-width: 100%;
 }
@@ -2256,7 +2452,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	   medio-interlineado del line-height = baseline. Un padding vertical
 	   tendría que ser un baseline ENTERO para no descuadrar la fila, lo
 	   que duplicaría el alto de celda; aquí el aire ya está en la línea. */
-	padding: 0 var(--sn-s-3);
+	padding: calc((var(--sn-fs-table) * var(--sn-leading-table)) / 2);
 	border: 0;
 	/* Ancho mínimo de celda: impide que una columna se estruje por debajo de
 	   lo legible cuando la tabla excede el viewport (es lo que disparaba el
@@ -2381,10 +2577,13 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	   a este tamaño, así que la ficha corre a 3/4 de baseline. La retícula se
 	   reencuentra cada 4 líneas (4 × 0.75 = 3 baselines), así que sigue on-grid
 	   en bloques de 4 — y los márgenes exteriores son baselines enteros. */
-	line-height: calc(var(--sn-baseline) * 3 / 4);
+	line-height: var(--sn-leading-table);
 }
 .sn-body table:is(.template, .plantilla) > tbody > tr { vertical-align: top; letter-spacing: 0.045ex;}
-.sn-body table:is(.template, .plantilla) > tbody > tr > :is(th, td) { border: 0; }
+.sn-body table:is(.template, .plantilla) > tbody > tr > :is(th, td) { 
+	border: 0; 
+	padding: 0 calc(var(--sn-baseline) / 4);
+}
 /* `:first-child` para empatar la especificidad (0,3,4) de la regla de
    "fila de cabecera" de wikitable, que si no marca esta primera th a 600.
    En una ficha la primera fila es un par clave→valor, no una cabecera. */
@@ -2432,6 +2631,9 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body :is(figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"]) > figcaption {
 	background-color: var(--sn-papel-100);
 	border: 0;
+	/* Padding parejo en los 4 lados para que la leyenda no se pegue al borde
+	   de la imagen ni a los costados de la tarjeta. */
+	padding: var(--sn-s-2);
 	/* El marco del core es CONTINUO: el <figure> lleva borde salvo abajo y la
 	   leyenda (table-caption) lleva borde salvo arriba, y ambas se tocan. El
 	   `margin-top` genérico de `.sn-body figcaption` (pensado para imágenes SIN
@@ -2464,8 +2666,13 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 }
 
 /* Sin filete en la imagen interna (mw-file-element / .thumbimage / border=):
-   solo el fondo de papel enmarca, ningún borde de píxel. */
-.sn-body :is(.thumbimage, .thumbborder, figure img, .mw-image-border img) {
+   solo el fondo de papel enmarca, ningún borde de píxel. El SEGUNDO selector
+   es imprescindible: core (content.media-screen.less) pinta el filete con
+   `figure[typeof~='mw:File/Thumb'] > :not(figcaption) .mw-file-element`
+   (especificidad 0,2,2); el genérico `figure img` (0,2,1) NO lo gana. Replicamos
+   el selector de core con prefijo `.sn-body` (0,3,2) para vencerlo. */
+.sn-body :is(.thumbimage, .thumbborder, figure img, .mw-image-border img),
+.sn-body :is(figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"]) > :not(figcaption) .mw-file-element {
 	border: 0;
 }
 
@@ -2539,16 +2746,39 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 
    Texto sobre relleno = `--sn-nova-ink`: voltea solo (blanco en claro,
    casi-negro en oscuro) y sirve a las tres variantes porque los tres
-   rellenos (ink-soft, nova, ok) son oscuros en claro y claros en oscuro. */
+   rellenos (ink-soft, nova, ok) son oscuros en claro y claros en oscuro.
+
+   ROBUSTEZ: el color del texto al hover se fija en el BOTÓN mismo
+   (`.wiki-btn:hover { color }`), no en un `<a>` hijo. Así funciona en los
+   TRES usos reales: (1) span que envuelve un enlace `[[…]]`, donde el `<a>`
+   hereda el color por `color: inherit`; (2) span SIN enlace —p. ej. un
+   toggle `mw-customtoggle-* link-toggle wiki-btn`— cuyo texto va suelto en
+   el span; y (3) la clase aplicada directo a un `<a>`. Antes el volteo a
+   blanco colgaba de `.wiki-btn:hover a`, así que el caso (2) quedaba con
+   texto del color de la variante sobre su mismo relleno (ilegible). Cada
+   variante repite el color en su `:hover` porque `.wiki-btn.red/.green`
+   (base, 0,3,0) empata en especificidad al `:hover` genérico y le ganaría
+   por orden. */
 .sn-body .wiki-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: 1ex 1.5ex;
+	/* ON-GRID: alto EXACTO de una línea base (--sn-baseline = fs-base ×
+	   leading = el alto del renglón del cuerpo). Como el botón mide lo mismo
+	   que la línea que lo contiene, NO engorda el renglón ni desplaza la
+	   grilla, esté suelto o en medio de un párrafo. El relleno es SOLO
+	   horizontal → el alto interior es idéntico en los tres usos (span+enlace,
+	   span suelto, <a> directo); el vertical lo fija `height`, no el padding.
+	   box-sizing:border-box (global) mete el borde de 1px dentro del alto. */
+	height: var(--sn-baseline);
+	padding: 0 1.5ex;
+	line-height: 1;
+	vertical-align: middle;
 	border-radius: 2ex;
 	border: 1px solid var(--sn-ink-soft);
 	background-color: transparent;
 	color: var(--sn-ink-soft);
+	font-weight: 700;
 	white-space: nowrap;
 	text-decoration: none;
 	cursor: pointer;
@@ -2558,10 +2788,11 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body .wiki-btn:focus-within {
 	background-color: var(--sn-ink-soft);
 	border-color: var(--sn-ink-soft);
+	color: var(--sn-nova-ink);
 }
 .sn-body .wiki-btn a {
 	font-weight: 700;
-	line-height: 90%;
+	line-height: 1;                 /* homologa con el texto suelto del span (el alto lo fija el botón) */
 	color: inherit !important;
 	text-decoration: none !important;
 	white-space: nowrap;
@@ -2572,13 +2803,11 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	display: inline-block;
 	transition: text-shadow .2s ease-in-out;
 }
+.sn-body .wiki-btn:hover a,
+.sn-body .wiki-btn:focus-within a,
 .sn-body .wiki-btn a:hover,
 .sn-body .wiki-btn a:focus {
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-}
-.sn-body .wiki-btn:hover a,
-.sn-body .wiki-btn:focus-within a {
-	color: var(--sn-nova-ink) !important;
 }
 /* Variante roja (la nova del skin). */
 .sn-body .wiki-btn.red {
@@ -2589,6 +2818,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body .wiki-btn.red:focus-within {
 	background-color: var(--sn-nova);
 	border-color: var(--sn-nova);
+	color: var(--sn-nova-ink);
 }
 /* Variante verde (token de éxito). */
 .sn-body .wiki-btn.green {
@@ -2599,6 +2829,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body .wiki-btn.green:focus-within {
 	background-color: var(--sn-ok);
 	border-color: var(--sn-ok);
+	color: var(--sn-nova-ink);
 }
 
 /* ─── Grilla / grid: framework de layout semántico para wikitexto.
@@ -2630,11 +2861,31 @@ details[open]::details-content { block-size: auto; opacity: 1; }
    (tablet vertical) todas caen a una sola columna — las asimétricas
    cols1-2 / cols2-1 también colapsan a una columna ahí. */
 .sn-body :is(.grid, .grilla) {
-	--sn-grid-gap: var(--sn-s-5);   /* default generoso (1.5rem); gap-s/m/l ajustan */
+	--sn-grid-gap: var(--sn-s-5);   /* default generoso (1.5rem), común a ambos ejes; gap-s/m/l lo ajustan */
+	/* Gaps por EJE: por defecto ambos siguen a --sn-grid-gap; las clases
+	   gap-h-N y gap-v-N los separan. horizontal (gap-h) = espacio entre
+	   COLUMNAS (dentro de la fila); vertical (gap-v) = espacio entre FILAS.
+	   En `gap` el 1.er valor es row-gap (vertical) y el 2.º column-gap
+	   (horizontal). */
+	--sn-grid-gap-h: var(--sn-grid-gap);
+	--sn-grid-gap-v: var(--sn-grid-gap);
 	display: grid;
-	gap: var(--sn-grid-gap);
-	margin: var(--sn-s-4) 0;
+	gap: var(--sn-grid-gap-v) var(--sn-grid-gap-h);
+	/* margin-block (longhand), NO el shorthand `margin`: el shorthand fijaba
+	   margin-inline:0 y, al combinar `.grilla` con una banda `.fondo-*`, borraba
+	   el bleed lateral (margin-inline negativo) de la banda. Con el longhand la
+	   grilla sólo toca el eje de bloque y respeta el sangrado. */
+	margin-block: var(--sn-s-4);
 }
+/* Robustez ante el <p> de MediaWiki: cuando el contenido de la grilla es una
+   SECUENCIA INLINE (varios <span class="wiki-btn">, [[enlaces]], texto…),
+   el parser lo envuelve TODO en un único <p>, que pasa a ser la sola celda de
+   la grilla → colapsa el layout (una fila, sin efecto de cols-N ni gap-N). Si ese
+   <p> es el único hijo, lo hacemos `display: contents`: su caja desaparece y
+   sus hijos (los spans/enlaces) se vuelven las celdas REALES de la grilla, así
+   cols-auto y gap-h/gap-v vuelven a funcionar. No afecta a las grillas cuyos
+   hijos ya son bloques (divs, figuras, fichas): ahí no hay un <p>:only-child. */
+.sn-body :is(.grid, .grilla) > p:only-child { display: contents; }
 .sn-body :is(.grid, .grilla).cols-1 { grid-template-columns: minmax(0, 1fr); }
 .sn-body :is(.grid, .grilla).cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sn-body :is(.grid, .grilla).cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -2649,11 +2900,25 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body :is(.grid, .grilla).cols1-2 { grid-template-columns: 1fr 2fr; }
 .sn-body :is(.grid, .grilla).cols2-1 { grid-template-columns: 2fr 1fr; }
 
-/* Espaciado entre celdas (override del default --sn-s-5). */
+/* Espaciado entre celdas, AMBOS ejes (override del default --sn-s-5). */
 .sn-body :is(.grid, .grilla).gap-0 { --sn-grid-gap: 0; }
 .sn-body :is(.grid, .grilla).gap-s { --sn-grid-gap: var(--sn-s-2); }
 .sn-body :is(.grid, .grilla).gap-m { --sn-grid-gap: var(--sn-s-4); }
 .sn-body :is(.grid, .grilla).gap-l { --sn-grid-gap: var(--sn-s-6); }
+
+/* Gap por EJE (override del común). Se combinan entre sí y con gap-*:
+   p.ej. `grid cols-3 gap-h-s gap-v-l` = columnas juntas, filas aireadas.
+     · gap-h-* = horizontal, entre COLUMNAS (dentro de cada fila)
+     · gap-v-* = vertical,   entre FILAS
+   Misma escala 0/s/m/l que gap-*. */
+.sn-body :is(.grid, .grilla).gap-h-0 { --sn-grid-gap-h: 0; }
+.sn-body :is(.grid, .grilla).gap-h-s { --sn-grid-gap-h: var(--sn-s-2); }
+.sn-body :is(.grid, .grilla).gap-h-m { --sn-grid-gap-h: var(--sn-s-4); }
+.sn-body :is(.grid, .grilla).gap-h-l { --sn-grid-gap-h: var(--sn-s-6); }
+.sn-body :is(.grid, .grilla).gap-v-0 { --sn-grid-gap-v: 0; }
+.sn-body :is(.grid, .grilla).gap-v-s { --sn-grid-gap-v: var(--sn-s-2); }
+.sn-body :is(.grid, .grilla).gap-v-m { --sn-grid-gap-v: var(--sn-s-4); }
+.sn-body :is(.grid, .grilla).gap-v-l { --sn-grid-gap-v: var(--sn-s-6); }
 
 /* Flujo vertical (column-major): los elementos LLENAN cada columna de
    arriba abajo y al terminarla saltan a la siguiente, en vez de ir por
@@ -2669,7 +2934,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body :is(.grid, .grilla).flujo-v {
 	display: block;
 	column-count: 2;
-	column-gap: var(--sn-grid-gap);
+	column-gap: var(--sn-grid-gap-h);   /* la separación entre columnas sigue al eje horizontal */
 }
 .sn-body :is(.grid, .grilla).flujo-v.cols-1 { column-count: 1; }
 .sn-body :is(.grid, .grilla).flujo-v.cols-2 { column-count: 2; }
@@ -2864,3 +3129,12 @@ textarea.mw-editfont-monospace {
 .sn-body :is(h1, h2, h3, h4, h5, h6):has(.title-toggle) + .mw-collapsible:not(.mw-collapsed) {
 	margin-top: 0;
 }
+/* ── Acordeón real de colapsables (apertura Y cierre animados) ──
+   Implementado por JS (skin.js → bindCollapse), NO por CSS. makeCollapsible
+   togglea el cuerpo con display seco, así que animamos `height` 0↔scrollHeight
+   midiendo en sus eventos jQuery, con overflow:hidden SOLO durante la transición
+   (al terminar se restaura height:auto/overflow). Se evita a propósito el truco
+   CSS grid-template-rows: exigiría envolver los hijos y forzar display:grid sobre
+   el colapsable, lo que rompería contenedores de contenido que son su propio
+   layout —p.ej. `.curso-fotos`, que es `display:flex`—. Sin wrapper ni override
+   de display, el layout del contenido queda intacto y nada se recorta en reposo. */

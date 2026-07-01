@@ -968,53 +968,6 @@ function loremIpsum(dolor, sit) {
 </section>
 
 <section class="comp">
-  <h2>Avisos (washes)</h2>
-  <p class="meta">Fondos derivados con <code>color-mix(in oklab, ...)</code>
-  sobre <code>--sn-paper</code> — voltean con el tema sin redefinir. Filete
-  izquierdo (3 px) en el color de la señal.</p>
-  <div class="grilla cols-2 spec-usage">
-<pre class="howto-code">&lt;div class="sn-wash sn-wash-ok"&gt;
-'''Confirmación.''' Texto del aviso.
-&lt;/div&gt;
-
-&lt;div class="sn-wash sn-wash-info"&gt;
-'''Información.''' Aviso neutro.
-&lt;/div&gt;
-
-&lt;div class="sn-wash sn-wash-warn"&gt;
-'''Advertencia.''' Precaución.
-&lt;/div&gt;
-
-&lt;div class="sn-wash sn-wash-danger"&gt;
-'''Error.''' Bloqueo o falla.
-&lt;/div&gt;</pre>
-    <div class="demo demo-stack">
-      <aside class="sn-wash sn-wash-ok">
-        <strong>Confirmación.</strong> Lorem ipsum dolor sit amet.
-      </aside>
-      <aside class="sn-wash sn-wash-info">
-        <strong>Información.</strong> Sed do eiusmod tempor incididunt.
-      </aside>
-      <aside class="sn-wash sn-wash-warn">
-        <strong>Advertencia.</strong> Ut enim ad minim veniam.
-      </aside>
-      <aside class="sn-wash sn-wash-danger">
-        <strong>Error.</strong> Duis aute irure dolor.
-      </aside>
-    </div>
-  </div>
-  <div class="spec-notes">
-    <p>Variantes: <code>sn-wash-ok</code> (confirmación) ·
-    <code>sn-wash-info</code> (aviso neutro) ·
-    <code>sn-wash-warn</code> (precaución) ·
-    <code>sn-wash-danger</code> (error o bloqueo). Estos avisos los
-    inserta el skin en respuesta a acciones del sistema, pero también
-    se pueden emitir desde una plantilla envolviendo el contenido en
-    un <code>&lt;div&gt;</code> con la clase correspondiente.</p>
-  </div>
-</section>
-
-<section class="comp">
   <h2>Badges y contadores</h2>
   <p class="meta">Badge: tipografía <code>--sn-fs-xs</code> peso 500, radio
   <code>--sn-radius</code> · fondo wash correspondiente a la señal.<br>
@@ -1091,31 +1044,36 @@ __FORCETOC__  fuerza el índice aun con &lt; 4 cabeceras.</pre>
 </section>
 
 <section class="comp">
-  <h2>Nota al margen</h2>
-  <p class="meta"><code>aside.sn-notice</code> · información meta del
-  artículo (categorías, redirecciones, banners de plantilla) · fondo
-  <code>--sn-info-wash</code> · filete <code>--sn-warn</code>.</p>
+  <h2>Aviso administrado (.sn-notice)</h2>
+  <p class="meta"><code>aside.sn-notice</code> · banner que el skin inyecta al
+  <strong>tope del paper</strong> desde el fragmento administrable
+  <code>Stella-Nova:Aviso</code>. Se revienta al borde superior de la hoja
+  (mismo bleed que <code>.full-width</code>), fondo <code>--sn-notice-bg</code> /
+  tinta <code>--sn-notice-ink</code> (ámbar tenue que voltea con el tema) y trae
+  su botón de cierre; el lector lo descarta y no reaparece esa revisión.</p>
   <div class="grilla cols-2 spec-usage">
-<pre class="howto-code">&lt;aside class="sn-notice" role="note"&gt;
-'''Nota.''' Texto del aviso, con [[enlaces]]
-si hace falta.
+<pre class="howto-code">Se edita en Stella-Nova:Aviso
+(no se teclea en el artículo).
+El skin lo envuelve en:
+&lt;aside class="sn-notice"&gt;
+  &lt;div class="sn-notice-body"&gt;…&lt;/div&gt;
+  &lt;button class="sn-notice-x"&gt;×&lt;/button&gt;
 &lt;/aside&gt;</pre>
-    <div class="sn-paper sn-body demo">
+    <div class="sn-paper sn-body demo demo--bleed">
       <aside class="sn-notice" role="note">
-        <strong>Nota.</strong> Lorem ipsum dolor sit amet, consectetur
-        adipiscing elit. Sed do eiusmod tempor incididunt.
+        <div class="sn-notice-body"><strong>Aviso.</strong> Lorem ipsum dolor
+        sit amet, con <a href="#">enlaces</a> si hace falta.</div>
+        <button type="button" class="sn-notice-x" aria-label="Cerrar">
+          <svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-x"/></svg>
+        </button>
       </aside>
-      <p>El cuerpo del artículo continúa debajo del aviso, manteniendo el
-      flujo de lectura sin saltos visuales bruscos.</p>
+      <p>El cuerpo del artículo continúa debajo del aviso, al ancho de lectura.</p>
     </div>
   </div>
   <div class="spec-notes">
-    <p>A diferencia de los washes (que codifican una severidad), la
-    nota al margen es información meta del artículo: redirecciones,
-    banners de plantilla, advertencias editoriales. Va dentro del
-    cuerpo y rompe sutilmente el flujo sin alarmar. Se usa también
-    para el fragmento administrable
-    <code>Stella-Nova:Aviso</code> que se inyecta al tope del paper.</p>
+    <p>Lo pinta la CSS real del skin (no hay estilo propio del espécimen). Es la
+    misma banda superior que aparece en la página de <em>Layout</em>. Para bandas
+    de contenido dentro del cuerpo, ver <code>.fondo-*</code> (Bandas de fondo).</p>
   </div>
 </section>
 
@@ -1148,22 +1106,82 @@ si hace falta.
 </section>
 
 <section class="comp">
+  <h2>Bandas de fondo (.fondo-*)</h2>
+  <p class="meta">Bloque de contenido a <strong>sangre lateral</strong>: el
+  fondo va de lado a lado de la hoja (misma técnica de bleed que
+  <code>.full-width</code>) pero el <strong>contenido vuelve al ancho de
+  lectura</strong>, con una línea base de aire arriba y abajo. Sirve para
+  destacar una sección —intro, aviso, índice de portada— sin sacarla del flujo.
+  Cada variante sólo cambia el color, tomado de un <strong>lavado pálido
+  semántico</strong> que voltea con el tema. Se combina con las clases de
+  contenido y con <code>.grilla</code> (el fondo sangra, la grilla maqueta
+  dentro).</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;div class="fondo-ahuesado"&gt;…&lt;/div&gt;
+&lt;div class="fondo-coral"&gt;…&lt;/div&gt;
+&lt;div class="fondo-verde"&gt;…&lt;/div&gt;
+&lt;div class="fondo-ambar"&gt;…&lt;/div&gt;
+&lt;div class="fondo-info"&gt;…&lt;/div&gt;
+
+&lt;!-- con grilla: el fondo sangra,
+     las columnas maquetan dentro --&gt;
+&lt;div class="fondo-coral grilla cols-3"&gt;
+  …tres columnas…
+&lt;/div&gt;</pre>
+    <div class="sn-paper sn-body demo demo--bleed">
+      <div class="mw-parser-output">
+        <p>Párrafo del cuerpo, al ancho de lectura normal de la hoja.</p>
+        <div class="fondo-ahuesado"><p><code>fondo-ahuesado</code> — hueso claro (<code>--sn-papel-400</code>).</p></div>
+        <div class="fondo-coral"><p><code>fondo-coral</code> — lavado carmín (<code>--sn-nova-wash</code>).</p></div>
+        <div class="fondo-verde"><p><code>fondo-verde</code> — lavado verde (<code>--sn-ok-wash</code>).</p></div>
+        <div class="fondo-ambar"><p><code>fondo-ambar</code> — lavado ámbar (<code>--sn-warn-wash</code>).</p></div>
+        <div class="fondo-info"><p><code>fondo-info</code> — lavado info (<code>--sn-info-wash</code>).</p></div>
+        <p>Combinada con grilla, el fondo sangra y las columnas quedan al ancho de lectura:</p>
+        <div class="fondo-coral grilla cols-3">
+          <div><strong>Escuela</strong><br>columna 1</div>
+          <div><strong>Punto de vista</strong><br>columna 2</div>
+          <div><strong>Acontecer</strong><br>columna 3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="spec-notes">
+    <p>Vive en el skin (no en <code>Common.css</code>), así que voltea
+    claro/oscuro sola. El alto es un múltiplo entero de
+    <code>--sn-baseline</code> → no rompe la retícula. Sólo sangra dentro de
+    <code>.sn-paper</code> / <code>.sn-canvas</code>. Al combinar con
+    <code>.grilla</code>, la grilla usa <code>margin-block</code> (no el
+    shorthand <code>margin</code>) para no pisar el sangrado lateral de la
+    banda.</p>
+  </div>
+</section>
+
+<section class="comp">
   <h2>Botón de contenido (.wiki-btn)</h2>
   <p class="meta">Clase de wikitexto migrada desde <code>Common.css</code> al
-  tema. Botón &laquo;outline&raquo; que envuelve un enlace: contorno fino
-  (1&nbsp;px) en forma de píldora; al pasar el cursor se rellena y el texto
-  voltea. Tres variantes: por defecto (gris), <code>red</code> y
-  <code>green</code>. Color 100&nbsp;% por tokens → voltea claro/oscuro.</p>
+  tema. Botón &laquo;outline&raquo;: contorno fino (1&nbsp;px) en forma de
+  píldora; al pasar el cursor se rellena y el texto voltea a
+  <code>--sn-nova-ink</code>. Tres variantes: por defecto (gris),
+  <code>red</code> y <code>green</code>. Color 100&nbsp;% por tokens → voltea
+  claro/oscuro. <strong>Robusto a tres usos</strong>: envolviendo un enlace,
+  como <em>span suelto</em> (p.ej. un toggle) o aplicado directo a un
+  <code>&lt;a&gt;</code> — el volteo del texto no depende de que haya un enlace
+  dentro.</p>
 
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;span class="wiki-btn"&gt;[[Página|Etiqueta]]&lt;/span&gt;
 &lt;span class="wiki-btn red"&gt;[[…|Rojo]]&lt;/span&gt;
-&lt;span class="wiki-btn green"&gt;[[…|Verde]]&lt;/span&gt;</pre>
+&lt;span class="wiki-btn green"&gt;[[…|Verde]]&lt;/span&gt;
+
+&lt;!-- span suelto, sin enlace (toggle): --&gt;
+&lt;span class="mw-customtoggle-x link-toggle wiki-btn green"&gt;
+  ver versión en inglés&lt;/span&gt;</pre>
     <div class="sn-paper sn-body demo">
       <div class="demo-inline">
         <span class="wiki-btn"><a href="#">Por defecto</a></span>
         <span class="wiki-btn red"><a href="#">Rojo</a></span>
         <span class="wiki-btn green"><a href="#">Verde</a></span>
+        <span class="wiki-btn green">span suelto (toggle)</span>
       </div>
     </div>
   </div>
@@ -1171,11 +1189,18 @@ si hace falta.
   <div class="spec-notes">
     <p>Color 100&nbsp;% tokenizado: por defecto → <code>--sn-ink-soft</code>;
     <code>red</code> → <code>--sn-nova</code>; <code>green</code> →
-    <code>--sn-ok</code>. El enlace interno hereda el color; al hover/foco el
-    botón se rellena y el texto pasa a <code>--sn-nova-ink</code> (voltea:
-    blanco en claro, casi-negro en oscuro). La variante <code>blue</code> se
-    retiró (sin token equivalente, sin uso). Debe vivir dentro de
-    <code>.sn-body</code> (la regla está acotada a ese contenedor).</p>
+    <code>--sn-ok</code>. Al hover/foco el botón se rellena y el texto pasa a
+    <code>--sn-nova-ink</code> (voltea: blanco en claro, casi-negro en oscuro).
+    El color del hover se fija en el <strong>botón mismo</strong>, no en un
+    enlace hijo, así que un <code>&lt;span&gt;</code> suelto (un toggle
+    <code>mw-customtoggle-*</code>, sin <code>&lt;a&gt;</code> dentro) también
+    voltea a blanco — antes se quedaba con el texto del color de la variante
+    sobre su propio relleno.</p>
+    <p>El alto es <strong>exacto de una línea base</strong>
+    (<code>--sn-baseline</code>) con relleno solo horizontal: el interior calza
+    igual en los tres usos y el botón no rompe la retícula, suelto o en medio de
+    un párrafo. La variante <code>blue</code> se retiró (sin token, sin uso).
+    Debe vivir dentro de <code>.sn-body</code>.</p>
   </div>
 </section>
 
@@ -1186,8 +1211,9 @@ si hace falta.
   <code>.grid</code> (canónico) y <code>.grilla</code> (alias en español).
   Los modificadores se combinan: <code>.cols-1…6</code> /
   <code>.cols-auto</code> / <code>.cols1-2</code> / <code>.cols2-1</code>
-  (columnas), <code>.gap-0/s/m/l</code> (espaciado),
-  <code>.flujo-v</code>/<code>.stack</code> (pila vertical),
+  (columnas), <code>.gap-0/s/m/l</code> (espaciado en ambos ejes) o, por eje,
+  <code>.gap-h-*</code> (horizontal, entre columnas) y <code>.gap-v-*</code>
+  (vertical, entre filas), <code>.flujo-v</code>/<code>.stack</code> (pila vertical),
   <code>.align-top/center/bottom</code> (alineación de celda),
   <code>.sin-margen</code>/<code>.flush</code> (margen) y
   <code>.full</code>/<code>.completa</code> (a todo el campo). Bajo 64 rem
@@ -1282,6 +1308,28 @@ Bloque angosto (un tercio)
     </div>
   </div>
 
+  <h3 class="spec-subh">gap por eje — gap-h (columnas) · gap-v (filas)</h3>
+  <p class="meta">El gap se puede separar por eje: <code>gap-h-*</code> controla
+  el espacio <strong>horizontal</strong> (entre columnas, dentro de la fila) y
+  <code>gap-v-*</code> el <strong>vertical</strong> (entre filas). Se combinan
+  entre sí y con <code>gap-*</code>. Aquí: columnas juntas
+  (<code>gap-h-0</code>), filas separadas (<code>gap-v-l</code>).</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;div class="grid cols-3 gap-h-0 gap-v-l"&gt;
+…columnas pegadas, filas aireadas…
+&lt;/div&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="grid cols-3 gap-h-0 gap-v-l">
+        <div class="spec-cell">1</div>
+        <div class="spec-cell">2</div>
+        <div class="spec-cell">3</div>
+        <div class="spec-cell">4</div>
+        <div class="spec-cell">5</div>
+        <div class="spec-cell">6</div>
+      </div>
+    </div>
+  </div>
+
   <h3 class="spec-subh">alias en español (grilla)</h3>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;div class="grilla cols-2"&gt;
@@ -1317,8 +1365,9 @@ Bloque angosto (un tercio)
     <p>Cada hijo directo de <code>.grid</code> es una celda; URLs
     largas o bloques de código no desbordan
     (<code>minmax(0, 1fr)</code>). El gap por defecto es
-    <code>--sn-s-4</code> (1 rem) y ahora se ajusta con
-    <code>.gap-0/s/m/l</code>.</p>
+    <code>--sn-s-5</code> (1.5 rem) en ambos ejes; se ajusta uniforme con
+    <code>.gap-0/s/m/l</code> o por eje con <code>.gap-h-*</code> (columnas) y
+    <code>.gap-v-*</code> (filas), combinables entre sí.</p>
     <p>Funciona en chrome normal y en <code>__PANTALLACOMPLETA__</code>:
     ambos contenedores llevan <code>.sn-body</code>, que es donde el
     skin define la regla. En pantalla completa el contenido es libre
@@ -1541,8 +1590,12 @@ def body_layout():
     <div class="sn-paper-wrap">
       <article class="sn-paper mw-body">
         <aside class="sn-notice" role="note">
-          <strong>Simulacro.</strong> Layout de Stella Nova con texto
-          simulado (<em>lorem ipsum</em>) — referencia visual para diseño.
+          <div class="sn-notice-body"><strong>Simulacro.</strong> Layout de
+          Stella Nova con texto simulado (<em>lorem ipsum</em>) — referencia
+          visual para diseño.</div>
+          <button type="button" class="sn-notice-x" aria-label="Cerrar">
+            <svg class="sn-i" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><use href="#sn-i-x"/></svg>
+          </button>
         </aside>
         <div id="contentSub" class="sn-subtitle">Subtítulo del artículo · metadato</div>
         <div class="sn-body mw-body-content">
@@ -1889,16 +1942,9 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
 .sn-tabs li.selected a { color: var(--sn-ink); border-bottom-color: var(--sn-nova); }
 .sn-tabs li.new a { color: var(--sn-link); }
 
-/* Washes */
-.sn-wash { padding: var(--sn-s-3) var(--sn-s-4); border-radius: var(--sn-radius);
-           border-inline-start: 3px solid currentColor; font-size: var(--sn-fs-sm); }
-.sn-wash strong { color: inherit; }
-.sn-wash-ok     { background: var(--sn-ok-wash);     color: var(--sn-ok); }
-.sn-wash-info   { background: var(--sn-info-wash);   color: var(--sn-warn); }
-.sn-wash-warn   { background: var(--sn-warn-wash);   color: var(--sn-warn); }
-.sn-wash-danger { background: var(--sn-danger-wash); color: var(--sn-danger); }
-.sn-wash :is(strong, span, p) { color: var(--sn-ink); }
-.sn-wash > strong:first-child { color: inherit; }
+/* (Los "washes" .sn-wash-* eran clases INVENTADAS por el espécimen: no existen
+   en el skin. Se retiraron. El patrón real de banda con lavado semántico es la
+   familia .fondo-* del skin, documentada en "Bandas de fondo".) */
 
 /* Badges: .sn-badge (+ variantes -nova/-ok/-warn/-danger) ahora es componente
    REAL del skin (resources/stella-nova.css), no specimen-only. El especimen
@@ -1955,36 +2001,14 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
                        padding: var(--sn-s-6) var(--sn-s-5); }
 .demo-app .sn-paper { background: var(--sn-paper); border-radius: var(--sn-radius-paper);
                        box-shadow: var(--sn-lift-paper); padding: var(--sn-s-6); }
-.demo-app .sn-paper h1.firstHeading {
-  font-family: var(--sn-font-display); font-size: var(--sn-fs-display);
-  font-weight: 400; letter-spacing: -0.02em; margin: 0 0 var(--sn-s-5); }
-.demo-app .sn-paper h2 { font-family: var(--sn-font-display); font-size: var(--sn-fs-lg);
-                          font-weight: 400; margin: var(--sn-s-6) 0 var(--sn-s-3); }
-.demo-app .sn-paper p { margin: 0 0 var(--sn-s-3); }
-.demo-app .sn-paper a { color: var(--sn-link); }
-.demo-app .sn-paper a:visited { color: var(--sn-link-visited); }
-.demo-app .sn-paper a:hover { color: var(--sn-link-hover); }
-.demo-app .sn-paper a.external::after {
-  content: ''; display: inline-block; width: .7em; height: .7em;
-  margin-inline-start: .25em; background-color: currentColor;
-  mask-image: var(--sn-ext-icon); mask-repeat: no-repeat; mask-size: contain;
-  -webkit-mask-image: var(--sn-ext-icon); -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-}
-.demo-app .sn-paper blockquote {
-  margin: var(--sn-s-5) 0; padding: var(--sn-s-3) var(--sn-s-5);
-  font-family: var(--sn-font-display); font-size: var(--sn-fs-md);
-  color: var(--sn-ink); font-style: italic;
-}
-.demo-app .sn-paper blockquote footer { font-style: normal; font-size: var(--sn-fs-sm);
-                                          color: var(--sn-ink-soft); margin-top: var(--sn-s-2); }
-
-.sn-notice {
-  background: var(--sn-info-wash); color: var(--sn-ink);
-  padding: var(--sn-s-3) var(--sn-s-4); border-radius: var(--sn-radius);
-  border-inline-start: 3px solid var(--sn-warn); font-size: var(--sn-fs-sm);
-  margin: 0 0 var(--sn-s-4);
-}
+/* El CONTENIDO del paper (h1/h2/párrafos/enlaces/cita/aviso .sn-notice) NO se
+   re-estila aquí: lo pinta la CSS REAL del skin (stella-nova.css, que el
+   espécimen carga). El contenido del layout vive dentro de `.sn-body`, así que
+   hereda tipografía, jerarquía de cabeceras, enlaces, blockquote y el aviso
+   `.sn-notice` tal cual el skin — sin CSS custom que diverja. Antes esta zona
+   forzaba cabeceras a la familia display (el skin ya usa --sn-font-text) y
+   falseaba `.sn-notice` como caja simple (el real es la banda superior del
+   paper con su token --sn-notice-bg): ambas cosas se retiraron. */
 
 pre, code { font-family: var(--sn-font-mono); }
 pre { background: var(--sn-sunk); padding: var(--sn-s-3) var(--sn-s-4);

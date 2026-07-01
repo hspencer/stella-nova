@@ -5,7 +5,7 @@
      · Roboto Serif — serif del cuerpo cuando el usuario alterna a familia
        serif desde el menú (data-sn-family="serif"), y en <poem>/blockquote
        por defecto. VARIABLE de CUATRO ejes (peso wght 100–900, ancho
-       wdth 75–100, óptico opsz 8–60, grado GRAD −50–100), normal e italic.
+       wdth 62.5–100, óptico opsz 8–60, grado GRAD −50–100), normal e italic.
      · IBM Plex Mono — código, normal+italic 400 y normal 600.
    Subset latin: U+0000-00FF cubre el español (no hace falta latin-ext).
    Las woff2 viven en resources/fonts/.
@@ -95,21 +95,23 @@
 /* — Roboto Serif — serif del cuerpo (alterna desde el menú), citas y
    poemas. VARIABLE de CUATRO ejes en un único woff2 por estilo:
      · wght 100–900  → font-weight (peso)
-     · wdth 75–100   → font-stretch (ancho; MISMO rango que IBM Plex Sans,
-                       así el cuerpo serif condensa igual que el sans con
-                       --sn-text-width)
+     · wdth 62.5–100 → font-stretch (ancho). El cuerpo serif condensa MÁS que
+                       el sans: IBM Plex Sans solo baja a wdth 75, así que se
+                       re-instanció esta familia con piso 62.5 para darle al
+                       modo serif un escalón extra de condensación (token
+                       --sn-text-width, que en serif baja por debajo de 75)
      · opsz 8–60     → font-optical-sizing: auto (tamaño óptico)
      · GRAD −50–100  → font-variation-settings "GRAD" (grado; lo conduce el
                        token --sn-serif-grade, que sube en modo oscuro)
    Subset latin, TTF variable de Google Fonts (OFL) instanciado a estos
    rangos con fonttools: opsz y wdth se recortaron de 8–144 / 50–150 a 8–60
-   / 75–100 para no cargar los masters de despliegue ni los anchos extremos
-   que el skin nunca usa (de ~1.6 MB a ~0.9 MB la familia). — */
+   / 62.5–100 para no cargar los masters de despliegue ni los anchos extremos
+   que el skin nunca usa (~0.95 MB la familia). — */
 @font-face {
 	font-family: 'Roboto Serif';
 	font-style: normal;
 	font-weight: 100 900;
-	font-stretch: 75% 100%;
+	font-stretch: 62.5% 100%;
 	font-display: swap;
 	src: url('fonts/robotoserif-latin-wghtwdthgrad-normal.woff2') format('woff2');
 }
@@ -117,7 +119,7 @@
 	font-family: 'Roboto Serif';
 	font-style: italic;
 	font-weight: 100 900;
-	font-stretch: 75% 100%;
+	font-stretch: 62.5% 100%;
 	font-display: swap;
 	src: url('fonts/robotoserif-latin-wghtwdthgrad-italic.woff2') format('woff2');
 }

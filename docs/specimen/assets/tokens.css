@@ -5,7 +5,7 @@
  * nova. Editorial, sobrio, cálido. IBM Plex Sans (sans del cuerpo · UI ·
  * cabeceras, variable de dos ejes) · Roboto Serif (serif del cuerpo cuando
  * el lector la elige desde el menú, citas y poemas; variable de cuatro ejes
- * wght 100–900 + wdth 75–100 + opsz 8–60 + GRAD −50–100) · IBM Plex Mono
+ * wght 100–900 + wdth 62.5–100 + opsz 8–60 + GRAD −50–100) · IBM Plex Mono
  * (código).
  * Ritmo vertical sobre la interlínea del cuerpo: la unidad es
  * `--sn-baseline`, todo line-height/margen vertical de bloque es un múltiplo.
@@ -235,7 +235,7 @@
 	   UI y TODAS las cabeceras; VARIABLE, dos ejes wght 100–700 + wdth 75–100)
 	   y Roboto Serif (serif del cuerpo cuando el lector la elige desde el
 	   menú; siempre en citas/poemas; VARIABLE, cuatro ejes wght 100–900 +
-	   wdth 75–100 + opsz 8–60 + GRAD −50–100). IBM Plex Mono para código.
+	   wdth 62.5–100 + opsz 8–60 + GRAD −50–100). IBM Plex Mono para código.
 	   Auto-alojadas (fonts.css). `--sn-font-display` queda
 	   como alias de `--sn-font-text`: la doctrina del skin es "todo sans en
 	   cabeceras"; el alias permite reintroducir un display distinto tocando
@@ -268,16 +268,17 @@
 	--sn-serif-grade: 70;
 	font-variation-settings: "GRAD" var(--sn-serif-grade);
 
-	/* Ancho del cuerpo (eje wdth, vía font-stretch). 100% = normal, 75% = lo
-	   más condensado. Lo comparten las DOS familias de texto: IBM Plex Sans
-	   (sans) y Roboto Serif (serif) declaran el MISMO rango wdth 75–100, así
-	   el cuerpo condensa por igual elija el lector la familia que elija.
+	/* Ancho del cuerpo (eje wdth, vía font-stretch). 100% = normal. Las DOS
+	   familias de texto lo consumen, pero NO comparten piso: IBM Plex Sans
+	   baja a wdth 75; Roboto Serif se re-instanció con piso 62.5 para que el
+	   modo serif pueda apretar más (el override de familia más abajo cambia
+	   este token). Este default (80%) es el del modo sans.
 	   Aplica a párrafos, listas y tablas (el cuerpo de .sn-body); las
 	   CABECERAS y las CITAS se resetean a 100% aparte (doctrina: condensada
 	   solo en el cuerpo corrido, no en titulares ni cita). El VERSO tiene su
 	   propio ancho (--sn-poem-width, abajo). Mono no tiene eje de ancho →
 	   font-stretch lo ignora sin daño. Sube a 100% para desactivar la
-	   condensación; baja hacia 75% para más densidad. */
+	   condensación; baja para más densidad (sans hasta 75, serif hasta 62.5). */
 	--sn-text-width: 80%;
 
 	/* Verso (<poem>): tratamiento editorial propio, distinto del cuerpo y de
@@ -295,7 +296,8 @@
 	   preferencia de usuario): cambiarlo desparametriza el ajuste al
 	   baseline grid. */
 	--sn-font-scale: 1;
-	--sn-leading: 1.65;
+	--sn-leading: 1.61;
+	--sn-leading-table: 1.305;
 
 	--sn-fs-root:  calc(1rem * var(--sn-font-scale));
 	--sn-fs-xs:    clamp(.72rem, .70rem + .10vw, .78rem);
@@ -313,7 +315,7 @@
 	   (wikitable/smwtable/broadtable Y table.template/.plantilla): 85% de base, ABSOLUTO
 	   (no compone con anidamiento, a diferencia de un `font-size: 80%` relativo).
 	   Tunear aquí cambia todas las tablas a la vez. */
-	--sn-fs-table: calc(var(--sn-fs-base) * .85);
+	--sn-fs-table: calc(var(--sn-fs-base) * .8);
 
 	/* — Baseline grid — la unidad del ritmo vertical es la interlínea del
 	   cuerpo: `--sn-baseline` = fs-base × leading. Escala SOLO con la
@@ -592,21 +594,31 @@
 	--sn-serif-size-adjust: 0.516;
 	font-size-adjust: var(--sn-serif-size-adjust);
 	/* Roboto Serif renderiza más ANCHA y PESADA que IBM Plex Sans al mismo
-	   ajuste. Se angosta el cuerpo serif al wdth más condensado (75%) para
-	   acercar su mancha a la de la sans. El peso (normal y negrita) se afina
-	   abajo. */
-	--sn-text-width: 75%;
+	   ajuste. Se angosta el cuerpo serif al wdth más condensado del woff2
+	   re-instanciado (62.5%, su piso; ver fonts.css) para apretar su mancha
+	   por debajo de lo que llega el sans (que solo baja a 75). El peso (normal
+	   y negrita) se afina abajo. */
+	--sn-text-width: 62.5%;
 }
 /* El monoespaciado (IBM Plex Mono) conserva su propio tamaño en modo serif:
    no se normaliza a la x-height de la sans. */
 :root[data-sn-family="serif"] :is(code, pre, kbd, samp, tt, .mw-code) {
 	font-size-adjust: none;
 }
-/* Serif: cuerpo un punto más fino (380) y negrita proporcionalmente más
-   liviana (600, no 700), para calibrar el contraste normal↔negrita ahora que
-   el cuerpo serif es menos pesado. `:where()` neutraliza la especificidad del
-   selector de familia para NO pisar los pesos propios de las cabeceras. */
-:where(:root[data-sn-family="serif"]) .sn-body { font-weight: 380; }
+/* Serif: cuerpo más fino (350) y negrita proporcionalmente más liviana (600,
+   no 700), para calibrar el contraste normal↔negrita ahora que el cuerpo serif
+   es menos pesado. `:where()` neutraliza la especificidad del selector de
+   familia para NO pisar los pesos propios de las cabeceras.
+   Tracking negativo: encima de la condensación por eje wdth (--sn-text-width
+   en su piso 62.5%, ver arriba) se aprieta el avance — letra y, sobre todo,
+   palabra (la serif abre demasiado los espacios al condensar). En `ex` para
+   que escale con el tamaño de fuente del lector. Solo el cuerpo: cabeceras y
+   citas conservan su avance natural. */
+:where(:root[data-sn-family="serif"]) .sn-body {
+	font-weight: 350;
+	letter-spacing: -0.01ex;
+	word-spacing: -0.13ex;
+}
 :where(:root[data-sn-family="serif"]) .sn-body :is(b, strong) { font-weight: 600; }
 
 /* ── Movimiento: sólo la señal del SO (ya no es preferencia del usuario;

@@ -1203,6 +1203,45 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	margin-inline: calc((100% - 100vw) / 2);
 }
 
+/* ─── Bandas de fondo a sangre lateral (.fondo-N) ───────────────────────
+   Bloque de contenido que va de lado a lado de la hoja (bleed con la MISMA
+   técnica que .full-width: margin-inline negativo = padding lateral del papel)
+   pero con el CONTENIDO de vuelta al ancho de lectura (padding inverso) y una
+   línea base de aire arriba y abajo → la banda mide un nº entero de baselines
+   y no rompe la retícula. Cada variante SOLO cambia el color de fondo, tomado
+   de un token PÁLIDO semántico que voltea claro/oscuro:
+
+     .fondo-ahuesado   hueso claro (papel-400 / tinta-700)
+     .fondo-coral      lavado carmín  (--sn-nova-wash)
+     .fondo-verde      lavado verde   (--sn-ok-wash)
+     .fondo-ambar      lavado ámbar   (--sn-warn-wash)   [rol warn]
+     .fondo-info       lavado info    (--sn-info-wash)   [rol info]
+
+   Combinable con .grilla (el FONDO sangra, la grilla maqueta las columnas
+   dentro del ancho de lectura) y con las clases de contenido. El color se
+   enruta por --sn-fondo para que el comportamiento viva en un solo lugar.
+   Uso: <div class="fondo-verde"> … </div> o <div class="fondo-coral grilla cols-3"> … </div>. */
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) {
+	display: block;
+	background: var(--sn-fondo, var(--sn-paper-edge));
+	color: var(--sn-ink);
+	width: auto;
+	max-width: none;
+	margin-inline: calc(-1 * var(--sn-paper-px));
+	padding-inline: var(--sn-paper-px);
+	padding-block: var(--sn-baseline);
+	margin-block: var(--sn-baseline);
+}
+:is(.sn-paper, .sn-canvas) .fondo-ahuesado { --sn-fondo: light-dark(var(--sn-papel-400), var(--sn-tinta-700)); }
+:is(.sn-paper, .sn-canvas) .fondo-coral { --sn-fondo: var(--sn-nova-wash); }
+:is(.sn-paper, .sn-canvas) .fondo-verde { --sn-fondo: var(--sn-ok-wash); }
+:is(.sn-paper, .sn-canvas) .fondo-ambar { --sn-fondo: var(--sn-warn-wash); }
+:is(.sn-paper, .sn-canvas) .fondo-info  { --sn-fondo: var(--sn-info-wash); }
+/* El aire vertical lo da el padding de la banda; el margen del primer/último
+   hijo interno sobra y descuadraría los bordes. */
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) > :first-child { margin-top: 0; }
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) > :last-child  { margin-bottom: 0; }
+
 /* El skin DECRETA que <canvas> e <iframe> embebidos (p5.js, widgets como
    {{#widget:P5js}} que incrustan un sitio externo, lienzos experimentales)
    NO llevan borde, outline NI box-shadow — ni en foco. Se neutraliza
@@ -2707,16 +2746,39 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 
    Texto sobre relleno = `--sn-nova-ink`: voltea solo (blanco en claro,
    casi-negro en oscuro) y sirve a las tres variantes porque los tres
-   rellenos (ink-soft, nova, ok) son oscuros en claro y claros en oscuro. */
+   rellenos (ink-soft, nova, ok) son oscuros en claro y claros en oscuro.
+
+   ROBUSTEZ: el color del texto al hover se fija en el BOTÓN mismo
+   (`.wiki-btn:hover { color }`), no en un `<a>` hijo. Así funciona en los
+   TRES usos reales: (1) span que envuelve un enlace `[[…]]`, donde el `<a>`
+   hereda el color por `color: inherit`; (2) span SIN enlace —p. ej. un
+   toggle `mw-customtoggle-* link-toggle wiki-btn`— cuyo texto va suelto en
+   el span; y (3) la clase aplicada directo a un `<a>`. Antes el volteo a
+   blanco colgaba de `.wiki-btn:hover a`, así que el caso (2) quedaba con
+   texto del color de la variante sobre su mismo relleno (ilegible). Cada
+   variante repite el color en su `:hover` porque `.wiki-btn.red/.green`
+   (base, 0,3,0) empata en especificidad al `:hover` genérico y le ganaría
+   por orden. */
 .sn-body .wiki-btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	padding: 1ex 1.5ex;
+	/* ON-GRID: alto EXACTO de una línea base (--sn-baseline = fs-base ×
+	   leading = el alto del renglón del cuerpo). Como el botón mide lo mismo
+	   que la línea que lo contiene, NO engorda el renglón ni desplaza la
+	   grilla, esté suelto o en medio de un párrafo. El relleno es SOLO
+	   horizontal → el alto interior es idéntico en los tres usos (span+enlace,
+	   span suelto, <a> directo); el vertical lo fija `height`, no el padding.
+	   box-sizing:border-box (global) mete el borde de 1px dentro del alto. */
+	height: var(--sn-baseline);
+	padding: 0 1.5ex;
+	line-height: 1;
+	vertical-align: middle;
 	border-radius: 2ex;
 	border: 1px solid var(--sn-ink-soft);
 	background-color: transparent;
 	color: var(--sn-ink-soft);
+	font-weight: 700;
 	white-space: nowrap;
 	text-decoration: none;
 	cursor: pointer;
@@ -2726,10 +2788,11 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body .wiki-btn:focus-within {
 	background-color: var(--sn-ink-soft);
 	border-color: var(--sn-ink-soft);
+	color: var(--sn-nova-ink);
 }
 .sn-body .wiki-btn a {
 	font-weight: 700;
-	line-height: 90%;
+	line-height: 1;                 /* homologa con el texto suelto del span (el alto lo fija el botón) */
 	color: inherit !important;
 	text-decoration: none !important;
 	white-space: nowrap;
@@ -2740,13 +2803,11 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	display: inline-block;
 	transition: text-shadow .2s ease-in-out;
 }
+.sn-body .wiki-btn:hover a,
+.sn-body .wiki-btn:focus-within a,
 .sn-body .wiki-btn a:hover,
 .sn-body .wiki-btn a:focus {
 	text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-}
-.sn-body .wiki-btn:hover a,
-.sn-body .wiki-btn:focus-within a {
-	color: var(--sn-nova-ink) !important;
 }
 /* Variante roja (la nova del skin). */
 .sn-body .wiki-btn.red {
@@ -2757,6 +2818,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body .wiki-btn.red:focus-within {
 	background-color: var(--sn-nova);
 	border-color: var(--sn-nova);
+	color: var(--sn-nova-ink);
 }
 /* Variante verde (token de éxito). */
 .sn-body .wiki-btn.green {
@@ -2767,6 +2829,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body .wiki-btn.green:focus-within {
 	background-color: var(--sn-ok);
 	border-color: var(--sn-ok);
+	color: var(--sn-nova-ink);
 }
 
 /* ─── Grilla / grid: framework de layout semántico para wikitexto.
@@ -2798,11 +2861,31 @@ details[open]::details-content { block-size: auto; opacity: 1; }
    (tablet vertical) todas caen a una sola columna — las asimétricas
    cols1-2 / cols2-1 también colapsan a una columna ahí. */
 .sn-body :is(.grid, .grilla) {
-	--sn-grid-gap: var(--sn-s-5);   /* default generoso (1.5rem); gap-s/m/l ajustan */
+	--sn-grid-gap: var(--sn-s-5);   /* default generoso (1.5rem), común a ambos ejes; gap-s/m/l lo ajustan */
+	/* Gaps por EJE: por defecto ambos siguen a --sn-grid-gap; las clases
+	   gap-h-N y gap-v-N los separan. horizontal (gap-h) = espacio entre
+	   COLUMNAS (dentro de la fila); vertical (gap-v) = espacio entre FILAS.
+	   En `gap` el 1.er valor es row-gap (vertical) y el 2.º column-gap
+	   (horizontal). */
+	--sn-grid-gap-h: var(--sn-grid-gap);
+	--sn-grid-gap-v: var(--sn-grid-gap);
 	display: grid;
-	gap: var(--sn-grid-gap);
-	margin: var(--sn-s-4) 0;
+	gap: var(--sn-grid-gap-v) var(--sn-grid-gap-h);
+	/* margin-block (longhand), NO el shorthand `margin`: el shorthand fijaba
+	   margin-inline:0 y, al combinar `.grilla` con una banda `.fondo-*`, borraba
+	   el bleed lateral (margin-inline negativo) de la banda. Con el longhand la
+	   grilla sólo toca el eje de bloque y respeta el sangrado. */
+	margin-block: var(--sn-s-4);
 }
+/* Robustez ante el <p> de MediaWiki: cuando el contenido de la grilla es una
+   SECUENCIA INLINE (varios <span class="wiki-btn">, [[enlaces]], texto…),
+   el parser lo envuelve TODO en un único <p>, que pasa a ser la sola celda de
+   la grilla → colapsa el layout (una fila, sin efecto de cols-N ni gap-N). Si ese
+   <p> es el único hijo, lo hacemos `display: contents`: su caja desaparece y
+   sus hijos (los spans/enlaces) se vuelven las celdas REALES de la grilla, así
+   cols-auto y gap-h/gap-v vuelven a funcionar. No afecta a las grillas cuyos
+   hijos ya son bloques (divs, figuras, fichas): ahí no hay un <p>:only-child. */
+.sn-body :is(.grid, .grilla) > p:only-child { display: contents; }
 .sn-body :is(.grid, .grilla).cols-1 { grid-template-columns: minmax(0, 1fr); }
 .sn-body :is(.grid, .grilla).cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sn-body :is(.grid, .grilla).cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -2817,11 +2900,25 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body :is(.grid, .grilla).cols1-2 { grid-template-columns: 1fr 2fr; }
 .sn-body :is(.grid, .grilla).cols2-1 { grid-template-columns: 2fr 1fr; }
 
-/* Espaciado entre celdas (override del default --sn-s-5). */
+/* Espaciado entre celdas, AMBOS ejes (override del default --sn-s-5). */
 .sn-body :is(.grid, .grilla).gap-0 { --sn-grid-gap: 0; }
 .sn-body :is(.grid, .grilla).gap-s { --sn-grid-gap: var(--sn-s-2); }
 .sn-body :is(.grid, .grilla).gap-m { --sn-grid-gap: var(--sn-s-4); }
 .sn-body :is(.grid, .grilla).gap-l { --sn-grid-gap: var(--sn-s-6); }
+
+/* Gap por EJE (override del común). Se combinan entre sí y con gap-*:
+   p.ej. `grid cols-3 gap-h-s gap-v-l` = columnas juntas, filas aireadas.
+     · gap-h-* = horizontal, entre COLUMNAS (dentro de cada fila)
+     · gap-v-* = vertical,   entre FILAS
+   Misma escala 0/s/m/l que gap-*. */
+.sn-body :is(.grid, .grilla).gap-h-0 { --sn-grid-gap-h: 0; }
+.sn-body :is(.grid, .grilla).gap-h-s { --sn-grid-gap-h: var(--sn-s-2); }
+.sn-body :is(.grid, .grilla).gap-h-m { --sn-grid-gap-h: var(--sn-s-4); }
+.sn-body :is(.grid, .grilla).gap-h-l { --sn-grid-gap-h: var(--sn-s-6); }
+.sn-body :is(.grid, .grilla).gap-v-0 { --sn-grid-gap-v: 0; }
+.sn-body :is(.grid, .grilla).gap-v-s { --sn-grid-gap-v: var(--sn-s-2); }
+.sn-body :is(.grid, .grilla).gap-v-m { --sn-grid-gap-v: var(--sn-s-4); }
+.sn-body :is(.grid, .grilla).gap-v-l { --sn-grid-gap-v: var(--sn-s-6); }
 
 /* Flujo vertical (column-major): los elementos LLENAN cada columna de
    arriba abajo y al terminarla saltan a la siguiente, en vez de ir por
@@ -2837,7 +2934,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .sn-body :is(.grid, .grilla).flujo-v {
 	display: block;
 	column-count: 2;
-	column-gap: var(--sn-grid-gap);
+	column-gap: var(--sn-grid-gap-h);   /* la separación entre columnas sigue al eje horizontal */
 }
 .sn-body :is(.grid, .grilla).flujo-v.cols-1 { column-count: 1; }
 .sn-body :is(.grid, .grilla).flujo-v.cols-2 { column-count: 2; }
