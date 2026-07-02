@@ -57,6 +57,19 @@
 	-webkit-overflow-scrolling: touch;
 }
 
+/* Paréntesis de campos extra en listas #ask (format=list/ul/ol) ─────────
+   La i18n española de SMW define `smw-format-list-other-fields-open` como
+   "(" SIN espacio previo (el inglés trae " ("), así que el paréntesis de los
+   campos entre paréntesis queda pegado al título del resultado:
+   «Título(Autor: valor)». Reponemos el espacio tras el primer campo de la
+   fila. El `:not(:last-child)` lo limita a filas que SÍ traen campos extra
+   (en listas de una sola columna el primer campo es el único → no se toca,
+   evitando un espacio espurio antes del separador de ítems). Cubre valores
+   con enlace y de texto plano por igual. */
+.smw-format .smw-row > .smw-field:first-child:not(:last-child)::after {
+	content: " ";
+}
+
 /* Listas de columnas (#ask format=ul/ol con columnas) */
 .smw-columnlist-container { column-gap: var(--sn-s-6); }
 .smw-column { break-inside: avoid; }
