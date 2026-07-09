@@ -846,7 +846,7 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 }
 .sn-body :is(h4, .mw-heading4) {
 	font-size: var(--sn-fs-md);
-	margin: var(--sn-baseline) 0 0; font-weight: 600;
+	margin: var(--sn-baseline) 0 var(--sn-baseline); font-weight: 600;
 }
 .sn-body :is(h5, .mw-heading5) {
 	font-size: var(--sn-fs-base);
@@ -1221,7 +1221,7 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
    dentro del ancho de lectura) y con las clases de contenido. El color se
    enruta por --sn-fondo para que el comportamiento viva en un solo lugar.
    Uso: <div class="fondo-verde"> … </div> o <div class="fondo-coral grilla cols-3"> … </div>. */
-:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) {
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info, .fondo-noche, .fondo-dia, .fondo-opuesto) {
 	display: block;
 	background: var(--sn-fondo, var(--sn-paper-edge));
 	color: var(--sn-ink);
@@ -1237,10 +1237,70 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 :is(.sn-paper, .sn-canvas) .fondo-verde { --sn-fondo: var(--sn-ok-wash); }
 :is(.sn-paper, .sn-canvas) .fondo-ambar { --sn-fondo: var(--sn-warn-wash); }
 :is(.sn-paper, .sn-canvas) .fondo-info  { --sn-fondo: var(--sn-info-wash); }
+
+/* ── Bandas que INVIERTEN el tema — color-scheme local ──────────────────
+   El tema se conduce por `color-scheme` + light-dark(): redeclarar
+   `color-scheme` en un contenedor hace que TODOS los tokens light-dark() de
+   su subárbol resuelvan al esquema opuesto, arrastrando texto, enlaces,
+   tablas y fichas al voltear. El fondo de la banda es el papel del esquema
+   contrario (`--sn-paper`, ya volteado). Como light-dark() solo interpola
+   COLOR, se reponen a mano los cinco tokens NO-color que varían por tema
+   (grano, las tres sombras y el grado serif) — los mismos que sobrescribe el
+   conmutador en tokens.css — y se re-declara font-variation-settings para que
+   el grado acompañe a la serif DENTRO de la banda (la propiedad se hereda ya
+   sustituida desde :root; sin re-declararla el grado no voltearía).
+
+     .fondo-noche    fuerza OSCURO (sea cual sea el tema de la página)
+     .fondo-dia      fuerza CLARO
+     .fondo-opuesto  invierte respecto al tema VIGENTE de la página
+   Uso: <div class="fondo-opuesto"> … </div> (combinable con .grilla y las
+   clases de contenido, igual que el resto de la familia .fondo-*). */
+:is(.sn-paper, .sn-canvas) :is(.fondo-noche, .fondo-dia, .fondo-opuesto) {
+	--sn-fondo: var(--sn-paper);
+}
+
+/* Objetivo OSCURO: .fondo-noche siempre; .fondo-opuesto cuando la página
+   está en claro (forzado, o auto sin preferencia oscura del SO). */
+.fondo-noche,
+:root[data-sn-theme="light"] .fondo-opuesto,
+:root[data-sn-theme="auto"]  .fondo-opuesto {
+	color-scheme: dark;
+	--sn-field-grain: .05;
+	--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
+	--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+	--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
+	--sn-serif-grade: 30;
+	font-variation-settings: "GRAD" var(--sn-serif-grade);
+}
+
+/* Objetivo CLARO: .fondo-dia siempre; .fondo-opuesto cuando la página está
+   en oscuro forzado (el caso auto+SO-oscuro se resuelve en la media de abajo,
+   que gana por orden a igual especificidad — mismo patrón que tokens.css). */
+.fondo-dia,
+:root[data-sn-theme="dark"] .fondo-opuesto {
+	color-scheme: light;
+	--sn-field-grain: .035;
+	--sn-lift-paper: 0 1px 1px rgba(40,33,20,.03), 0 3px 8px rgba(40,33,20,.04);
+	--sn-lift:       0 1px 2px rgba(40,33,20,.05), 0 8px 24px rgba(40,33,20,.08);
+	--sn-lift-soft:  0 2px 8px rgba(40,33,20,.05);
+	--sn-serif-grade: 70;
+	font-variation-settings: "GRAD" var(--sn-serif-grade);
+}
+@media (prefers-color-scheme: dark) {
+	:root[data-sn-theme="auto"] .fondo-opuesto {
+		color-scheme: light;
+		--sn-field-grain: .035;
+		--sn-lift-paper: 0 1px 1px rgba(40,33,20,.03), 0 3px 8px rgba(40,33,20,.04);
+		--sn-lift:       0 1px 2px rgba(40,33,20,.05), 0 8px 24px rgba(40,33,20,.08);
+		--sn-lift-soft:  0 2px 8px rgba(40,33,20,.05);
+		--sn-serif-grade: 70;
+		font-variation-settings: "GRAD" var(--sn-serif-grade);
+	}
+}
 /* El aire vertical lo da el padding de la banda; el margen del primer/último
    hijo interno sobra y descuadraría los bordes. */
-:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) > :first-child { margin-top: 0; }
-:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info) > :last-child  { margin-bottom: 0; }
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info, .fondo-noche, .fondo-dia, .fondo-opuesto) > :first-child { margin-top: 0; }
+:is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info, .fondo-noche, .fondo-dia, .fondo-opuesto) > :last-child  { margin-bottom: 0; }
 
 /* El skin DECRETA que <canvas> e <iframe> embebidos (p5.js, widgets como
    {{#widget:P5js}} que incrustan un sitio externo, lienzos experimentales)
@@ -1364,23 +1424,30 @@ canvas, iframe,
 .sn-body .toc, .mw-parser-output .toc {
 	display: block;            /* full-width: ocupa el 100% de la hoja */
 	width: 100%;
-	margin: var(--sn-s-4) 0 var(--sn-s-6);
-	border: 1px solid var(--sn-hairline-soft);
+	/* Todas las medidas verticales son múltiplos de --sn-baseline para caer en
+	   la retícula, incluso al maquetar el TOC en columnas junto a párrafos. El
+	   "borde" va por box-shadow inset: pinta como un hairline pero NO ocupa
+	   layout, así la caja mide un nº ENTERO de baselines y el colapso de
+	   márgenes con los bloques vecinos no la desalinea (un border de 1px la
+	   corría medio píxel por lado y acumulaba drift). */
+	margin: var(--sn-baseline) 0;
 	border-radius: var(--sn-radius);
 	background: color-mix(in oklab, var(--sn-sunk) 60%, transparent);
-	padding: 0 0 var(--sn-s-3);
+	box-shadow: inset 0 0 0 1px var(--sn-hairline-soft);
+	padding: 0 0 var(--sn-baseline);
 	font-size: var(--sn-fs-sm);
 }
 .sn-body .toc .toctitle {
 	display: flex; align-items: center; justify-content: space-between;
 	gap: var(--sn-s-3);
-	padding: var(--sn-s-3) var(--sn-s-4) var(--sn-s-2);
+	padding: 0 var(--sn-s-4);          /* vertical 0: la barra mide 1 baseline por min-height */
+	min-height: var(--sn-baseline);
 	text-align: left;
 }
 .sn-body .toc .toctitle :is(h2, h3) {
 	margin: 0; padding: 0; border: 0; font-family: var(--sn-font-text);
 	font-size: var(--sn-fs-sm); font-weight: 600;
-	line-height: 1;
+	line-height: var(--sn-baseline);
 	letter-spacing: 0;
 	color: var(--sn-ink-soft);
 }
@@ -1419,13 +1486,10 @@ canvas, iframe,
 	transform: rotate(-45deg); margin-top: .1rem;
 }
 .sn-body .toc .toctogglecheckbox:checked ~ ul { display: none; }
-/* Colapsado: el contenedor `.toc` deja de aportar su `padding-bottom`
-   (no hay lista que separar) y el `.toctitle` iguala su padding inferior
-   al superior para que la caja quede simétrica arriba/abajo. */
+/* Colapsado: sin lista que separar, la caja suelta su `padding-bottom` y queda
+   la barra de título (1 baseline) — la caja sigue midiendo un nº entero de
+   baselines. */
 .sn-body .toc:has(.toctogglecheckbox:checked) { padding-bottom: 0; }
-.sn-body .toc:has(.toctogglecheckbox:checked) .toctitle {
-	padding-bottom: var(--sn-s-3);
-}
 .sn-body .toc .toctogglecheckbox:focus-visible ~ .toctitle .toctogglelabel {
 	outline: 2px solid var(--sn-nova); outline-offset: 2px;
 }
@@ -1438,7 +1502,8 @@ canvas, iframe,
 }
 .sn-body .toc li { margin: 0; }
 .sn-body .toc li a {
-	display: flex; gap: var(--sn-s-2); padding: .24rem 0;
+	display: flex; gap: var(--sn-s-2); padding: 0;
+	line-height: var(--sn-baseline);   /* cada fila = 1 baseline exacto (era .24rem 0 → drift acumulado) */
 	color: var(--sn-ink-soft); text-decoration: none;
 }
 .sn-body .toc li a:hover { color: var(--sn-ink); }

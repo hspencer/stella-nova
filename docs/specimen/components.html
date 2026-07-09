@@ -876,6 +876,11 @@ El skin lo envuelve en:
 &lt;div class="fondo-ambar"&gt;…&lt;/div&gt;
 &lt;div class="fondo-info"&gt;…&lt;/div&gt;
 
+&lt;!-- invierten el tema del bloque entero --&gt;
+&lt;div class="fondo-noche"&gt;…&lt;/div&gt;
+&lt;div class="fondo-dia"&gt;…&lt;/div&gt;
+&lt;div class="fondo-opuesto"&gt;…&lt;/div&gt;
+
 &lt;!-- con grilla: el fondo sangra,
      las columnas maquetan dentro --&gt;
 &lt;div class="fondo-coral grilla cols-3"&gt;
@@ -895,6 +900,13 @@ El skin lo envuelve en:
           <div><strong>Punto de vista</strong><br>columna 2</div>
           <div><strong>Acontecer</strong><br>columna 3</div>
         </div>
+        <p>Y tres bandas que <strong>invierten el tema</strong> del bloque
+        entero (no sólo el fondo): aprovechan que el skin conmuta con
+        <code>color-scheme</code>, así que texto, enlaces y tablas se redibujan
+        en el esquema contrario.</p>
+        <div class="fondo-opuesto"><p><code>fondo-opuesto</code> — el tema <em>contrario</em> al de la página (día↔noche). <a href="#">Un enlace</a> para ver el color invertido.</p></div>
+        <div class="fondo-noche"><p><code>fondo-noche</code> — fuerza <strong>oscuro</strong> siempre. <a href="#">Un enlace</a>.</p></div>
+        <div class="fondo-dia"><p><code>fondo-dia</code> — fuerza <strong>claro</strong> siempre. <a href="#">Un enlace</a>.</p></div>
       </div>
     </div>
   </div>
@@ -905,7 +917,11 @@ El skin lo envuelve en:
     <code>.sn-paper</code> / <code>.sn-canvas</code>. Al combinar con
     <code>.grilla</code>, la grilla usa <code>margin-block</code> (no el
     shorthand <code>margin</code>) para no pisar el sangrado lateral de la
-    banda.</p>
+    banda. Las variantes <code>fondo-noche</code>/<code>fondo-dia</code>/<code>fondo-opuesto</code>
+    redeclaran <code>color-scheme</code> en el bloque: como el tema del skin se
+    conduce por <code>color-scheme</code> + <code>light-dark()</code>, todo el
+    subárbol resuelve al esquema opuesto (se reponen a mano los cinco tokens
+    no-color que <code>light-dark()</code> no cubre: grano, sombras y grado serif).</p>
   </div>
 </section>
 

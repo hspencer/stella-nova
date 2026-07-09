@@ -146,6 +146,16 @@ pálido semántico** que voltea con el tema:
 | `fondo-ambar` | lavado ámbar (`--sn-warn-wash`) — rol *warn* |
 | `fondo-info` | lavado info (`--sn-info-wash`) |
 
+Y tres bandas que **invierten el tema** de todo lo que contienen (aprovechan
+que el skin conmuta claro/oscuro con `color-scheme`): el bloque completo —
+texto, enlaces, tablas, fichas — se dibuja con el esquema contrario.
+
+| Clase | Efecto |
+|---|---|
+| `fondo-noche` | fuerza **oscuro**, sea cual sea el tema de la página |
+| `fondo-dia` | fuerza **claro** |
+| `fondo-opuesto` | **invierte** respecto al tema vigente (si la página está en noche → el bloque en día, y viceversa) |
+
 ```wiki
 <div class="fondo-verde">
 Un bloque destacado, a sangre lateral pero con el texto legible.
@@ -154,10 +164,16 @@ Un bloque destacado, a sangre lateral pero con el texto legible.
 <div class="fondo-coral grilla cols-3">
 … tres columnas: el fondo sangra, la grilla maqueta dentro …
 </div>
+
+<div class="fondo-opuesto">
+Este bloque se ve en el tema contrario al de la página (día↔noche).
+</div>
 ```
 
 **Consecuencias:**
-- **Voltea con el tema** sola (los lavados son semánticos, no literales).
+- **Voltea con el tema** sola (los lavados son semánticos, no literales); las
+  variantes `fondo-noche`/`fondo-dia`/`fondo-opuesto` **redefinen el esquema**
+  del bloque, así que su contenido entero (no sólo el fondo) cambia de tema.
 - Añade una línea base de aire arriba y abajo; el alto es un múltiplo entero de
   `--sn-baseline`, así que **no rompe la retícula**.
 - Sólo sangra dentro de `.sn-paper` / `.sn-canvas`.
