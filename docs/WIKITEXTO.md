@@ -308,8 +308,9 @@ recorte).
 
 Clase estándar de MediaWiki. Stella Nova la respeta en `print.css`:
 cualquier elemento con `class=noprint` desaparece al imprimir o
-exportar a PDF (vía la extensión Mpdf). Útil para banners, botones,
-módulos interactivos que no tienen sentido en papel.
+exportar a PDF (la previsualización Vivliostyle del skin, que honra
+`print.css`; la vieja extensión Mpdf fue descartada). Útil para banners,
+botones, módulos interactivos que no tienen sentido en papel.
 
 ### `sn-notice` — aviso destacado
 
@@ -346,6 +347,39 @@ un `<a>`. El volteo del texto no depende de que haya un enlace dentro. El alto e
 **exacto de una línea base**, con relleno solo horizontal, así que el interior
 calza igual en los tres casos y no rompe la retícula. Debe vivir dentro de
 `.sn-body`.
+
+### `fw-*` — ancho de fuente (font-stretch)
+
+Condensan (o normalizan) el texto por el eje `wdth` de las fuentes variables
+del skin. Existen **porque el sanitizador de TemplateStyles no acepta
+`font-stretch: <porcentaje>`** (solo palabras clave), así que una plantilla no
+puede condensar por porcentaje en su propio `styles.css`. La skin no está
+sanitizada: expone el ancho como clase y el editor nunca escribe `font-stretch`
+en CSS sanitizado.
+
+```wiki
+<span class="fw-90">Texto condensado al 90%</span>
+
+<div class="fw-85">
+Un bloque entero: el ancho se hereda a los párrafos internos.
+</div>
+```
+
+`fw-NN` = `font-stretch: NN%`. Disponibles: `fw-100` `fw-95` `fw-90` `fw-85`
+`fw-80`.
+
+**Consecuencias:**
+- **Rango 80–100.** El cuerpo ya corre condensado a `--sn-text-width` (**80%**),
+  que es el **piso por diseño** (más apretado deja de leerse bien): `fw-80` = el
+  cuerpo, `fw-100` devuelve el texto a ancho normal, los pasos intermedios
+  relajan la condensación. No hay `fw-` por debajo de 80.
+- `font-stretch` **hereda**: puesta en un `<div>`, el ancho fluye a los `<p>`,
+  `<li>` y leyendas internos. Las cabeceras conservan su ancho normal.
+- **Ortogonales**: se combinan con los demás helpers
+  (`class="lg serif fw-90"`).
+- Para un ancho por fuera de la escala (p. ej. un titular serif más apretado),
+  la plantilla puede escribir `font-stretch: var(--tu-prop)` en su `styles.css`:
+  `var()` sí pasa el sanitizador (aunque el porcentaje literal no).
 
 ### Clases tipográficas de contenido (viven en `MediaWiki:Common.css`)
 

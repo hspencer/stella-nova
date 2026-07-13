@@ -754,6 +754,27 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
    fichas, figuras— vive dentro de ella al 100 %. (Las imágenes `.full-width`
    son la única excepción: sangran hasta --sn-shell con margen negativo.) */
 
+/* Helpers de ANCHO de fuente (eje wdth) — clases opt-in desde wikitexto o
+   plantillas. Razón de existir: el sanitizador de TemplateStyles (css-sanitizer)
+   NO acepta `font-stretch: <porcentaje>` (solo palabras clave), así que una
+   plantilla no puede condensar por porcentaje en su propio styles.css. La skin
+   NO está sanitizada, así que expone el ancho como clase: el editor escribe
+   `class="fw-90"` y nunca toca `font-stretch` en CSS sanitizado.
+   `fw-NN` = font-stretch NN%. Rango 80–100: 80% es el ANCHO CONDENSADO DEL
+   CUERPO (--sn-text-width) y el piso por diseño (más apretado deja de leerse
+   bien), así que fw-80 = cuerpo, fw-100 lo devuelve a ancho normal y los pasos
+   intermedios relajan la condensación. font-stretch HEREDA → puesta en un
+   contenedor, el ancho fluye a los <p>/<li>/leyendas internos; las cabeceras
+   conservan su reset a 100%. Ortogonales: se combinan con los helpers
+   tipográficos (`class="lg serif fw-90"`). Para un ancho fuera de esta escala,
+   la plantilla puede usar `font-stretch: var(--tu-prop)` (var() sí pasa el
+   sanitizador). */
+.sn-body .fw-100 { font-stretch: 100%; }
+.sn-body .fw-95  { font-stretch: 95%; }
+.sn-body .fw-90  { font-stretch: 90%; }
+.sn-body .fw-85  { font-stretch: 85%; }
+.sn-body .fw-80  { font-stretch: 80%; }
+
 /* Títulos en IBM Plex Sans (familia única para todas las cabeceras). h1–h2
    son la voz editorial sobria; h3 es la subsección en color nova; h4–h6
    son labels secundarios. line-heights y márgenes son múltiplos enteros
@@ -1433,7 +1454,11 @@ canvas, iframe,
 	margin: var(--sn-baseline) 0;
 	border-radius: var(--sn-radius);
 	background: color-mix(in oklab, var(--sn-sunk) 60%, transparent);
-	box-shadow: inset 0 0 0 1px var(--sn-hairline-soft);
+	/* El filete va a media opacidad: al ser un rectángulo cerrado de 4 lados
+	   destaca más que un hairline suelto; en oscuro el tinta-650 sobre el
+	   fondo hundido leía como una línea brillante. Mezclado con transparente
+	   se acerca al relleno y queda discreto en ambos temas. */
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sn-hairline-soft) 55%, transparent);
 	padding: 0 0 var(--sn-baseline);
 	font-size: var(--sn-fs-sm);
 }
@@ -2799,6 +2824,18 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 }
 .sn-body :is(.mw-changeslist-legend, .mw-specialpages-notes) dl {
 	margin: var(--sn-s-2) 0 0;
+}
+
+/* Historial de página: el core (mediawiki.action.history.styles) marca las
+   revisiones elegidas para el diff con `background-color:
+   @background-color-neutral-subtle` + `color: @color-base` + `outline: 1px
+   dashed #a2a9b1`, todos horneados a hex CLARO desde LESS skin-variables → en
+   oscuro la fila queda clara e ilegible. Se revisten con tokens que voltean.
+   El id `#pagehistory` da specificity de sobra; con `.sn-body` delante gana. */
+.sn-body #pagehistory li.selected {
+	background: var(--sn-sunk);
+	color: var(--sn-ink);
+	outline: 1px dashed var(--sn-hairline);
 }
 
 /* ─── Botones de wikitexto (.wiki-btn) — portados de MediaWiki:Common.css ───

@@ -1,0 +1,30 @@
+/* ============================================================
+ * skinStyles/rcfilters.css — Stella Nova
+ * Override para +mediawiki.rcfilters.filters.ui (filtros de CambiosRecientes
+ * y Lista de Seguimiento).
+ *
+ * El panel "Filtros activos" es `.oo-ui-tagMultiselectWidget-handle`, que el
+ * módulo pinta con `background-color: @background-color-interactive-subtle`
+ * horneado a #f8f9fa (claro) → CAJA BLANCA en oscuro. Los menús desplegables
+ * de filtros usan @background-color-neutral-subtle, igual horneado. Como son
+ * hex horneados (no var()), el remapeo de custom-properties del skin no los
+ * alcanza; hay que revestir los selectores. Prefijo `.skin-stellanova`
+ * (en <body>) para ganar por especificidad. Ver [[skinstyles-cascade-gotcha]].
+ * ============================================================ */
+
+/* Caja de filtros activos (el "handle" del tag-multiselect). */
+.skin-stellanova .mw-rcfilters-ui-filterTagMultiselectWidget.oo-ui-widget-enabled .oo-ui-tagMultiselectWidget-handle {
+	background-color: var(--sn-sunk);
+	border-color: var(--sn-hairline);
+}
+
+/* Menús desplegables de filtros (al abrir el buscador de filtros) y su cabecera. */
+.skin-stellanova .mw-rcfilters-ui-menuSelectWidget,
+.skin-stellanova .mw-rcfilters-ui-filterMenuHeaderWidget,
+.skin-stellanova .mw-rcfilters-ui-filterMenuOptionWidget {
+	background-color: var(--sn-paper);
+	border-color: var(--sn-hairline);
+}
+.skin-stellanova .mw-rcfilters-ui-filterMenuOptionWidget.oo-ui-optionWidget-highlighted {
+	background-color: var(--sn-sunk);
+}

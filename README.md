@@ -127,8 +127,8 @@ orden: `skin.json` (qué declara) → `skin.mustache` (qué emite) →
 - **[`docs/WIKITEXTO.md`](docs/WIKITEXTO.md)** — guía editorial para
   quien escribe páginas: palabras mágicas del skin
   (`__PANTALLACOMPLETA__`) y clases CSS opt-in disponibles desde
-  wikitexto (`full-width`, `grilla` + `cols-N`, `plantilla`,
-  `img-circle`, `noprint`, `sn-notice`).
+  wikitexto (`full-width`, `fondo-*`, `grilla` + `cols-N`, `plantilla`,
+  `img-circle`, `wiki-btn`, `fw-*`, `noprint`, `sn-notice`).
 - **[`specs/stella-nova.allium`](specs/stella-nova.allium)** —
   especificación de comportamiento (Allium): resolución de
   preferencias, chrome administrable desde el namespace `Stella-Nova`,

@@ -508,3 +508,67 @@ pre code { background: transparent; padding: 0; }
 	text-transform: uppercase; font-weight: 500; letter-spacing: .08ex; margin: 0;
 }
 .mw-parser-output .ficha-personal > .bio > span.text { font-size: var(--sn-fs-xs); }
+
+/* === Documento miniatura .dm (espejo de Plantilla:Documento miniatura/styles.css)
+   Tarjeta de una fila: título enlazado + pie (autor · año) + guía. Se apila en
+   columna larga desde un #ask que lista documentos/proyectos. Cada texto corre a
+   `line-height: var(--sn-baseline)` (una línea base), y el relleno vertical usa
+   `--sn-baseline-half` a cada lado → suma UNA línea base, así la tarjeta cierra en
+   un número entero de baselines y una columna no acumula desfase. Es el consumidor
+   canónico del token. NOTA DE SINCRONÍA: la plantilla viva aún usa
+   `padding: var(--sn-s-3)` (la aproximación); el espécimen muestra el estado
+   objetivo tras migrar a `--sn-baseline-half` (ver docs/tokens.css regla 4). */
+.mw-parser-output .dm {
+	position: relative;
+	padding: var(--sn-baseline-half) var(--sn-s-3);
+	box-shadow: inset 0 .5px 0 var(--sn-ink-faint);
+	background-color: transparent;
+	transition: background-color .6s ease;
+}
+.mw-parser-output .dm:hover { background-color: var(--sn-nova-wash); }
+.mw-parser-output .dm-titulo { line-height: var(--sn-baseline); }
+.mw-parser-output .dm-titulo a { color: var(--sn-ink); text-decoration: none; }
+/* Stretched link: toda la tarjeta enlaza a su página. */
+.mw-parser-output .dm-titulo a::after { content: ""; position: absolute; inset: 0; }
+.mw-parser-output .dm:hover .dm-titulo a { color: var(--sn-nova); }
+.mw-parser-output .dm-pie {
+	display: flex; justify-content: space-between; align-items: baseline;
+	gap: var(--sn-s-2); line-height: var(--sn-baseline);
+	font-size: .82em; color: var(--sn-ink-faint);
+}
+.mw-parser-output .dm-autor { min-width: 0; font-size: var(--sn-fs-xs); }
+.mw-parser-output .dm-autor a { color: inherit; text-decoration: none; }
+.mw-parser-output .dm-anio { white-space: nowrap; font-variant-numeric: tabular-nums; align-self: end; }
+.mw-parser-output .dm-guia { line-height: var(--sn-baseline); font-size: var(--sn-fs-xs); color: var(--sn-ink-faint); }
+.mw-parser-output .dm-guia-etq { text-transform: uppercase; letter-spacing: .04em; font-size: .85em; opacity: .75; }
+.mw-parser-output .dm-guia a { color: inherit; text-decoration: none; }
+
+/* === Listado de Cursos .curso-listado (espejo de Plantilla:Listado de Cursos/style.css)
+   Hermana de .dm para cursos: h4 enlazado + profesores (itálica) + alumnos. Mismo
+   contrato de retícula: textos a `--sn-baseline` y relleno vertical
+   `--sn-baseline-half` para cerrar en baselines enteras. Misma nota de sincronía
+   que .dm (la plantilla viva aún usa `--sn-s-3`). */
+.mw-parser-output .curso-listado {
+	position: relative; margin: 0;
+	padding: var(--sn-baseline-half) var(--sn-s-3);
+	line-height: var(--sn-baseline);
+	background-color: transparent;
+	transition: background-color .6s ease;
+}
+.mw-parser-output .curso-listado:hover { background-color: var(--sn-nova-wash); }
+.mw-parser-output .curso-listado h4 {
+	margin: 0; font-family: var(--sn-font-text); font-weight: 500;
+	font-size: var(--sn-fs-base); line-height: var(--sn-baseline);
+}
+.mw-parser-output .curso-listado h4 a { color: var(--sn-ink); text-decoration: none; }
+.mw-parser-output .curso-listado h4 a::after { content: ""; position: absolute; inset: 0; }
+.mw-parser-output .curso-listado:hover h4 a { color: var(--sn-nova); }
+.mw-parser-output .curso-listado .profesores {
+	font-family: var(--sn-font-text); font-style: italic;
+	font-size: var(--sn-fs-sm); line-height: var(--sn-baseline); color: var(--sn-ink-faint);
+}
+.mw-parser-output .curso-listado .alumnos {
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); line-height: var(--sn-baseline); color: var(--sn-ink-faint);
+}
+.mw-parser-output .curso-listado :is(.profesores, .alumnos) a { color: inherit; text-decoration: none; }

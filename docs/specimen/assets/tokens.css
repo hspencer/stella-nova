@@ -329,10 +329,20 @@
 	        que la altura por línea cae siempre en la retícula.
 	     3. Márgenes verticales de bloque (margin-top / margin-bottom) son
 	        múltiplos enteros de --sn-baseline. El colapso vertical de MW
-	        sigue funcionando porque NO usamos padding-top de compensación. */
-	--sn-baseline:    calc(var(--sn-fs-base) * var(--sn-leading));
-	--sn-baseline-2:  calc(var(--sn-baseline) * 2);
-	--sn-baseline-3:  calc(var(--sn-baseline) * 3);
+	        sigue funcionando porque NO usamos padding-top de compensación.
+	     4. El padding vertical que compensa MEDIA interlínea (p. ej. una
+	        tarjeta que debe cerrar en un número entero de baselines) usa
+	        `--sn-baseline-half`, NUNCA un valor de la escala de espaciado
+	        (--sn-s-*): esa escala es fija en rem y no sigue a
+	        --sn-font-scale, así que aproximarla deriva de la retícula al
+	        cambiar la preferencia FontSize. El submúltiplo se calcula aquí
+	        (calc() está permitido en la skin) y las TemplateStyles de la
+	        wiki lo consumen como var() desnudo — el sanitizador de MW no
+	        admite dividir dentro de calc() ni un fallback en el var(). */
+	--sn-baseline:      calc(var(--sn-fs-base) * var(--sn-leading));
+	--sn-baseline-half: calc(var(--sn-baseline) / 2);  /* media interlínea. Existe para que las TemplateStyles de la wiki cierren cajas (tarjetas) en un número entero de baselines sin dividir dentro de calc() — el sanitizador de MW no lo admite, así que la división ocurre aquí y la plantilla lo consume como var() desnudo. Padding vertical de compensación: usar este token, nunca --sn-s-* (fijo en rem, no sigue a --sn-font-scale). */
+	--sn-baseline-2:    calc(var(--sn-baseline) * 2);
+	--sn-baseline-3:    calc(var(--sn-baseline) * 3);
 
 	/* — Ritmo espacial (escala 1.5) — */
 	--sn-s-1: .25rem;  --sn-s-2: .5rem;   --sn-s-3: .75rem;

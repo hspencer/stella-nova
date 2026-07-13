@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fundamentos — Stella Nova v0.6.11</title>
+<title>Fundamentos — Stella Nova v0.6.14</title>
 <link rel="icon" href="assets/icons/casiopea-icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/tokens.css">
@@ -70,7 +70,7 @@
 	</g>
 </svg>
     <span class="spec-brand-name">Stella Nova</span>
-    <span class="spec-brand-ver">v0.6.11</span>
+    <span class="spec-brand-ver">v0.6.14</span>
   </a>
   <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html" aria-current="page">Fundamentos</a><a href="components.html">Componentes</a><a href="layout.html">Layout</a></nav>
   <div class="spec-controls">
@@ -845,6 +845,13 @@
     
   </figcaption>
 </figure><figure class="sz">
+  <span class="sz-bar" style="--sz-w: var(--sn-baseline-half);"></span>
+  <figcaption>
+    <code class="sz-var">--sn-baseline-half</code>
+    <span class="sz-val">calc(var(--sn-baseline) / 2)</span>
+    <span class="sz-note">media interlínea. Existe para que las TemplateStyles de la wiki cierren cajas (tarjetas) en un número entero de baselines sin dividir dentro de calc() — el sanitizador de MW no lo admite, así que la división ocurre aquí y la plantilla lo consume como var() desnudo. Padding vertical de compensación: usar este token, nunca --sn-s-* (fijo en rem, no sigue a --sn-font-scale).</span>
+  </figcaption>
+</figure><figure class="sz">
   <span class="sz-bar" style="--sz-w: var(--sn-baseline-2);"></span>
   <figcaption>
     <code class="sz-var">--sn-baseline-2</code>
@@ -1074,7 +1081,7 @@
 <footer class="spec-foot">
   <p>
     Espécimen generado por <code>scripts/build-specimen.py</code> ·
-    Stella Nova v0.6.11 ·
+    Stella Nova v0.6.14 ·
     <a href="notes.md">notes.md</a> (notas del taller de diseño) ·
     <a href="https://wiki.ead.pucv.cl">wiki.ead.pucv.cl</a>
   </p>

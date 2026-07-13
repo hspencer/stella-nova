@@ -1,0 +1,33 @@
+/* ============================================================
+ * skinStyles/preferences.css — Stella Nova
+ * Override para +mediawiki.special.preferences.styles.ooui (Especial:Preferencias).
+ *
+ * La barra "Guardar" sticky del pie usa
+ *   #preferences .mw-htmlform-submit-buttons { background-color: @background-color-base; }
+ * horneado a blanco → FRANJA BLANCA cruzando el ancho en oscuro. También los
+ * avisos del campo de correo (@background-color-warning/notice-subtle) y el
+ * realce de sección :target (#eaf3ff) quedan claros. Revestimos con tokens.
+ * Prefijo `.skin-stellanova` (en <body>). Ver [[skinstyles-cascade-gotcha]].
+ * ============================================================ */
+
+/* Barra sticky de botones de guardado. */
+.skin-stellanova #preferences .mw-htmlform-submit-buttons {
+	background-color: var(--sn-paper);
+	border-top-color: var(--sn-hairline);
+}
+
+/* Aviso "correo no confirmado / sin correo" (labelWidget con fondo horneado). */
+.skin-stellanova .mw-email-not-authenticated .oo-ui-labelWidget {
+	background-color: var(--sn-warn-wash);
+	border-color: var(--sn-warn);
+}
+.skin-stellanova .mw-email-none .oo-ui-labelWidget {
+	background-color: var(--sn-sunk);
+	border-color: var(--sn-hairline);
+}
+
+/* Realce al saltar a una sección (#mw-prefsection-…): #eaf3ff horneado. */
+.skin-stellanova .mw-prefs-tabs:not( .mw-prefs-tabs-searching ) .oo-ui-fieldsetLayout:target > .oo-ui-fieldsetLayout-header > .oo-ui-labelElement-label {
+	background-color: var(--sn-nova-wash);
+	outline-color: var(--sn-nova-wash);
+}

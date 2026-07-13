@@ -550,6 +550,52 @@ envuelva en su &lt;p&gt;, queda centrado.
 </section>
 
 <section class="comp">
+  <h2>Ancho de fuente — <code>fw-100</code> … <code>fw-80</code></h2>
+  <p class="meta"><strong>Estas viven en la skin</strong> (no en
+  <code>MediaWiki:Common.css</code> ni en TemplateStyles). Existen porque el
+  sanitizador de TemplateStyles (css-sanitizer) <strong>no acepta
+  <code>font-stretch:&nbsp;80%</code></strong> —solo palabras clave—, así que una
+  plantilla no puede condensar por porcentaje en su propio <code>styles.css</code>.
+  La skin no está sanitizada y lo expone como clase: se escribe
+  <code>class="fw-90"</code> y nunca se toca <code>font-stretch</code> en CSS
+  sanitizado. <code>fw-NN</code> = <code>font-stretch: NN%</code> (eje
+  <code>wdth</code> de las fuentes variables del skin). <strong>Rango
+  80–100</strong>: 80% es el ancho condensado del cuerpo
+  (<code>--sn-text-width</code>) y el piso por diseño —más apretado deja de
+  leerse bien—, así que <code>fw-80</code> = cuerpo, <code>fw-100</code> lo
+  devuelve a ancho normal y los pasos intermedios relajan la condensación.
+  <code>font-stretch</code> hereda → en un <code>&lt;div&gt;</code> el ancho fluye
+  a los párrafos internos.</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">&lt;span class="fw-100"&gt;Ancho normal&lt;/span&gt;
+&lt;span class="fw-90"&gt;Condensada 90%&lt;/span&gt;
+&lt;span class="fw-80"&gt;Condensada 80% (= cuerpo)&lt;/span&gt;
+
+&lt;div class="fw-90"&gt;
+Un bloque entero: el ancho
+se hereda a los &lt;p&gt; internos.
+&lt;/div&gt;</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="mw-parser-output">
+        <p style="margin:0"><span class="fw-100">Aa Hh — ancho normal (fw-100)</span></p>
+        <p style="margin:0"><span class="fw-95">Aa Hh — 95% (fw-95)</span></p>
+        <p style="margin:0"><span class="fw-90">Aa Hh — 90% (fw-90)</span></p>
+        <p style="margin:0"><span class="fw-85">Aa Hh — 85% (fw-85)</span></p>
+        <p style="margin:0"><span class="fw-80">Aa Hh — 80% (fw-80, = cuerpo, piso)</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="spec-notes">
+    <p>Ortogonales: se combinan con los helpers tipográficos
+    (<code>class="lg serif fw-90"</code>). El piso es <code>fw-80</code>: por
+    debajo del 80% el cuerpo deja de leerse cómodo, así que la escala no baja de
+    ahí. Para un ancho por fuera (p.&nbsp;ej. un titular serif más apretado), la
+    plantilla puede escribir <code>font-stretch: var(--tu-prop)</code>:
+    <code>var()</code> sí pasa el sanitizador aunque el porcentaje literal no.</p>
+  </div>
+</section>
+
+<section class="comp">
   <h2>Cuerpo de texto</h2>
   <p class="meta">Familia <code>--sn-font-text</code> · cuerpo
   <code>--sn-fs-base</code> (1.00–1.05 rem fluido) · interlínea
@@ -1537,6 +1583,107 @@ Archivo:C.jpg|Tercera obra
     <code>--sn-fs-xs</code> en versalita y la bio el mismo grado pequeño.</p>
   </div>
 </section>
+
+<section class="comp">
+  <h2>Documento miniatura (<code>.dm</code>) — tarjeta en la retícula</h2>
+  <p class="meta">Origen: <code>Plantilla:Documento miniatura/styles.css</code>
+  (TemplateStyles). Título enlazado + pie (autor&nbsp;·&nbsp;año) + guía, en una
+  tarjeta de una fila que se apila en columna desde un
+  <code>{{#ask:… |format=template |template=Documento miniatura}}</code>. Toda la
+  tarjeta enlaza a su página (<em>stretched link</em>) y en hover pinta
+  <code>--sn-nova-wash</code>. <strong>Cierra en la retícula:</strong> los textos
+  corren a <code>line-height: var(--sn-baseline)</code> y el relleno vertical usa
+  <code>var(--sn-baseline-half)</code> a cada lado — media interlínea × 2 = una
+  línea base entera —, de modo que la altura de la tarjeta es múltiplo de
+  <code>--sn-baseline</code> y una columna larga <em>no acumula desfase</em>, ni
+  siquiera con la preferencia de tamaño de letra en sus extremos.</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">{{#ask: [[Categoría:Documento]]
+ | ?Autor
+ | ?Año
+ | ?Profesor guía
+ | format=template
+ | template=Documento miniatura
+}}</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="mw-parser-output">
+        <div class="dm">
+          <div class="dm-titulo"><a href="#">Cartografía de un borde costero</a></div>
+          <div class="dm-pie"><span class="dm-autor"><a href="#">Valentina Rojas</a></span><span class="dm-anio">2024</span></div>
+          <div class="dm-guia"><span class="dm-guia-etq">Guía</span> <a href="#">Óscar Andrade</a></div>
+        </div>
+        <div class="dm">
+          <div class="dm-titulo"><a href="#">Ritmo y pausa en el habitar</a></div>
+          <div class="dm-pie"><span class="dm-autor"><a href="#">Tomás Herrera</a></span><span class="dm-anio">2023</span></div>
+          <div class="dm-guia"><span class="dm-guia-etq">Guía</span> <a href="#">Katherine Exss</a></div>
+        </div>
+        <div class="dm">
+          <div class="dm-titulo"><a href="#">Travesía a Punta de Piedra</a></div>
+          <div class="dm-pie"><span class="dm-autor"><a href="#">Josefa Miranda</a></span><span class="dm-anio">2023</span></div>
+          <div class="dm-guia"><span class="dm-guia-etq">Guía</span> <a href="#">Óscar Andrade</a></div>
+        </div>
+        <div class="dm">
+          <div class="dm-titulo"><a href="#">Luz de taller, sombra de patio</a></div>
+          <div class="dm-pie"><span class="dm-autor"><a href="#">Ignacio Peña</a></span><span class="dm-anio">2022</span></div>
+          <div class="dm-guia"><span class="dm-guia-etq">Guía</span> <a href="#">Katherine Exss</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="spec-notes">
+    <p>El filete que separa cada tarjeta es un <code>box-shadow</code> inset de
+    media línea, no un margen — el ritmo lo fija sólo el relleno
+    <code>--sn-baseline-half</code>. Antes de este token la plantilla aproximaba
+    con <code>--sn-s-3</code> (0.75&nbsp;rem, fijo en <code>rem</code>): quedaba
+    corto ~0.1&nbsp;rem por tarjeta y el error se acumulaba columna abajo.</p>
+  </div>
+</section>
+
+<section class="comp">
+  <h2>Listado de Cursos (<code>.curso-listado</code>)</h2>
+  <p class="meta">Origen: <code>Plantilla:Listado de Cursos/style.css</code>
+  (TemplateStyles). Hermana de <code>.dm</code> para cursos:
+  <code>h4</code> enlazado + profesores (itálica) + alumnos, apilada en columna
+  desde un <code>{{#ask:… |template=Listado de Cursos}}</code>. Mismo contrato de
+  retícula que <code>.dm</code> — textos a <code>--sn-baseline</code> y relleno
+  <code>var(--sn-baseline-half)</code> — así la columna de cursos también cierra
+  en baselines enteras.</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">{{#ask: [[Categoría:Curso]]
+ | ?Profesores
+ | ?Alumnos
+ | format=template
+ | template=Listado de Cursos
+}}</pre>
+    <div class="sn-paper sn-body demo">
+      <div class="mw-parser-output">
+        <div class="curso-listado">
+          <h4><a href="#">Taller de Amereida</a></h4>
+          <div class="profesores"><a href="#">Óscar Andrade</a>, <a href="#">Katherine Exss</a></div>
+          <div class="alumnos">34 estudiantes</div>
+        </div>
+        <div class="curso-listado">
+          <h4><a href="#">Presentación del Diseño Gráfico</a></h4>
+          <div class="profesores"><a href="#">Sylvia Arriagada</a></div>
+          <div class="alumnos">28 estudiantes</div>
+        </div>
+        <div class="curso-listado">
+          <h4><a href="#">Taller de Construcción Formal</a></h4>
+          <div class="profesores"><a href="#">Jaime Reyes</a>, <a href="#">Marcelo Araya</a></div>
+          <div class="alumnos">41 estudiantes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="spec-notes">
+    <p>Consumidor del mismo token que <code>.dm</code>: cualquier tarjeta de
+    plantilla que deba calzar en la retícula usa
+    <code>padding: var(--sn-baseline-half) var(--sn-s-3)</code> — nunca
+    <code>var(--sn-s-3)</code> en el eje vertical, porque la escala
+    <code>--sn-s-*</code> es fija en <code>rem</code> y no sigue a
+    <code>--sn-font-scale</code>.</p>
+  </div>
+</section>
 """
 
 
@@ -2218,6 +2365,70 @@ CONTENT_CSS = r"""
 	text-transform: uppercase; font-weight: 500; letter-spacing: .08ex; margin: 0;
 }
 .mw-parser-output .ficha-personal > .bio > span.text { font-size: var(--sn-fs-xs); }
+
+/* === Documento miniatura .dm (espejo de Plantilla:Documento miniatura/styles.css)
+   Tarjeta de una fila: título enlazado + pie (autor · año) + guía. Se apila en
+   columna larga desde un #ask que lista documentos/proyectos. Cada texto corre a
+   `line-height: var(--sn-baseline)` (una línea base), y el relleno vertical usa
+   `--sn-baseline-half` a cada lado → suma UNA línea base, así la tarjeta cierra en
+   un número entero de baselines y una columna no acumula desfase. Es el consumidor
+   canónico del token. NOTA DE SINCRONÍA: la plantilla viva aún usa
+   `padding: var(--sn-s-3)` (la aproximación); el espécimen muestra el estado
+   objetivo tras migrar a `--sn-baseline-half` (ver docs/tokens.css regla 4). */
+.mw-parser-output .dm {
+	position: relative;
+	padding: var(--sn-baseline-half) var(--sn-s-3);
+	box-shadow: inset 0 .5px 0 var(--sn-ink-faint);
+	background-color: transparent;
+	transition: background-color .6s ease;
+}
+.mw-parser-output .dm:hover { background-color: var(--sn-nova-wash); }
+.mw-parser-output .dm-titulo { line-height: var(--sn-baseline); }
+.mw-parser-output .dm-titulo a { color: var(--sn-ink); text-decoration: none; }
+/* Stretched link: toda la tarjeta enlaza a su página. */
+.mw-parser-output .dm-titulo a::after { content: ""; position: absolute; inset: 0; }
+.mw-parser-output .dm:hover .dm-titulo a { color: var(--sn-nova); }
+.mw-parser-output .dm-pie {
+	display: flex; justify-content: space-between; align-items: baseline;
+	gap: var(--sn-s-2); line-height: var(--sn-baseline);
+	font-size: .82em; color: var(--sn-ink-faint);
+}
+.mw-parser-output .dm-autor { min-width: 0; font-size: var(--sn-fs-xs); }
+.mw-parser-output .dm-autor a { color: inherit; text-decoration: none; }
+.mw-parser-output .dm-anio { white-space: nowrap; font-variant-numeric: tabular-nums; align-self: end; }
+.mw-parser-output .dm-guia { line-height: var(--sn-baseline); font-size: var(--sn-fs-xs); color: var(--sn-ink-faint); }
+.mw-parser-output .dm-guia-etq { text-transform: uppercase; letter-spacing: .04em; font-size: .85em; opacity: .75; }
+.mw-parser-output .dm-guia a { color: inherit; text-decoration: none; }
+
+/* === Listado de Cursos .curso-listado (espejo de Plantilla:Listado de Cursos/style.css)
+   Hermana de .dm para cursos: h4 enlazado + profesores (itálica) + alumnos. Mismo
+   contrato de retícula: textos a `--sn-baseline` y relleno vertical
+   `--sn-baseline-half` para cerrar en baselines enteras. Misma nota de sincronía
+   que .dm (la plantilla viva aún usa `--sn-s-3`). */
+.mw-parser-output .curso-listado {
+	position: relative; margin: 0;
+	padding: var(--sn-baseline-half) var(--sn-s-3);
+	line-height: var(--sn-baseline);
+	background-color: transparent;
+	transition: background-color .6s ease;
+}
+.mw-parser-output .curso-listado:hover { background-color: var(--sn-nova-wash); }
+.mw-parser-output .curso-listado h4 {
+	margin: 0; font-family: var(--sn-font-text); font-weight: 500;
+	font-size: var(--sn-fs-base); line-height: var(--sn-baseline);
+}
+.mw-parser-output .curso-listado h4 a { color: var(--sn-ink); text-decoration: none; }
+.mw-parser-output .curso-listado h4 a::after { content: ""; position: absolute; inset: 0; }
+.mw-parser-output .curso-listado:hover h4 a { color: var(--sn-nova); }
+.mw-parser-output .curso-listado .profesores {
+	font-family: var(--sn-font-text); font-style: italic;
+	font-size: var(--sn-fs-sm); line-height: var(--sn-baseline); color: var(--sn-ink-faint);
+}
+.mw-parser-output .curso-listado .alumnos {
+	font-family: var(--sn-font-text);
+	font-size: var(--sn-fs-xs); line-height: var(--sn-baseline); color: var(--sn-ink-faint);
+}
+.mw-parser-output .curso-listado :is(.profesores, .alumnos) a { color: inherit; text-decoration: none; }
 """
 
 

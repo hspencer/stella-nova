@@ -9,6 +9,50 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.6.14] — 2026-07-13
+
+### Added
+- **Clases helper de ancho de fuente `fw-*`** (`resources/stella-nova.css`):
+  `fw-100 fw-95 fw-90 fw-85 fw-80`, donde `fw-NN` = `font-stretch: NN%` sobre el
+  eje `wdth` de las fuentes variables. Opt-in desde wikitexto/plantillas
+  (`class="fw-90"`), combinables con los helpers tipográficos. **Motivo:** el
+  sanitizador de TemplateStyles (css-sanitizer v5.5.0) solo acepta `font-stretch`
+  con palabras clave, no con porcentaje, así que las plantillas no podían
+  condensar por `%` en su propio `styles.css`; la skin no está sanitizada y
+  expone el ancho como clase. Scope `.sn-body .fw-NN`; `font-stretch` hereda a
+  los bloques internos. **Rango 80–100**: el cuerpo ya corre a 80%
+  (`--sn-text-width`), que es el piso por diseño → `fw-80` = cuerpo, `fw-100`
+  restaura ancho normal; no hay `fw-` bajo 80. Para valores fuera de la escala,
+  la plantilla puede usar `font-stretch: var(--prop)` (var() sí pasa el
+  sanitizador). Documentado en `WIKITEXTO.md` §2 y demostrado en el espécimen.
+
+## [0.6.13] — 2026-07-13
+
+### Added
+- **Token `--sn-baseline-half`** (`resources/tokens.css`, junto a
+  `--sn-baseline-2/-3`): `calc(var(--sn-baseline) / 2)`, media interlínea. Existe
+  para que las TemplateStyles de la wiki cierren cajas (tarjetas) en un número
+  entero de baselines **sin dividir dentro de `calc()`** — el sanitizador de
+  MediaWiki no lo admite, así que la división ocurre en la skin y la plantilla lo
+  consume como `var()` desnudo. Cuarta regla del bloque "Baseline grid": el
+  relleno vertical que compensa media interlínea usa este token, **nunca**
+  `--sn-s-*` (fijo en `rem`, no sigue a `--sn-font-scale` → deriva de la
+  retícula). Antes las plantillas `Documento miniatura` (`.dm`) y `Listado de
+  Cursos` (`.curso-listado`) aproximaban con `--sn-s-3` (0.75&nbsp;rem), corto
+  ~0.1–0.24&nbsp;rem por tarjeta, con error acumulado en columnas largas.
+  Migración de esas plantillas pendiente **en la wiki** (no en el repo).
+
+### Changed
+- **Espécimen** (`scripts/build-specimen.py`): documenta el token nuevo en el
+  grupo "Baseline grid" (`index.html`) y añade dos secciones de componentes
+  fieles a las plantillas reales —`.dm` (Documento miniatura) y `.curso-listado`
+  (Listado de Cursos)— demostrando el relleno `var(--sn-baseline-half) var(--sn-s-3)`
+  tal como la wiki lo usará (una columna que cierra en la retícula).
+- **Docs**: `DISENO.md` documenta los tokens `--sn-baseline*` y la regla del
+  medio baseline en TemplateStyles; `WIKITEXTO.md` corrige la referencia obsoleta
+  a Mpdf en `noprint` (el PDF se hace por la previsualización Vivliostyle);
+  `README.md` completa la lista de clases opt-in (`fondo-*`, `wiki-btn`).
+
 ## [0.4.8] — 2026-06-19
 
 ### Changed

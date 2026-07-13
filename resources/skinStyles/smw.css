@@ -125,6 +125,9 @@
 	border-radius: var(--sn-radius-l);
 	box-shadow: var(--sn-lift);
 }
+.smw-modal-content, .smw-modal-header, .smw-modal-footer {
+	background-color: var(--sn-paper); color: var(--sn-ink);
+}
 .smw-modal-header { border-bottom: 1px solid var(--sn-hairline-soft);
 	font-family: var(--sn-font-display); }
 
@@ -184,3 +187,61 @@
 	background-color: var(--sn-paper);
 	border-color: var(--sn-hairline-soft);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Modo oscuro: superficies SMW con fondos CLAROS horneados (hex fijo en
+   el CSS de SMW, no var()), que el remapeo de custom-properties del skin
+   no alcanza. Se revisten con prefijo `.skin-stellanova` para ganar por
+   especificidad a las clases propias de SMW (que cargan después). Clases
+   detectadas por escaneo del DOM en oscuro sobre Especial:Browse / Ask /
+   FacetedSearch. Ver [[skinstyles-cascade-gotcha]].
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Controles nativos (select/input/submit) de las páginas especiales SMW:
+   SMW les fija un fondo claro explícito, así que color-scheme oscuro no
+   basta. Se acotan por la clase de body de cada especial. */
+/* Nota: la clase de body del especial y `.skin-stellanova` van en el MISMO
+   elemento (<body>), así que se compone (sin combinador descendente). */
+:is( .skin-stellanova.mw-special-Ask, .skin-stellanova.mw-special-Browse, .skin-stellanova.mw-special-FacetedSearch )
+	:is( select, input:not([ type ]), input[ type="text" ], input[ type="search" ], input[ type="submit" ], input[ type="button" ] ) {
+	background-color: var(--sn-field);
+	background-image: none;
+	color: var(--sn-ink);
+	border-color: var(--sn-field-border);
+}
+/* Botón de envío: aspecto de botón (no de campo). */
+:is( .skin-stellanova.mw-special-Ask, .skin-stellanova.mw-special-FacetedSearch )
+	input[ type="submit" ] {
+	background-color: var(--sn-btn-bg);
+	border-color: var(--sn-btn-border);
+}
+
+/* Especial:Browse — factbox de "explorar la wiki". */
+.skin-stellanova .smw-factbox-header {
+	background-color: var(--sn-sunk);
+	color: var(--sn-ink);
+}
+.skin-stellanova .smw-factbox-property-name { background-color: transparent; }
+.skin-stellanova .smw-browse-search-button.mw-ui-button {
+	background-color: var(--sn-btn-bg);
+	color: var(--sn-ink);
+	border-color: var(--sn-btn-border);
+}
+
+/* Especial:Ask — barra de enlaces y filas cebra de parámetros. */
+.skin-stellanova .smw-ask-toplinks,
+.skin-stellanova .smw-ask-options-row-odd,
+.skin-stellanova .smw-ask-options-row-even { background-color: transparent; }
+
+/* Especial:FacetedSearch — formulario, introducción y tarjetas de filtro. */
+.skin-stellanova .smw-factedsearch-search-form,
+.skin-stellanova .smw-factedsearch-intro,
+.skin-stellanova .smw-factedsearch-extra-search,
+.skin-stellanova .factedsearch-search,
+.skin-stellanova .smw-factedsearch-content-search,
+.skin-stellanova .filter-card {
+	background-color: var(--sn-sunk);
+	border-color: var(--sn-hairline);
+	color: var(--sn-ink);
+}
+.skin-stellanova .smw-factedsearch-intro { color: var(--sn-ink-soft); }

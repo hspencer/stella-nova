@@ -228,12 +228,24 @@ aceptes). Documentación completa del flujo diseñador ↔ mantenedor en
 El set de tokens y de clases opt-in se mantiene **chico a propósito**.
 Bootstrap nos enseñó qué pasa cuando crece sin freno. Antes de añadir:
 
-1. ¿Lo cubre un token existente (`--sn-s-*`, `--sn-fs-*`, `--sn-link`,
-   `--sn-ink-soft`…)?
+1. ¿Lo cubre un token existente (`--sn-s-*`, `--sn-fs-*`,
+   `--sn-baseline*`, `--sn-link`, `--sn-ink-soft`…)?
 2. ¿Lo cubre una clase existente (`.full-width`, `.grilla.cols-N`,
    `.plantilla`, `.img-circle`, `.sn-notice`)?
 3. Si la respuesta a ambas es no, conversar antes — no a regañadientes,
    simplemente para mantener coherencia.
+
+> **Ritmo vertical en TemplateStyles.** Los tokens `--sn-baseline`,
+> `--sn-baseline-half`, `--sn-baseline-2` y `--sn-baseline-3` son la unidad del
+> baseline grid (interlínea del cuerpo × múltiplo). El relleno vertical que debe
+> compensar **media interlínea** para que una caja cierre en un número entero de
+> baselines —típico de tarjetas de plantilla como `.dm` (Documento miniatura) o
+> `.curso-listado`— usa `var(--sn-baseline-half)`, **nunca** un valor de la escala
+> de espaciado (`--sn-s-*`): esa escala es fija en `rem` y no sigue a
+> `--sn-font-scale`, así que aproximarla deriva de la retícula cuando el lector
+> cambia el tamaño de letra. El submúltiplo se calcula en la skin (donde `calc()`
+> está permitido) y las TemplateStyles lo consumen como `var()` desnudo, porque el
+> sanitizador de MediaWiki no admite dividir dentro de `calc()`.
 
 Si vas a tocar un color, además decidí **en qué capa**:
 

@@ -1,0 +1,32 @@
+/* ============================================================
+ * skinStyles/pager.css — Stella Nova
+ * Override para +mediawiki.pager.styles (TablePager / .mw-datatable).
+ *
+ * El core (DataTable.less) hornea:
+ *   .mw-datatable th { background-color: #eaeeff; }
+ *   .mw-datatable td { background-color: @background-color-base; }   → #fff
+ *   .mw-datatable tr:hover td { background-color: @background-color-progressive-subtle; }
+ * y SOLO da el equivalente oscuro para `html.skin-theme-clientpref-night`
+ * (o `prefers-color-scheme: dark` + `clientpref-os`). Stella Nova NO usa ese
+ * esquema — conmuta por [data-sn-theme] + color-scheme/light-dark() — así que
+ * en oscuro las tablas de TablePager salen con CELDAS BLANCAS: TodosLosMensajes,
+ * Etiquetas, ListaImágenes, ListaDerechosGrupos, RedireccionesDobles, etc.
+ * Revestimos con tokens que voltean. Prefijo `.skin-stellanova` (en <body>)
+ * para ganar por especificidad al selector core (ver [[skinstyles-cascade-gotcha]]).
+ * ============================================================ */
+.skin-stellanova .mw-datatable,
+.skin-stellanova .mw-datatable td,
+.skin-stellanova .mw-datatable th {
+	border-color: var(--sn-hairline);
+}
+.skin-stellanova .mw-datatable th {
+	background-color: var(--sn-sunk);
+	color: var(--sn-ink);
+}
+.skin-stellanova .mw-datatable td {
+	/* Deja ver el papel de la hoja; las tablas de datos no necesitan relleno. */
+	background-color: transparent;
+}
+.skin-stellanova .mw-datatable tr:hover td {
+	background-color: color-mix(in oklab, var(--sn-nova) 8%, transparent);
+}
