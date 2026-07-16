@@ -109,6 +109,34 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
           color: var(--sn-ink-soft); }
 .sw-note { font-size: var(--sn-fs-xs); color: var(--sn-ink-faint); margin-top: 2px; }
 
+/* Comparador de tema — el MISMO swatch semántico resuelto en claro y oscuro.
+   Cada lado fuerza `color-scheme`; como los roles de color usan light-dark(),
+   cada columna resuelve su rama sola, sobre su propio fondo `--sn-field`. El
+   lado oscuro replica además los 4 tokens de geometría (grain/lifts) y el GRAD
+   de la serif, que NO usan light-dark() (se redefinen por tema en tokens.css),
+   para que sombras y textura calcen con el modo oscuro real. */
+.theme-duo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sn-s-3);
+             align-items: start; }
+.theme-side { padding: var(--sn-s-3); border-radius: var(--sn-radius);
+              background: var(--sn-field); color: var(--sn-ink);
+              border: 1px solid var(--sn-hairline); }
+.theme-side[data-demo-theme="light"] { color-scheme: light; }
+.theme-side[data-demo-theme="dark"] {
+	color-scheme: dark;
+	--sn-field-grain: .05;
+	--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
+	--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+	--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
+	--sn-serif-grade: 30;
+}
+.theme-side-tag { display: inline-block; font-family: var(--sn-font-mono);
+                  font-size: var(--sn-fs-xs); text-transform: uppercase;
+                  letter-spacing: .08ex; color: var(--sn-ink-faint);
+                  margin-bottom: var(--sn-s-3); }
+.theme-side .grid-color { display: grid; grid-template-columns: 1fr;
+                          gap: var(--sn-s-3); }
+@media (max-width: 40rem) { .theme-duo { grid-template-columns: 1fr; } }
+
 /* Size */
 .sz { margin: 0; padding: var(--sn-s-3); background: var(--sn-paper);
       border-radius: var(--sn-radius); box-shadow: var(--sn-lift-paper);

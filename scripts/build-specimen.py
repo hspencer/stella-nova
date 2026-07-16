@@ -77,6 +77,11 @@ def classify(name: str, value: str) -> str:
     v = value.strip()
     if v.startswith("#") or v.startswith("color-mix") or v.startswith("rgb"):
         return "color"
+    # Tokens semánticos de color: light-dark(claro, oscuro). En este archivo
+    # light-dark() envuelve SIEMPRE colores (los 4 no-color del tema —grain,
+    # lifts— no lo usan), así que basta el prefijo para tratarlo como swatch.
+    if v.startswith("light-dark("):
+        return "color"
     if v.startswith("url("):
         return "asset"
     if "cubic-bezier" in v:
@@ -178,7 +183,35 @@ def render_token(name, value, note):
 
 
 def render_section(title, items):
-    grid_kind = "grid-color" if any(classify(n, v) == "color" for n, v, _ in items) \
+    color_items = [it for it in items if classify(it[0], it[1]) == "color"]
+    other_items = [it for it in items if classify(it[0], it[1]) != "color"]
+
+    # Los tokens SEMÁNTICOS de color voltean con el tema (light-dark), así que
+    # se documentan en un COMPARADOR claro/oscuro: dos contenedores con
+    # `color-scheme` forzado y fondo `--sn-field` propio de cada tema; el mismo
+    # swatch aparece a ambos lados resuelto en su contexto. Las PRIMITIVAS son
+    # agnósticas del tema → una sola vez, sin comparador.
+    if title.startswith("Semántica") and color_items:
+        swatches = ''.join(render_swatch(n, v, note) for n, v, note in color_items)
+        others_block = ""
+        if other_items:
+            others = ''.join(render_token(n, v, note) for n, v, note in other_items)
+            others_block = f'\n  <div class="tokgrp-body grid-other">{others}</div>'
+        return f'''<section class="tokgrp">
+  <h2 class="tokgrp-h">{esc(title)}</h2>
+  <div class="theme-duo">
+    <div class="theme-side" data-demo-theme="light">
+      <span class="theme-side-tag">Claro</span>
+      <div class="grid-color">{swatches}</div>
+    </div>
+    <div class="theme-side" data-demo-theme="dark">
+      <span class="theme-side-tag">Oscuro</span>
+      <div class="grid-color">{swatches}</div>
+    </div>
+  </div>{others_block}
+</section>'''
+
+    grid_kind = "grid-color" if color_items \
                else "grid-size" if any(n.startswith("sn-s-") or n.startswith("sn-fs-") for n, _, _ in items) \
                else "grid-other"
     return f'''<section class="tokgrp">
@@ -321,6 +354,10 @@ def body_index(tokens):
   <p class="lede-sub">Para proponer cambios, redefiní variables en el bloque
   <code>&lt;style id="overrides"&gt;</code> al inicio del documento — la página
   entera los toma. Anotaciones libres en <a href="notes.md">notes.md</a>.</p>
+  <p class="lede-sub">Los tokens de color <strong>semánticos</strong> voltean con
+  el tema, así que se muestran en <strong>dos columnas —claro y oscuro—</strong>
+  para ver cada rol resuelto sobre su propio fondo. Los <strong>primitivos</strong>
+  son agnósticos del tema y van una sola vez.</p>
 </section>""")
     for title, items in sections.items():
         rendered.append(render_section(title, items))
@@ -1951,6 +1988,34 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
 .sw-val { font-family: var(--sn-font-mono); font-size: var(--sn-fs-xs);
           color: var(--sn-ink-soft); }
 .sw-note { font-size: var(--sn-fs-xs); color: var(--sn-ink-faint); margin-top: 2px; }
+
+/* Comparador de tema — el MISMO swatch semántico resuelto en claro y oscuro.
+   Cada lado fuerza `color-scheme`; como los roles de color usan light-dark(),
+   cada columna resuelve su rama sola, sobre su propio fondo `--sn-field`. El
+   lado oscuro replica además los 4 tokens de geometría (grain/lifts) y el GRAD
+   de la serif, que NO usan light-dark() (se redefinen por tema en tokens.css),
+   para que sombras y textura calcen con el modo oscuro real. */
+.theme-duo { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sn-s-3);
+             align-items: start; }
+.theme-side { padding: var(--sn-s-3); border-radius: var(--sn-radius);
+              background: var(--sn-field); color: var(--sn-ink);
+              border: 1px solid var(--sn-hairline); }
+.theme-side[data-demo-theme="light"] { color-scheme: light; }
+.theme-side[data-demo-theme="dark"] {
+	color-scheme: dark;
+	--sn-field-grain: .05;
+	--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
+	--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+	--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
+	--sn-serif-grade: 30;
+}
+.theme-side-tag { display: inline-block; font-family: var(--sn-font-mono);
+                  font-size: var(--sn-fs-xs); text-transform: uppercase;
+                  letter-spacing: .08ex; color: var(--sn-ink-faint);
+                  margin-bottom: var(--sn-s-3); }
+.theme-side .grid-color { display: grid; grid-template-columns: 1fr;
+                          gap: var(--sn-s-3); }
+@media (max-width: 40rem) { .theme-duo { grid-template-columns: 1fr; } }
 
 /* Size */
 .sz { margin: 0; padding: var(--sn-s-3); background: var(--sn-paper);
