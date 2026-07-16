@@ -9,6 +9,42 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.6.15] — 2026-07-16
+
+### Fixed
+- **Diff en modo oscuro** (`skinStyles/diff.css`, `+mediawiki.diff.styles`): las
+  celdas de comparación de revisiones/historial/deshacer/previsualización
+  quedaban en cajas blancas ilegibles. El core hornea desde LESS a hex claro
+  (`.diff-context{background:#f8f9fa;color:#202122;border:#c8ccd1}` + bordes de
+  añadido/quitado) en tiempo de build, así que **no** consume el remap de
+  `--background-color-content-*` de `tokens.css`. Se revisten con tokens que
+  voltean: contexto=`--sn-sunk`, añadido=`--sn-ok`, quitado=`--sn-danger`,
+  ins/del inline y línea vacía=`ok/danger-wash`.
+- **Campos "tokens" de PageForms (Select2) en modo oscuro** (`skinStyles/select2.css`,
+  `+ext.pageforms.select2.styles`): los `pfTokens` (multiselect Select2) traían
+  caja blanca, pills `#e4e4e4` y opción resaltada `#2A4B8D` horneados; Select2 no
+  conmuta con el tema, así que solo el texto (hereda `--sn-ink` volteado) se
+  aclaraba → texto claro sobre pill claro, ilegible. Se revisten con tokens de
+  campo: caja=`--sn-field-*`, pills=`--sn-sunk`/`--sn-hairline`/`--sn-ink`,
+  dropdown resaltado=`--sn-on-bg`/`--sn-on-fg`.
+- **Ícono de ayuda en modo oscuro** (`skinStyles/helplink.css`, `+mediawiki.helplink`):
+  el indicador "?" (`#mw-indicator-mw-helplink .mw-helplink-icon`) es un
+  `mask-image` de Codex teñido por `background-color:#222` (horneado oscuro) →
+  negro sobre negro. Se re-tiñe con `--sn-icon` (voltea con el tema).
+
+### Changed
+- **TOC sin filete** (`resources/stella-nova.css`): se retira el `box-shadow`
+  inset propio y se anula el `border:1px solid #aaa` que el core
+  (`mediawiki.skinning`) mete dentro de `@media screen` — nuestra regla ganaba en
+  especificidad pero no declaraba `border`. La caja queda delimitada solo por el
+  relleno hundido. Con `box-sizing:border-box` (global) el borde no afectaba el
+  alto exterior, así que la retícula de baseline se mantiene intacta.
+- **TOC: toda la barra de título togglea** (`resources/stella-nova.css`): el
+  `<label for=toctogglecheckbox>` se estira sobre toda la `.toctitle`
+  (`position:absolute; inset:0`), con el cheurón alineado a la derecha. Ahora un
+  click en cualquier parte de la barra colapsa/descolapsa el índice, no solo el
+  cheurón. Mecanismo nativo del `for`, sin JS.
+
 ## [0.6.14] — 2026-07-13
 
 ### Added

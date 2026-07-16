@@ -1,0 +1,22 @@
+/* ============================================================
+ * skinStyles/helplink.css — Stella Nova
+ * Override para +mediawiki.helplink (el indicador "?" de ayuda que va en
+ * #mw-indicator-mw-helplink, arriba a la derecha del título).
+ *
+ * El core (resources/src/mediawiki.helplink/helplink.less) pinta el ícono con
+ * `.cdx-mixin-css-icon( @cdx-icon-help-notice )`: en navegadores con mask-image
+ * (todos los modernos) el glifo es un `mask-image` teñido por `background-color:
+ * @color-base`, horneado a hex OSCURO en build → en modo oscuro el "?" queda
+ * negro sobre fondo negro (invisible). Se re-tiñe con `--sn-icon`, que voltea
+ * con el tema (igual criterio que el resto de íconos del skin).
+ *
+ * skinStyles se añade al propio módulo → gana por orden; `.skin-stellanova`
+ * (clase de <body>) blinda la especificidad.
+ * ============================================================ */
+.skin-stellanova #mw-indicator-mw-helplink .mw-helplink-icon {
+	background-color: var(--sn-icon);
+}
+.skin-stellanova #mw-indicator-mw-helplink a:hover .mw-helplink-icon,
+.skin-stellanova #mw-indicator-mw-helplink a:focus .mw-helplink-icon {
+	background-color: var(--sn-icon-active);
+}

@@ -1,0 +1,92 @@
+/* ============================================================
+ * skinStyles/diff.css — Stella Nova
+ * Override para +mediawiki.diff.styles (render de diffs: comparar
+ * revisiones, historial, deshacer, previsualización de edición y
+ * conflictos de edición).
+ *
+ * El core (resources/src/mediawiki.diff.styles/diff.less) COMPILA desde
+ * mediawiki.skin.variables.less → hornea a hex CLARO en tiempo de build,
+ * así que NO consume las custom properties `--background-color-*` que
+ * Stella Nova remapea en tokens.css. Resultado en oscuro:
+ *
+ *   .diff-context   { background:#f8f9fa; color:#202122; border:#c8ccd1 }  → caja BLANCA
+ *   .diff-addedline { border-color:@background-color-content-added }       → borde claro
+ *   .diff-deletedline{ border-color:@background-color-content-removed }
+ *
+ * → los campos de código del diff quedan blancos e ilegibles en modo oscuro
+ * (ver captura: filas `<div class='…'>` sobre fondo negro). Se revisten con
+ * tokens que voltean, alineados a los mismos roles que ya usa el remap Codex
+ * (contexto = hundido; añadido = ok-wash; quitado = danger-wash).
+ *
+ * skinStyles se AÑADE al propio módulo mediawiki.diff.styles → gana por orden
+ * de fuente. Igual se prefija `.skin-stellanova` (clase de <body>) para blindar
+ * la especificidad (ver [[skinstyles-cascade-gotcha]] y [[dark-mode-special-pages-audit]]).
+ * ============================================================ */
+
+/* Líneas de contexto (sin cambios): la "caja blanca" de la captura. */
+.skin-stellanova .diff-context {
+	background: var(--sn-sunk);
+	color: var(--sn-ink);
+	border-color: var(--sn-hairline-soft);
+}
+
+/* Bordes (1px 1px 1px 4px) que marcan añadido / quitado a la izquierda. */
+.skin-stellanova .diff-addedline {
+	border-color: var(--sn-ok);
+}
+.skin-stellanova .diff-deletedline {
+	border-color: var(--sn-danger);
+}
+
+/* Relleno de las líneas añadidas/quitadas: lavado suave del color, no el
+   blanco del core. El texto hereda `--sn-ink` (visible en ambos temas). */
+.skin-stellanova .diff-addedline,
+.skin-stellanova .diff-deletedline {
+	color: var(--sn-ink);
+}
+
+/* Resalte intra-línea (palabras cambiadas): un lavado más marcado que la
+   línea para que salten. */
+.skin-stellanova .diff-addedline .diffchange {
+	background: var(--sn-ok-wash);
+}
+.skin-stellanova .diff-deletedline .diffchange {
+	background: var(--sn-danger-wash);
+}
+
+/* Diff en línea (inline): ins/del y su leyenda. */
+.skin-stellanova .mw-diff-inline-added ins,
+.skin-stellanova .mw-diff-inline-changed ins,
+.skin-stellanova .mw-diff-inline-moved ins,
+.skin-stellanova .mw-diff-inline-legend .mw-diff-inline-legend-ins {
+	background: var(--sn-ok-wash);
+	color: var(--sn-ink);
+}
+.skin-stellanova .mw-diff-inline-deleted del,
+.skin-stellanova .mw-diff-inline-changed del,
+.skin-stellanova .mw-diff-inline-moved del,
+.skin-stellanova .mw-diff-inline-legend .mw-diff-inline-legend-del {
+	background: var(--sn-danger-wash);
+	color: var(--sn-ink);
+}
+
+/* Marcadores de línea vacía (añadida/quitada/nueva): el `::after` con el
+   texto "(línea en blanco)" hornea el mismo fondo claro + `--sn-ink-soft`. */
+.skin-stellanova .mw-diff-inline-added.mw-diff-empty-line::after,
+.skin-stellanova .mw-inline-diff-newline::after {
+	background: var(--sn-ok-wash);
+	color: var(--sn-ink-soft);
+}
+.skin-stellanova .mw-diff-inline-deleted.mw-diff-empty-line::after {
+	background: var(--sn-danger-wash);
+	color: var(--sn-ink-soft);
+}
+
+/* Marca de párrafo movido (↪ / ↩) y error de slot: colores base horneados. */
+.skin-stellanova .mw-diff-movedpara-left::after,
+.skin-stellanova .mw-diff-movedpara-right::after {
+	color: var(--sn-ink);
+}
+.skin-stellanova .mw-diff-slot-error {
+	color: var(--sn-danger);
+}

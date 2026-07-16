@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 	"name": "StellaNova",
 	"namemsg": "skinname-stellanova",
-	"version": "0.6.14",
+	"version": "0.6.15",
 	"author": [
 		"[https://herbertspencer.net Herbert Spencer González], e[ad] Escuela de Arquitectura y Diseño, Pontificia Universidad Católica de Valparaíso"
 	],
@@ -130,6 +130,7 @@
 			"+ext.pageforms.main.styles": "skinStyles/pageforms.css",
 			"+ext.pageforms.rating.styles": "skinStyles/pageforms.css",
 			"+ext.pageforms.submit.styles": "skinStyles/pageforms.css",
+			"+ext.pageforms.select2.styles": "skinStyles/select2.css",
 			"+ext.smw.ask.styles": "skinStyles/smw.css",
 			"+ext.smw.browse.styles": "skinStyles/smw.css",
 			"+ext.smw.deferred.styles": "skinStyles/smw.css",
@@ -146,6 +147,8 @@
 			"+ext.timeline.styles": "skinStyles/easytimeline.css",
 			"+ext.wikiEditor.styles": "skinStyles/wikieditor.css",
 			"+mediawiki.action.edit.styles": "skinStyles/edit.css",
+			"+mediawiki.diff.styles": "skinStyles/diff.css",
+			"+mediawiki.helplink": "skinStyles/helplink.css",
 			"+mediawiki.htmlform.styles": "skinStyles/htmlform.css",
 			"+mediawiki.notification": "skinStyles/notification.css",
 			"+mediawiki.pager.styles": "skinStyles/pager.css",

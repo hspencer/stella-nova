@@ -1446,28 +1446,28 @@ canvas, iframe,
 	display: block;            /* full-width: ocupa el 100% de la hoja */
 	width: 100%;
 	/* Todas las medidas verticales son múltiplos de --sn-baseline para caer en
-	   la retícula, incluso al maquetar el TOC en columnas junto a párrafos. El
-	   "borde" va por box-shadow inset: pinta como un hairline pero NO ocupa
-	   layout, así la caja mide un nº ENTERO de baselines y el colapso de
-	   márgenes con los bloques vecinos no la desalinea (un border de 1px la
-	   corría medio píxel por lado y acumulaba drift). */
+	   la retícula, incluso al maquetar el TOC en columnas junto a párrafos, así
+	   la caja mide un nº ENTERO de baselines y el colapso de márgenes con los
+	   bloques vecinos no la desalinea. Sin filete (decisión de diseño): solo el
+	   relleno hundido delimita la caja. */
 	margin: var(--sn-baseline) 0;
+	/* Sin filete: el core (mediawiki.skinning) mete `.toc { border:1px solid #aaa }`
+	   dentro de `@media screen`; nuestra regla gana en especificidad pero antes NO
+	   declaraba `border`, así que el del core seguía pintando. Lo anulamos. */
+	border: 0;
 	border-radius: var(--sn-radius);
 	background: color-mix(in oklab, var(--sn-sunk) 60%, transparent);
-	/* El filete va a media opacidad: al ser un rectángulo cerrado de 4 lados
-	   destaca más que un hairline suelto; en oscuro el tinta-650 sobre el
-	   fondo hundido leía como una línea brillante. Mezclado con transparente
-	   se acerca al relleno y queda discreto en ambos temas. */
-	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sn-hairline-soft) 55%, transparent);
 	padding: 0 0 var(--sn-baseline);
 	font-size: var(--sn-fs-sm);
 }
 .sn-body .toc .toctitle {
+	position: relative;                /* ancla del label-overlay que cubre toda la barra */
 	display: flex; align-items: center; justify-content: space-between;
 	gap: var(--sn-s-3);
 	padding: 0 var(--sn-s-4);          /* vertical 0: la barra mide 1 baseline por min-height */
 	min-height: var(--sn-baseline);
 	text-align: left;
+	cursor: pointer;                   /* toda la barra togglea (ver label-overlay abajo) */
 }
 .sn-body .toc .toctitle :is(h2, h3) {
 	margin: 0; padding: 0; border: 0; font-family: var(--sn-font-text);
@@ -1487,13 +1487,19 @@ canvas, iframe,
 /* Minimal: SOLO el cheurón que gira. Se suprime cualquier texto y los
    corchetes "[ocultar]/[mostrar]" que MediaWiki pinta vía CSS (en el
    label o en el span); font-size:0 mata texto y el cheurón se mide en
-   rem (independiente del tamaño de fuente). */
+   rem (independiente del tamaño de fuente).
+
+   El `<label for=toctogglecheckbox>` se ESTIRA sobre toda la `.toctitle`
+   (absoluto, `inset:0`) para que un click en cualquier parte de la barra
+   —no solo el cheurón— togglee el TOC (mecanismo nativo del `for`, sin JS,
+   funciona colapsado→expandido y viceversa). El cheurón se dibuja alineado
+   a la derecha (`justify-content:flex-end` + padding), donde vivía antes. */
 .sn-body .toc .toctogglelabel {
-	display: inline-flex; align-items: center; justify-content: center;
-	width: 1.7rem; height: 1.7rem; margin: -.3rem -.3rem -.3rem 0;
+	position: absolute; inset: 0; z-index: 1;
+	display: flex; align-items: center; justify-content: flex-end;
+	padding-right: var(--sn-s-4); margin: 0;
 	font-size: 0; line-height: 0;
 	cursor: pointer; color: var(--sn-ink-faint);
-	border-radius: var(--sn-radius-s);
 	transition: color var(--sn-dur-1);
 }
 .sn-body .toc .toctogglelabel:hover { color: var(--sn-ink); }

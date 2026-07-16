@@ -1,0 +1,109 @@
+/* ============================================================
+ * skinStyles/select2.css — Stella Nova
+ * Override para +ext.pageforms.select2.styles (los campos "tokens" de
+ * PageForms: <select class="pfTokens"> mejorado por Select2 → pills
+ * `.select2-selection__choice`, caja `.select2-selection--multiple`,
+ * dropdown de resultados, etc.).
+ *
+ * El módulo agrupa select2.css (librería) + select2-bootstrap.css +
+ * ext.pf.select2.css, TODOS con color HORNEADO a claro (`background:white`,
+ * pills `#e4e4e4`, bordes `#aaa`, highlighted `#2A4B8D`). Select2 NO conmuta
+ * con el tema → en oscuro la caja y los pills quedan claros y SOLO el texto
+ * (que hereda `--sn-ink`, ya volteado a claro) se aclara → texto claro sobre
+ * pill claro = ilegible (bug de la captura). Se revisten con tokens de campo.
+ *
+ * OJO: el dropdown lo monta Select2 como hijo directo de <body>, así que el
+ * prefijo `.skin-stellanova` (clase de <body>) sigue siendo ancestro y aplica.
+ * skinStyles se añade al mismo módulo → gana por orden; el prefijo blinda la
+ * especificidad frente a los selectores de 3 clases de ext.pf.select2.css.
+ * ============================================================ */
+
+/* ── Caja del control (single y multiple) ── */
+.skin-stellanova .select2-container--default .select2-selection--single,
+.skin-stellanova .select2-container--default .select2-selection--multiple {
+	background-color: var(--sn-field-bg);
+	border-color: var(--sn-field-border);
+	color: var(--sn-field-fg);
+}
+.skin-stellanova .select2-container--default .select2-selection--single .select2-selection__rendered {
+	color: var(--sn-field-fg);
+}
+.skin-stellanova .select2-container--default .select2-selection--single .select2-selection__placeholder {
+	color: var(--sn-field-placeholder);
+}
+.skin-stellanova .select2-container--default .select2-selection--single .select2-selection__arrow b {
+	border-top-color: var(--sn-icon);
+}
+.skin-stellanova .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+	border-bottom-color: var(--sn-icon);
+}
+/* Foco: en vez del `border: solid black 1px` horneado. */
+.skin-stellanova .select2-container--default.select2-container--focus .select2-selection--multiple,
+.skin-stellanova .select2-container--default.select2-container--focus .select2-selection--single {
+	border-color: var(--sn-focus-border);
+	outline: 0;
+}
+/* Deshabilitado. */
+.skin-stellanova .select2-container--default.select2-container--disabled .select2-selection--single,
+.skin-stellanova .select2-container--default.select2-container--disabled .select2-selection--multiple {
+	background-color: var(--sn-field-bg-disabled);
+}
+
+/* ── Pills (valores elegidos) ── el corazón del bug de la captura. */
+.skin-stellanova .select2-container--default .select2-selection--multiple .select2-selection__choice {
+	background-color: var(--sn-sunk);
+	border-color: var(--sn-hairline);
+	color: var(--sn-ink);
+}
+/* Select2 4.1 envuelve el texto del pill en __display; tíñelo por si acaso. */
+.skin-stellanova .select2-selection__choice .select2-selection__choice__display {
+	color: var(--sn-ink);
+}
+/* La "×" de quitar. */
+.skin-stellanova .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+	color: var(--sn-ink-faint);
+}
+.skin-stellanova .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+	color: var(--sn-ink);
+}
+
+/* ── Campo de búsqueda inline (donde se teclea para filtrar). ── */
+.skin-stellanova .select2-container--default .select2-search--inline .select2-search__field {
+	color: var(--sn-field-fg);
+}
+
+/* ── Dropdown de resultados ── */
+.skin-stellanova .select2-dropdown {
+	background-color: var(--sn-field-bg);
+	border-color: var(--sn-field-border);
+	color: var(--sn-ink);
+}
+.skin-stellanova .select2-container--default .select2-search--dropdown .select2-search__field {
+	background-color: var(--sn-field-bg);
+	border-color: var(--sn-field-border);
+	color: var(--sn-field-fg);
+}
+.skin-stellanova .select2-container--default .select2-results__option[aria-disabled="true"] {
+	color: var(--sn-ink-faint);
+}
+/* Opción ya seleccionada (gris `#ddd`). */
+.skin-stellanova .select2-container--default .select2-results__option[aria-selected="true"] {
+	background-color: var(--sn-opt-sel-bg);
+	color: var(--sn-ink);
+}
+/* Opción resaltada (hover / teclado): select2 pone azul `#5897fb`, PageForms
+   lo pisa con `#2A4B8D` (0,3,0). Reemplazamos por el relleno "on" del skin,
+   legible en ambos temas. */
+.skin-stellanova .select2-container--default .select2-results__option--highlighted[aria-selected],
+.skin-stellanova .pf-select2-dropdown .select2-results__options .select2-results__option--highlighted {
+	background-color: var(--sn-on-bg);
+	color: var(--sn-on-fg);
+}
+/* La descripción secundaria del resultado (PageForms) al resaltar. */
+.skin-stellanova .select2-results__option--highlighted .pf-result-description,
+.skin-stellanova .select2-highlighted .pf-result-description {
+	color: var(--sn-on-fg);
+}
+.skin-stellanova .pf-result-description {
+	color: var(--sn-ink-soft);
+}
