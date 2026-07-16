@@ -9,7 +9,7 @@
  * demás dobles-guión-bajo de MediaWiki.
  *
  * @file
- * @license GPL-2.0-or-later
+ * @license Artistic-2.0
  */
 
 $magicWords = [];

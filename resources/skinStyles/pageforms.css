@@ -3,9 +3,20 @@
  * Los formularios viven dentro de html-body-content; el skin no recorta su
  * markup ni sus TemplateStyles. Solo armoniza inputs/botones con el papel.
  * Carga junto a ext.pageforms*.styles .
+ *
+ * GOTCHA (2026-07-16): el <form> real que emite PageForms es
+ * `<form name="createbox" id="pfForm" class="createbox">` — NO lleva clase
+ * `pfForm`. Por eso todas las reglas que colgaban de `.pfForm` (clase)
+ * estaban MUERTAS: labels, checkboxes, alto uniforme, selects, botones. Los
+ * campos solo se estilaban por `input.createboxInput`/`textarea.createboxInput`,
+ * dejando fuera los `<input>` sin `type`, los `<select>` (combobox) y demás
+ * → borde default del navegador que NO voltea en oscuro (mismo síntoma que el
+ * borde de la TOC). El scope de formulario ahora es
+ * `:is(.pfForm, .createbox)` (createbox = la clase real; pfForm se conserva por
+ * si alguna versión/inline lo usa). Ver [[dark-mode-special-pages-audit]].
  */
 
-.pfForm, .pf-form-wrapper { font-size: var(--sn-fs-base); max-width: 100%; }
+.pfForm, .pf-form-wrapper, .createbox { font-size: var(--sn-fs-base); max-width: 100%; }
 
 /* La rejilla del formulario: respeta su tabla, suaviza el ritmo.
    `table-layout: fixed` es CLAVE: con `auto` un campo ancho (un input con
@@ -36,7 +47,7 @@
    Etiqueta más chica (--sn-fs-xs), AIRE entre la casilla y el texto (el `&nbsp;`
    solo no basta) y separación entre opciones. */
 .skin-stellanova :is(.checkboxLabel, .radioButtonItem),
-.pfForm label:has(> input:is([type="checkbox"], [type="radio"])) {
+:is(.pfForm, .createbox) label:has(> input:is([type="checkbox"], [type="radio"])) {
 	display: inline-block;
 	margin-inline-end: var(--sn-s-4);
 	font-size: var(--sn-fs-xs);
@@ -47,17 +58,24 @@
    widget OOUI, o el <input> pelado si no hay OOUI. */
 .skin-stellanova :is(.checkboxLabel, .radioButtonItem)
 	> :is(input, .oo-ui-checkboxInputWidget, .oo-ui-radioInputWidget),
-.pfForm label:has(> input:is([type="checkbox"], [type="radio"])) > input {
+:is(.pfForm, .createbox) label:has(> input:is([type="checkbox"], [type="radio"])) > input {
 	margin-inline-end: var(--sn-s-2);
 }
 
 /* Campos: misma materia que la búsqueda y los selects del panel. `box-sizing:
    border-box` evita que el padding cause desbordes; `max-width: 100%` acota
-   cualquier campo a su columna (incluido el width inline de los tokens). */
-.pfForm :is(input[type="text"], input[type="number"], input[type="search"],
-	input[type="url"], input[type="email"], input[type="date"], textarea, select),
-.pf-form-wrapper :is(input[type="text"], textarea, select),
-input.createboxInput, .formInput input, textarea.createboxInput {
+   cualquier campo a su columna (incluido el width inline de los tokens).
+   `input:not([type])` es CLAVE: PageForms emite varios <input> SIN atributo
+   `type` (rinden como texto), que `input[type="text"]` no captura. */
+:is(.pfForm, .createbox, .pf-form-wrapper) :is(
+	input:not([type]),
+	input[type="text"], input[type="number"], input[type="search"],
+	input[type="url"], input[type="email"], input[type="tel"],
+	input[type="password"], input[type="date"], input[type="time"],
+	input[type="datetime-local"], input[type="month"], input[type="week"],
+	textarea, select),
+input.createboxInput, textarea.createboxInput, select.createboxInput,
+.formInput input {
 	box-sizing: border-box;
 	font: inherit; color: var(--sn-ink);
 	background: var(--sn-paper);
@@ -67,28 +85,30 @@ input.createboxInput, .formInput input, textarea.createboxInput {
 	max-width: 100%;
 	vertical-align: middle;
 }
-.pfForm textarea, textarea.createboxInput { width: 100%;
+:is(.pfForm, .createbox) textarea, textarea.createboxInput { width: 100%;
 	line-height: var(--sn-leading); }
 /* Altura UNIFORME para los controles de una sola línea (textarea y tokens
    multilínea conservan su propio alto). */
-.pfForm :is(input[type="text"], input[type="number"], input[type="search"],
-	input[type="url"], input[type="email"], input[type="date"], select):not([multiple]),
-.pfForm input.createboxInput:not([type="checkbox"]):not([type="radio"]):not([multiple]) {
+:is(.pfForm, .createbox) :is(input:not([type]), input[type="text"],
+	input[type="number"], input[type="search"], input[type="url"],
+	input[type="email"], input[type="date"], select):not([multiple]),
+:is(.pfForm, .createbox) input.createboxInput:not([type="checkbox"]):not([type="radio"]):not([multiple]) {
 	min-height: var(--sn-ctl);
 }
 /* Widgets de tokens (select2) y selects múltiples: acotados al contenedor pese
    al width inline (p. ej. 600px) → nunca rebasan el ancho de la página. */
-.pfForm :is(.select2-container, .pfTokens, select[multiple]) { max-width: 100%; }
-.pfForm :is(input, textarea, select):focus {
+:is(.pfForm, .createbox) :is(.select2-container, .pfTokens, select[multiple]) { max-width: 100%; }
+:is(.pfForm, .createbox) :is(input, textarea, select):focus {
 	outline: none; border-color: var(--sn-nova);
 	box-shadow: 0 0 0 3px var(--sn-nova-wash);
 }
-.pfForm input::placeholder, .pf-form-wrapper input::placeholder {
+:is(.pfForm, .createbox) input::placeholder,
+.pf-form-wrapper input::placeholder {
 	color: var(--sn-ink-faint);
 }
 
 /* OOUI dentro de PageForms — solo acentos, sin romper su layout */
-.pfForm .oo-ui-inputWidget-input:focus,
+:is(.pfForm, .createbox) .oo-ui-inputWidget-input:focus,
 .oo-ui-textInputWidget.oo-ui-widget-enabled .oo-ui-inputWidget-input:focus {
 	border-color: var(--sn-nova);
 	box-shadow: 0 0 0 2px var(--sn-nova-wash);
@@ -111,24 +131,44 @@ input.createboxInput, .formInput input, textarea.createboxInput {
 .removeTemplate:hover, .multipleTemplateRemover:hover { color: var(--sn-danger); }
 
 /* Botones de envío / acciones del formulario */
-.pfForm .editButtons input[type="submit"],
-.pfForm .mw-htmlform-submit, .pfSubmitButton, input#wpSave,
+:is(.pfForm, .createbox) .editButtons input[type="submit"],
+:is(.pfForm, .createbox) .mw-htmlform-submit, .pfSubmitButton, input#wpSave,
 .pf_CreateBox input[type="submit"] {
 	background: var(--sn-ink); color: var(--sn-paper);
 	border: 0; border-radius: var(--sn-radius);
 	padding: .55rem var(--sn-s-5); font: inherit; font-weight: 500;
 	cursor: pointer; transition: background var(--sn-dur-1);
 }
-.pfForm .editButtons input[type="submit"]:hover, .pfSubmitButton:hover {
+:is(.pfForm, .createbox) .editButtons input[type="submit"]:hover, .pfSubmitButton:hover {
 	background: var(--sn-nova); color: var(--sn-nova-ink);
 }
-.pfForm .editButtons input[type="button"], #wpPreview, #wpDiff {
+:is(.pfForm, .createbox) .editButtons input[type="button"], #wpPreview, #wpDiff {
 	background: transparent; color: var(--sn-ink);
 	border: 1px solid var(--sn-hairline); border-radius: var(--sn-radius);
 	padding: .5rem var(--sn-s-4); font: inherit; cursor: pointer;
 }
 .pf_CreateBox, .pfFormInput {
 	display: flex; flex-wrap: wrap; gap: var(--sn-s-2); align-items: center;
+}
+
+/* ── Borde de campos: vencer el ID de PageForms ──
+   `PageForms.less` (ext.pageforms.main.styles) fija el borde de los campos con
+   selectores de ID: `#pfForm .createboxInput|.mandatoryField|textarea|
+   input.formInput|input.yearInput|…|select.monthInput { border:1px solid #BBB }`.
+   El `#BBB` está HORNEADO (no voltea) y, por ser ID (1,1,0), le gana a nuestras
+   reglas de clase → en oscuro el campo queda con filete gris claro (mismo
+   síntoma que el borde de la TOC). Medido con CDP: bg/radio/padding nuestros SÍ
+   ganan (PF no los repite en esos selectores), solo el color de borde perdía.
+   Se re-tiñe con `--sn-hairline` desde una especificidad mayor (ID + clase =
+   1,2,x) y orden posterior. `:focus` y `[readonly]` incluidos. */
+.skin-stellanova #pfForm :is( input, textarea, select ):not( [type="checkbox"] ):not( [type="radio"] ) {
+	border-color: var(--sn-hairline);
+}
+.skin-stellanova #pfForm :is( input, textarea, select ):focus {
+	border-color: var(--sn-nova);
+}
+.skin-stellanova #pfForm input[readonly] {
+	background: var(--sn-field-bg-disabled); color: var(--sn-ink-soft);
 }
 
 /* Autocompletado / fancybox / datepicker */

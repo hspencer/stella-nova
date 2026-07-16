@@ -4,11 +4,13 @@
 	"namemsg": "skinname-stellanova",
 	"version": "0.6.15",
 	"author": [
-		"[https://herbertspencer.net Herbert Spencer González], e[ad] Escuela de Arquitectura y Diseño, Pontificia Universidad Católica de Valparaíso"
+		"[https://herbertspencer.net Herbert Spencer González]",
+		".:TIG:. Taller de Investigaciones Gráficas, e[ad] Escuela de Arquitectura y Diseño, Pontificia Universidad Católica de Valparaíso",
+		"Corporación Cultural Amereida"
 	],
 	"url": "https://github.com/hspencer/stella-nova",
 	"descriptionmsg": "stellanova-desc",
-	"license-name": "GPL-2.0-or-later",
+	"license-name": "Artistic-2.0",
 	"type": "skin",
 	"requires": {
 		"MediaWiki": ">= 1.43.0"

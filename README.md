@@ -138,7 +138,17 @@ orden: `skin.json` (qué declara) → `skin.mustache` (qué emite) →
 
 ## Licencia
 
-GPL-2.0-or-later. Ver [`COPYING`](COPYING).
+**Artistic License 2.0** (`Artistic-2.0`). Ver [`COPYING`](COPYING), que
+incluye el aviso en castellano y el texto original vinculante en inglés.
+
+Copyright © 2026 Herbert Spencer González · .:TIG:. Taller de
+Investigaciones Gráficas de la e[ad] Escuela de Arquitectura y Diseño de la
+Pontificia Universidad Católica de Valparaíso · Corporación Cultural
+Amereida.
+
+Dos archivos de `resources/skinStyles/` (`mermaid.css`, `pagenotice.css`)
+incorporan CSS de extensiones de MediaWiki y conservan su licencia original
+GPL-2.0-or-later; el resto del skin es Artistic-2.0.
 
 ### Advertencia
 

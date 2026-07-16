@@ -11,7 +11,7 @@
  *  · Pre-pintado sin FOUC  → resuelve el tema antes del primer paint
  *    (eludir el "parpadeo" de color al recargar).
  *
- * @license GPL-2.0-or-later
+ * @license Artistic-2.0
  */
 
 namespace MediaWiki\Skins\StellaNova;

@@ -8,7 +8,7 @@
  * UserTools, ManagedChrome, PreferencesPanel). El contrato
  * SkinRenderFidelity lo cumple el template emitiendo todas las data keys.
  *
- * @license GPL-2.0-or-later
+ * @license Artistic-2.0
  */
 
 namespace MediaWiki\Skins\StellaNova;
