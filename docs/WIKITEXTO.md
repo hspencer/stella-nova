@@ -365,14 +365,41 @@ Un bloque entero: el ancho se hereda a los párrafos internos.
 </div>
 ```
 
-`fw-NN` = `font-stretch: NN%`. Disponibles: `fw-100` `fw-95` `fw-90` `fw-85`
-`fw-80`.
+`fw-NN` = `font-stretch: NN%`. Disponibles de 10 en 10: `fw-50` `fw-60` `fw-70`
+`fw-80` `fw-90` `fw-100` `fw-110` `fw-120` `fw-130` `fw-140` `fw-150`. Además
+siguen publicados `fw-75` `fw-85` `fw-95` (pasos de 5 heredados de v0.6.14, para
+no romper el wikitexto que ya los usa).
 
-**Consecuencias:**
-- **Rango 80–100.** El cuerpo ya corre condensado a `--sn-text-width` (**80%**),
-  que es el **piso por diseño** (más apretado deja de leerse bien): `fw-80` = el
-  cuerpo, `fw-100` devuelve el texto a ancho normal, los pasos intermedios
-  relajan la condensación. No hay `fw-` por debajo de 80.
+#### ⚠️ Qué se ve de verdad
+
+La escala **declarada** va 50–150, pero el navegador **clampa en silencio** al
+rango del `woff2` que servimos, y ese rango depende de la familia:
+
+| Familia | `wdth` del woff2 | Tramo que SÍ se ve | Qué pasa fuera |
+|---|---|---|---|
+| **IBM Plex Sans** (por defecto) | 75–100 | **75–100** | `fw-50/60/70` → se ven como 75 · `fw-110`…`fw-150` → se ven como 100 |
+| **Roboto Serif** (modo serif) | 62.5–100 | **62.5–100** | `fw-50/60` → se ven como 62.5 · `fw-110`…`fw-150` → se ven como 100 |
+
+**Ojo con esto: la familia la elige el LECTOR**, no quien escribe (menú del skin,
+preferencia `family`, default sans). Así que el mismo `fw-130` puede verse
+expandido para un lector en serif y clampado a 100 para uno en sans. Si vas a
+usar un ancho fuera de 75–100, **fija la familia en el propio elemento**
+(`class="serif fw-130"`) para que el resultado no dependa de la preferencia
+ajena.
+
+**Por qué no se puede arreglar del todo:** IBM Plex Sans **no tiene ancho
+expandido** — su eje llega a 100 y punto, no es cosa del subset. Los tramos
+`fw-110`…`fw-150` solo pueden existir en Roboto Serif, y hoy tampoco: nuestro
+`woff2` va instanciado a 62.5–100 (upstream trae 50–150; se recortó en v0.2.4
+para bajar la familia de ~1.6 MB a ~0.9 MB). Para activarlos hay que reconstruir
+el `woff2` sin recortar el eje **y** fijar `serif` en el elemento.
+
+**Otras consecuencias:**
+- En modo **sans**, el cuerpo corre condensado a `--sn-text-width` (**80%**):
+  `fw-80` = el cuerpo, `fw-100` devuelve el texto a ancho normal, `fw-75` lo
+  aprieta al máximo que da la fuente. En modo **serif** el cuerpo va más
+  apretado (62.5%), así que ahí toda la escala lee **más ancha** que el cuerpo:
+  la escala es absoluta, no relativa al cuerpo.
 - `font-stretch` **hereda**: puesta en un `<div>`, el ancho fluye a los `<p>`,
   `<li>` y leyendas internos. Las cabeceras conservan su ancho normal.
 - **Ortogonales**: se combinan con los demás helpers

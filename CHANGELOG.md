@@ -9,6 +9,31 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.6.16] — 2026-07-16
+
+### Added
+- **Escala completa de `fw-*`** (`resources/stella-nova.css`): las clases de
+  ancho de fuente ahora van **de 10 en 10 entre `fw-50` y `fw-150`** (`fw-50`
+  `fw-60` `fw-70` `fw-80` `fw-90` `fw-100` `fw-110` `fw-120` `fw-130` `fw-140`
+  `fw-150`), en vez del rango 80–100 de v0.6.14. Los pasos de 5 previos
+  (`fw-75` `fw-85` `fw-95`) **siguen publicados** para no romper el wikitexto
+  que ya los usa. Motivo del rango declarado: es el eje `wdth` de Roboto Serif
+  upstream, y así el wikitexto no hay que reescribirlo si algún día se
+  reconstruye la fuente sin recortar el eje.
+
+### Documentation
+- **Documentado el clamp de `fw-*`** (`docs/WIKITEXTO.md`, comentario del CSS y
+  espécimen), que es la parte no obvia: **la escala declarada es más ancha que
+  lo que las fuentes saben renderizar** y el navegador clampa en silencio al eje
+  del `woff2`, que **depende de la familia** — IBM Plex Sans `wdth` 75–100 (la
+  fuente entera: no tiene ancho expandido, no es el subset), Roboto Serif
+  62.5–100 en nuestro build (upstream 50–150; recortado en v0.2.4 para bajar la
+  familia de ~1.6 MB a ~0.9 MB). Hoy, en la práctica, **solo 75–100 se ve**.
+  Además, **la familia la elige el LECTOR** (preferencia `family`, default sans,
+  aplicada por `skin.js` como `data-sn-family`), así que un mismo `fw-130` puede
+  clampar para un lector y expandir para otro: fuera de 75–100 el wikitexto debe
+  fijar la familia en el elemento (`class="serif fw-130"`).
+
 ## [0.6.15] — 2026-07-16
 
 ### Fixed

@@ -587,7 +587,7 @@ envuelva en su &lt;p&gt;, queda centrado.
 </section>
 
 <section class="comp">
-  <h2>Ancho de fuente — <code>fw-100</code> … <code>fw-80</code></h2>
+  <h2>Ancho de fuente — <code>fw-50</code> … <code>fw-150</code></h2>
   <p class="meta"><strong>Estas viven en la skin</strong> (no en
   <code>MediaWiki:Common.css</code> ni en TemplateStyles). Existen porque el
   sanitizador de TemplateStyles (css-sanitizer) <strong>no acepta
@@ -596,17 +596,39 @@ envuelva en su &lt;p&gt;, queda centrado.
   La skin no está sanitizada y lo expone como clase: se escribe
   <code>class="fw-90"</code> y nunca se toca <code>font-stretch</code> en CSS
   sanitizado. <code>fw-NN</code> = <code>font-stretch: NN%</code> (eje
-  <code>wdth</code> de las fuentes variables del skin). <strong>Rango
-  80–100</strong>: 80% es el ancho condensado del cuerpo
-  (<code>--sn-text-width</code>) y el piso por diseño —más apretado deja de
-  leerse bien—, así que <code>fw-80</code> = cuerpo, <code>fw-100</code> lo
-  devuelve a ancho normal y los pasos intermedios relajan la condensación.
-  <code>font-stretch</code> hereda → en un <code>&lt;div&gt;</code> el ancho fluye
-  a los párrafos internos.</p>
+  <code>wdth</code> de las fuentes variables del skin). La escala va
+  <strong>de 10 en 10, de 50 a 150</strong>; siguen publicados
+  <code>fw-75</code> <code>fw-85</code> <code>fw-95</code> (pasos de 5 heredados
+  de v0.6.14). <code>font-stretch</code> hereda → en un <code>&lt;div&gt;</code>
+  el ancho fluye a los párrafos internos.</p>
+  <div class="spec-notes" style="border-left:3px solid var(--sn-nova);padding-left:1em">
+    <p><strong>⚠️ La escala declarada es más ancha que lo que las fuentes saben
+    renderizar.</strong> El navegador <strong>clampa en silencio</strong> al eje
+    <code>wdth</code> del <code>woff2</code>, y ese rango depende de la familia:</p>
+    <ul>
+      <li><strong>IBM Plex Sans</strong> (familia por defecto): <code>wdth</code>
+      <strong>75–100</strong>. Es la fuente entera —no tiene ancho expandido, no
+      es cosa del subset—. <code>fw-50/60/70</code> se ven todos como 75;
+      <code>fw-110</code>…<code>fw-150</code> se ven todos como 100.</li>
+      <li><strong>Roboto Serif</strong> (modo serif): nuestro <code>woff2</code>
+      va instanciado a <strong>62.5–100</strong>, aunque upstream trae 50–150
+      (se recortó en v0.2.4 para bajar la familia de ~1.6&nbsp;MB a ~0.9&nbsp;MB).
+      <code>fw-50/60</code> se ven como 62.5; <code>fw-110</code>…<code>fw-150</code>
+      como 100. Activar el tramo expandido exige reconstruir el
+      <code>woff2</code> sin recortar el eje.</li>
+    </ul>
+    <p><strong>La familia la elige el LECTOR</strong> (menú del skin, default
+    sans), no quien escribe. Así que un mismo <code>fw-130</code> puede clampar
+    para un lector y expandir para otro. Fuera de 75–100, <strong>fija la familia
+    en el elemento</strong>: <code>class="serif fw-130"</code>.</p>
+  </div>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;span class="fw-100"&gt;Ancho normal&lt;/span&gt;
 &lt;span class="fw-90"&gt;Condensada 90%&lt;/span&gt;
 &lt;span class="fw-80"&gt;Condensada 80% (= cuerpo)&lt;/span&gt;
+
+&lt;!-- fuera de 75-100: fija la familia --&gt;
+&lt;span class="serif fw-130"&gt;Expandida&lt;/span&gt;
 
 &lt;div class="fw-90"&gt;
 Un bloque entero: el ancho
@@ -614,21 +636,25 @@ se hereda a los &lt;p&gt; internos.
 &lt;/div&gt;</pre>
     <div class="sn-paper sn-body demo">
       <div class="mw-parser-output">
-        <p style="margin:0"><span class="fw-100">Aa Hh — ancho normal (fw-100)</span></p>
-        <p style="margin:0"><span class="fw-95">Aa Hh — 95% (fw-95)</span></p>
-        <p style="margin:0"><span class="fw-90">Aa Hh — 90% (fw-90)</span></p>
-        <p style="margin:0"><span class="fw-85">Aa Hh — 85% (fw-85)</span></p>
-        <p style="margin:0"><span class="fw-80">Aa Hh — 80% (fw-80, = cuerpo, piso)</span></p>
+        <p style="margin:0"><span class="fw-150">Aa Hh — 150 (clampa en sans)</span></p>
+        <p style="margin:0"><span class="fw-130">Aa Hh — 130 (clampa en sans)</span></p>
+        <p style="margin:0"><span class="fw-110">Aa Hh — 110 (clampa en sans)</span></p>
+        <p style="margin:0"><span class="fw-100">Aa Hh — 100 (ancho normal)</span></p>
+        <p style="margin:0"><span class="fw-90">Aa Hh — 90</span></p>
+        <p style="margin:0"><span class="fw-80">Aa Hh — 80 (= cuerpo en sans)</span></p>
+        <p style="margin:0"><span class="fw-75">Aa Hh — 75 (piso real de Plex Sans)</span></p>
+        <p style="margin:0"><span class="fw-70">Aa Hh — 70 (clampa a 75 en sans)</span></p>
+        <p style="margin:0"><span class="fw-50">Aa Hh — 50 (clampa a 75 en sans)</span></p>
       </div>
     </div>
   </div>
   <div class="spec-notes">
     <p>Ortogonales: se combinan con los helpers tipográficos
-    (<code>class="lg serif fw-90"</code>). El piso es <code>fw-80</code>: por
-    debajo del 80% el cuerpo deja de leerse cómodo, así que la escala no baja de
-    ahí. Para un ancho por fuera (p.&nbsp;ej. un titular serif más apretado), la
-    plantilla puede escribir <code>font-stretch: var(--tu-prop)</code>:
-    <code>var()</code> sí pasa el sanitizador aunque el porcentaje literal no.</p>
+    (<code>class="lg serif fw-90"</code>). Si dos filas de la demo se ven
+    idénticas, no es un error del espécimen: es el clamp de la fuente. Para un
+    ancho por fuera de la escala, la plantilla puede escribir
+    <code>font-stretch: var(--tu-prop)</code>: <code>var()</code> sí pasa el
+    sanitizador aunque el porcentaje literal no.</p>
   </div>
 </section>
 
