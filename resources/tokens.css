@@ -137,6 +137,16 @@
 	--sn-paper:        light-dark(var(--sn-papel-50),  var(--sn-tinta-800));
 	--sn-paper-edge:   light-dark(var(--sn-papel-100), var(--sn-tinta-700));
 	--sn-sunk:         light-dark(var(--sn-papel-200), var(--sn-tinta-900));
+	/* Superficie del área de edición (el <textarea> de wikitexto y de
+	   CSS/JS/JSON). Es un LAVADO, no una superficie de la escala papel:
+	   un 3% de tinta disuelto en el papel de la página. Apenas se despega
+	   del fondo —lo justo para que el área de escritura se lea como una
+	   zona distinta— y voltea sola con el tema, porque sus dos ingredientes
+	   ya voltean. Se separó de --sn-sunk (2026-07-20) porque el pozo del
+	   bloque de código resultó demasiado marcado para un área grande: en
+	   una caja de <pre> de cinco líneas es un acento, en un textarea de
+	   pantalla completa es una mancha. Un solo número para calibrarlo. */
+	--sn-edit-surface: color-mix(in oklab, var(--sn-ink) 3%, var(--sn-paper));
 
 	/* — Semántica · tinta — texto, secundarios, filetes */
 	--sn-ink:          light-dark(var(--sn-tinta-750), var(--sn-papel-300));
@@ -381,9 +391,13 @@
 	--sn-lift-paper:
 		0 1px 1px rgba(40, 33, 20, .03),
 		0 3px 8px rgba(40, 33, 20, .04);
+	/* --sn-lift es el gesto de ELEVACIÓN (menús, popovers, tarjetas que se
+	   despegan): desenfoque corto (6px) y desplazamiento vertical largo, para
+	   que se lea "levantado hacia arriba" y no como una mancha difusa. El
+	   spread negativo recoge la sombra hacia el centro y afila el borde. */
 	--sn-lift:
-		0 1px 2px rgba(40, 33, 20, .05),
-		0 8px 24px rgba(40, 33, 20, .08);
+		0 1px 1px rgba(40, 33, 20, .06),
+		0 8px 6px -3px rgba(40, 33, 20, .16);
 	--sn-lift-soft: 0 2px 8px rgba(40, 33, 20, .05);
 
 	/* — Movimiento (--sn-motion lo apaga la preferencia/SO) — */
@@ -555,7 +569,7 @@
 	color-scheme: dark;
 	--sn-field-grain: .05;
 	--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
-	--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+	--sn-lift:       0 1px 1px rgba(0,0,0,.45), 0 8px 6px -3px rgba(0,0,0,.6);
 	--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
 	--sn-serif-grade: 30;
 }
@@ -568,7 +582,7 @@
 	:root[data-sn-theme="auto"] {
 		--sn-field-grain: .05;
 		--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
-		--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+		--sn-lift:       0 1px 1px rgba(0,0,0,.45), 0 8px 6px -3px rgba(0,0,0,.6);
 		--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
 		--sn-serif-grade: 30;
 	}

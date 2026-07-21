@@ -41,8 +41,11 @@
  * ============================================================ */
 
 /* ─── Superficie del editor ─── */
+/* Mismo lavado que el <textarea> de wikitexto (--sn-edit-surface): el área de
+   escritura se despega apenas del papel de la página, y Ace no cambia de
+   superficie al tomar el relevo del textarea. */
 .skin-stellanova .ace-tm {
-	background-color: var(--sn-paper);
+	background-color: var(--sn-edit-surface);
 	color: var(--sn-ink);
 }
 /* Fuente: monoespaciada del skin, al tamaño del cuerpo menor. El prefijo
@@ -182,5 +185,7 @@
 .skin-stellanova .codeeditor-loading #wpTextbox1 {
 	font-family: var(--sn-font-mono);
 	color: var(--sn-ink);
-	background: var(--sn-paper);
+	/* Misma superficie que el editor ya cargado, para que Ace no entre desde
+	   un flash de papel claro. */
+	background: var(--sn-edit-surface);
 }

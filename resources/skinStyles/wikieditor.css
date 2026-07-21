@@ -295,7 +295,7 @@ form#editform {
 .mw-body #wpTextbox1,
 .mw-body .mw-editfont-monospace,
 .mw-body .wikiEditor-ui-text textarea {
-	background: var(--sn-paper);
+	background: var(--sn-edit-surface);
 	color: var(--sn-ink);
 }
 

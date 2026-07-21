@@ -1323,7 +1323,7 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	color-scheme: dark;
 	--sn-field-grain: .05;
 	--sn-lift-paper: 0 1px 1px rgba(0,0,0,.25), 0 3px 10px rgba(0,0,0,.35);
-	--sn-lift:       0 1px 2px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.45), 0 24px 60px rgba(0,0,0,.4);
+	--sn-lift:       0 1px 1px rgba(0,0,0,.45), 0 8px 6px -3px rgba(0,0,0,.6);
 	--sn-lift-soft:  0 2px 12px rgba(0,0,0,.4);
 	--sn-serif-grade: 30;
 	font-variation-settings: "GRAD" var(--sn-serif-grade);
@@ -1337,7 +1337,7 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	color-scheme: light;
 	--sn-field-grain: .035;
 	--sn-lift-paper: 0 1px 1px rgba(40,33,20,.03), 0 3px 8px rgba(40,33,20,.04);
-	--sn-lift:       0 1px 2px rgba(40,33,20,.05), 0 8px 24px rgba(40,33,20,.08);
+	--sn-lift:       0 1px 1px rgba(40,33,20,.06), 0 8px 6px -3px rgba(40,33,20,.16);
 	--sn-lift-soft:  0 2px 8px rgba(40,33,20,.05);
 	--sn-serif-grade: 70;
 	font-variation-settings: "GRAD" var(--sn-serif-grade);
@@ -1347,7 +1347,7 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 		color-scheme: light;
 		--sn-field-grain: .035;
 		--sn-lift-paper: 0 1px 1px rgba(40,33,20,.03), 0 3px 8px rgba(40,33,20,.04);
-		--sn-lift:       0 1px 2px rgba(40,33,20,.05), 0 8px 24px rgba(40,33,20,.08);
+		--sn-lift:       0 1px 1px rgba(40,33,20,.06), 0 8px 6px -3px rgba(40,33,20,.16);
 		--sn-lift-soft:  0 2px 8px rgba(40,33,20,.05);
 		--sn-serif-grade: 70;
 		font-variation-settings: "GRAD" var(--sn-serif-grade);
@@ -3142,8 +3142,15 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	}
 }
 
-/* ─── Editor: tipografía monoespaciada recién instalada (IBM Plex Mono),
-   un pelo más grande, padding 1ex; legible también en modo oscuro. ─── */
+/* ─── Editor: tipografía monoespaciada (IBM Plex Mono), padding 1ex;
+   legible también en modo oscuro.
+
+   PARIDAD CON EL BLOQUE DE CÓDIGO (decisión 2026-07-20): el textarea de
+   edición se lee como la caja `<pre>` de la previsualización — misma
+   superficie hundida (--sn-sunk), mismo cuerpo (--sn-fs-sm) y misma
+   interlínea (1.5). Antes iba sobre --sn-paper a --sn-fs-base: un bloque
+   blanco y grande que no dialogaba con el resultado renderizado. Editar
+   wikitexto ES escribir código, así que hereda la materia del código. ─── */
 /* Marco tokenizado POR DEFECTO. Cuando se edita una página que NO es
    wikitexto —CSS/JS/JSON, p. ej. `Plantilla:…/style.css`— WikiEditor no
    realza el área: el textarea queda desnudo (`#wpTextbox1.mw-editfont-
@@ -3157,11 +3164,11 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .wikiEditor-ui-text textarea,
 textarea.mw-editfont-monospace {
 	font-family: var(--sn-font-mono) !important;
-	font-size: var(--sn-fs-base);
-	line-height: 1.65;
+	font-size: var(--sn-fs-sm);
+	line-height: 1.5;
 	padding: 1ex !important;
 	color: var(--sn-ink);
-	background: var(--sn-paper);
+	background: var(--sn-edit-surface);
 	border: 1px solid var(--sn-hairline);
 	border-radius: var(--sn-radius);
 	box-shadow: none !important;

@@ -9,6 +9,45 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.6.17] — 2026-07-20
+
+### Added
+- **Token `--sn-edit-surface`** (`resources/tokens.css`): superficie propia del
+  área de escritura, definida como **lavado** (`color-mix(in oklab,
+  var(--sn-ink) 3%, var(--sn-paper))`) y no como peldaño de la escala papel.
+  Voltea sola con el tema porque sus dos ingredientes ya voltean, así que no
+  necesita override en los selectores `[data-sn-theme]`. La consumen las
+  cuatro superficies de escritura: textarea desnudo, textarea envuelto por
+  WikiEditor, `.ace-tm` (CodeEditor, que estaba en `--sn-paper`) y el fallback
+  FOUC de Ace. Un solo número para calibrar el despegue del papel.
+
+### Changed
+- **`--sn-lift` reformulado** (`resources/tokens.css`, `resources/stella-nova.css`):
+  el gesto de elevación pasa de sombra difusa a sombra **corta y desplazada**
+  — `0 1px 1px` de contacto + `0 8px 6px -3px` de elevación, en vez de los
+  `8px 24px` (claro) y la tercera capa de `24px 60px` (oscuro). Blur ~6px y
+  spread negativo: el objeto se lee levantado, no rodeado de halo. En oscuro
+  sube la opacidad (.45/.6) para compensar el menor desenfoque. Afecta a los
+  seis puntos donde se declara el token (base + overrides de tema en
+  `tokens.css`; `.fondo-noche`/`.fondo-dia`/media-query en `stella-nova.css`).
+  `--sn-lift-paper` y `--sn-lift-soft` **no cambian**. Consumidores: menú de
+  usuario, sugerencias de PageForms, jQuery UI, notificaciones, tooltips SMW,
+  InlineComments.
+- **El textarea de edición se iguala al bloque de código**
+  (`resources/stella-nova.css`, `resources/skinStyles/wikieditor.css`,
+  `resources/skinStyles/codeeditor.css`): cuerpo **`--sn-fs-sm`** (antes
+  `--sn-fs-base`) e interlínea **1.5** (antes 1.65) — los mismos valores que
+  `.sn-body pre`, con la misma monoespaciada que ya compartían. Editar
+  wikitexto es escribir código, así que el editor hereda la materia del
+  código y deja de ser un bloque blanco y grande frente a la
+  previsualización. La superficie NO se igualó a la de `pre`: el pozo
+  `--sn-sunk` funciona en una caja de cinco líneas pero a pantalla completa
+  es una mancha, así que el fondo va por `--sn-edit-surface` (arriba), mucho
+  más leve. Cubre las tres rutas: textarea desnudo (CSS/JS/JSON),
+  envuelto por WikiEditor, y el fallback FOUC de CodeEditor mientras Ace
+  carga. El cromo (toolbar, tabs, cinta de controles) sigue en `--sn-paper`,
+  que ahora contrasta con el pozo del textarea.
+
 ## [0.6.16] — 2026-07-16
 
 ### Added
