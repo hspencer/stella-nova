@@ -136,6 +136,26 @@
 	--sn-field-grain:  0.035;          /* opacidad del grano de papel; override por tema al final */
 	--sn-paper:        light-dark(var(--sn-papel-50),  var(--sn-tinta-800));
 	--sn-paper-edge:   light-dark(var(--sn-papel-100), var(--sn-tinta-700));
+	/* Superficie ELEVADA: la única del skin que abandona la temperatura
+	   cálida del papel y va a los extremos —blanco puro en claro, negro
+	   cálido en oscuro— para que una tarjeta al elevarse CONTRASTE con la
+	   hoja en vez de fundirse con ella. Existe porque el sanitizador de
+	   TemplateStyles rechaza `light-dark()`: una plantilla no puede escribir
+	   una superficie que voltee con el tema, solo referenciar var(--token).
+	   Este es ese token (contrato externo: lo consume Plantilla:Portafolio y
+	   el hover-elevar transversal de tarjetas).
+
+	   DOS ASIMETRÍAS CONOCIDAS, deliberadas (2026-07-20):
+	   · En claro el salto contra el papel es de 3–8 puntos por canal, o sea
+	     que el color casi no se ve y el gesto lo lleva --sn-lift. Es
+	     intencional — el papel cálido ya es casi blanco.
+	   · En oscuro el valor COINCIDE con --sn-field (el fondo de página tras
+	     la hoja), así que la tarjeta se lee recortada sobre el fondo, no
+	     flotando sobre el papel: efecto lightbox, no elevación Material.
+	     Si algún día se quiere lo segundo, el cambio es una palabra:
+	     --sn-tinta-950 → --sn-tinta-700 (un peldaño MÁS CLARO que el papel,
+	     que es como la elevación se lee en oscuro). */
+	--sn-paper-raised: light-dark(var(--sn-blanco), var(--sn-tinta-950));
 	--sn-sunk:         light-dark(var(--sn-papel-200), var(--sn-tinta-900));
 	/* Superficie del área de edición (el <textarea> de wikitexto y de
 	   CSS/JS/JSON). Es un LAVADO, no una superficie de la escala papel:

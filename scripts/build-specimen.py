@@ -55,6 +55,15 @@ def parse_tokens(css_text: str):
     m = re.search(r":root\s*\{(.+?)^\}", css_text, re.DOTALL | re.MULTILINE)
     body = m.group(1) if m else css_text
 
+    # Los comentarios de bloque que ocupan sus PROPIAS líneas se descartan
+    # antes de buscar tokens. Sin esto, un comentario que menciona un token
+    # seguido de dos puntos —"contra --sn-paper: el color casi no se ve"— se
+    # parsea como una declaración y se lleva por delante todo hasta el
+    # siguiente `;`, ensuciando la tabla del espécimen. Los comentarios
+    # TRAILING (los que van tras el `;` en la misma línea) sobreviven: son
+    # las notas que el render muestra junto a cada token.
+    body = re.sub(r"(?ms)^[ \t]*/\*.*?\*/[ \t]*\n?", "", body)
+
     sections = []
     current = "General"
     pos = 0

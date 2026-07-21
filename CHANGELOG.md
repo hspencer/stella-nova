@@ -9,6 +9,35 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.6.18] — 2026-07-20
+
+### Added
+- **Token `--sn-paper-raised`** (`resources/tokens.css`): superficie elevada,
+  `light-dark(var(--sn-blanco), var(--sn-tinta-950))` — blanco puro en claro,
+  negro cálido en oscuro. Es la única superficie del skin que abandona la
+  temperatura cálida del papel, para que una tarjeta al elevarse contraste con
+  la hoja en vez de fundirse. **Existe porque el sanitizador de TemplateStyles
+  rechaza `light-dark()`** (`bad-value-for-property`): una plantilla no puede
+  escribir una superficie que voltee con el tema, solo referenciar
+  `var(--token)`. Contrato externo: lo consume `Plantilla:Portafolio` (hover de
+  tarjeta) y el hover-elevar transversal cuando se generalice.
+
+  Dos asimetrías conocidas y deliberadas, documentadas en el CSS: en **claro**
+  el salto contra `--sn-paper` es de 3–8 puntos por canal (el gesto lo lleva
+  `--sn-lift`, no el color); en **oscuro** el valor coincide con `--sn-field`,
+  así que la tarjeta se lee **recortada** sobre el fondo de página, no flotando
+  sobre el papel — efecto lightbox, no elevación Material. Para lo segundo el
+  cambio es una palabra: `--sn-tinta-950` → `--sn-tinta-700`.
+
+### Fixed
+- **`scripts/build-specimen.py` ya no confunde comentarios con tokens**: el
+  parser descartaba solo los comentarios *trailing*, así que un comentario de
+  bloque que mencionara un token seguido de dos puntos (`contra --sn-paper: el
+  color…`) se parseaba como declaración y se tragaba todo hasta el siguiente
+  `;`, metiendo prosa en la celda de valor del espécimen. Ahora se eliminan los
+  comentarios de bloque que ocupan sus propias líneas antes de buscar tokens;
+  los trailing sobreviven, que son los que alimentan las notas del render.
+
 ## [0.6.17] — 2026-07-20
 
 ### Added
