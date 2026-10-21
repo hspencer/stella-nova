@@ -1535,6 +1535,12 @@ Primer párrafo de la ficha…
      las columnas maquetan dentro --&gt;
 &lt;div class="fondo-coral grilla cols-3"&gt;
   …tres columnas…
+&lt;/div&gt;
+
+&lt;!-- pie pegado a un mapa o imagen a sangre --&gt;
+{{#constel: … | class=ancho-completo}}
+&lt;div class="fondo-info xs serif pegado"&gt;
+  '''Mapa de anotaciones hechas con Con§tel.'''
 &lt;/div&gt;</pre>
     <div class="sn-paper sn-body demo demo--bleed">
       <div class="mw-parser-output">
@@ -1550,10 +1556,18 @@ Primer párrafo de la ficha…
           <div><strong>Punto de vista</strong><br>columna 2</div>
           <div><strong>Acontecer</strong><br>columna 3</div>
         </div>
+        <p>Con <code>pegado</code>, la banda es el pie de la imagen a sangre que la precede, sin aire entre ambas:</p>
+        <div class="full-width" style="aspect-ratio: 21/5; overflow: hidden;"><img src="{PHOTO}" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+        <div class="fondo-info xs serif pegado"><p><strong>Pie pegado.</strong> Mapa de anotaciones hechas con Con§tel.</p></div>
       </div>
     </div>
   </div>
   <div class="spec-notes">
+    <p><code>pegado</code> anula el margen superior del bloque y, por
+    <code>:has()</code>, el inferior del hermano anterior. Sirve para cualquier
+    bloque, pero el caso previsto es una banda <code>.fondo-*</code> como pie
+    de un mapa o imagen a sangre. No hace falta sumarle
+    <code>ancho-completo</code> a la banda: ya sangra sola.</p>
     <p>Vive en el skin (no en <code>Common.css</code>), así que voltea
     claro/oscuro sola. El alto es un múltiplo entero de
     <code>--sn-baseline</code> → no rompe la retícula. Sólo sangra dentro de
@@ -2174,6 +2188,10 @@ Archivo:C.jpg|Tercera obra
             <td><code>&lt;div class="fondo-verde"&gt;…&lt;/div&gt;</code></td>
             <td>Fondo de lado a lado de la hoja con el contenido de vuelta al ancho de lectura; alto en líneas base enteras. <em>Uso previsto:</em> dividir una página larga en zonas, destacar una entradilla o un índice de portada. Se combina con la grilla y con las clases de texto.</td>
             <td><a href="#fondo">demo</a></td></tr>
+        <tr><td><code>pegado</code></td>
+            <td><code>&lt;div class="fondo-info pegado"&gt;…&lt;/div&gt;</code></td>
+            <td>Pega el bloque al anterior: anula su margen superior y el inferior del hermano previo. <em>Uso previsto:</em> una banda <code>fondo-*</code> como pie de un mapa de Con§tel o de una imagen a sangre.</td>
+            <td><a href="#fondo">demo</a></td></tr>
         <tr><td><code>fondo-noche</code> · <code>fondo-dia</code> · <code>fondo-opuesto</code></td>
             <td><code>&lt;div class="fondo-opuesto"&gt;…&lt;/div&gt;</code></td>
             <td>Bandas que invierten el tema de todo lo que contienen (texto, enlaces, tablas). <code>fondo-opuesto</code> sostiene el contraste sea cual sea el tema del lector.</td>
@@ -2209,8 +2227,8 @@ Archivo:C.jpg|Tercera obra
             <td>Botón de contorno en píldora, alto exacto de una línea base; al pasar el cursor se rellena. Sirve envolviendo un enlace, como <code>span</code> suelto (disparador de un desplegable) o sobre un <code>&lt;a&gt;</code>. Con <code>grande</code> mide dos líneas base y dobla el relleno horizontal, para una llamada que va sola. <em>Uso previsto:</em> llamadas a la acción en portada y guías.</td>
             <td><a href="#wiki-btn">demo</a></td></tr>
         <tr><td><code>sn-notice</code></td>
-            <td><code>&lt;div class="sn-notice"&gt;…&lt;/div&gt;</code></td>
-            <td>Aviso editorial destacado: filete carmín, fondo lavado, cuerpo pequeño. Una sola variante. <em>Uso previsto:</em> el fragmento administrable <code>Stella-Nova:Aviso</code>; disponible para cualquier página.</td>
+            <td>la emite el skin (<code>&lt;aside class="sn-notice"&gt;</code>)</td>
+            <td>Aviso administrado: banda ámbar a sangre, lo primero dentro de la hoja, con botón de cerrar. <em>Uso previsto:</em> solo el fragmento administrable <code>Stella-Nova:Aviso</code>. Para un aviso dentro del contenido se usa <code>fondo-ambar</code>.</td>
             <td><a href="#aviso">demo</a></td></tr>
         <tr><td><code>sn-badge</code> (+ <code>sn-badge-nova</code> / <code>-ok</code> / <code>-warn</code> / <code>-danger</code>)</td>
             <td><code>&lt;span class="sn-badge sn-badge-ok"&gt;Activo&lt;/span&gt;</code></td>
@@ -2709,10 +2727,11 @@ def body_aplicados_diagramaciones():
         ("Categorías principales", ("Proyectos", "Cursos", "Obras y observaciones", "Personas"))))
     cards = card("Atmósfera de colores afectados", "Andrés Aliaga", "Taller Luz y Color") + card("Portafolio Web", "Martín Araneda", "Construcción 4º DG", PH_BLOCK) + card("Ciclo Proyecto Final", "Andrea Leiva", "Módulo Investigación")
     content = f"""<div class="full-width" style="aspect-ratio: 21/8; overflow: hidden;"><img src="{PHOTO}" alt="" style="width:100%;height:100%;object-fit:cover;object-position:center 30%"></div>
+<div class="fondo-info xs serif pegado"><strong>Mapa de anotaciones hechas con Con§tel.</strong> Para activar esta función, habilítala en tus preferencias.</div>
 <div class="jumbo serif center nova fw-90"><p>Casiopea</p></div>
 <div class="sm uppercase center"><p>Escuela de Arquitectura y Diseño · Pontificia Universidad Católica de Valparaíso</p></div>
 <div class="center"><p class="lg serif">{P3}</p></div>
-<div class="sn-notice"><div class="sn-notice-body">Si es la primera vez que estás acá, lee las <a href="#">reglas básicas para colaborar</a> antes de crear una página.</div></div>
+<div class="fondo-ambar sm">Si es la primera vez que estás acá, lee las <a href="#">reglas básicas para colaborar</a> antes de crear una página.</div>
 <div class="fondo-ahuesado grid cols-3">{nav3}</div>
 <h2><span class="mw-customtoggle-arq title-toggle">Arquitectura</span></h2>
 <div class="mw-collapsible" id="mw-customcollapsible-arq"><div class="grid cols-2">

@@ -647,6 +647,11 @@ html[data-sn-modal] .sn-header {
 	transform: translateZ(0);
 }
 html[data-sn-notice-hide] .sn-notice { display: none; }
+/* Si alguien escribe <div class="sn-notice"> en el wikitexto, cae a media
+   página dentro de .mw-parser-output: ahí el bleed superior (pensado para el
+   <aside> que el skin pone antes del cuerpo) se montaría sobre el texto. Se
+   neutraliza; para un aviso en el contenido la clase prevista es .fondo-ambar. */
+.mw-parser-output .sn-notice { margin-block-start: 0; border-radius: 0; }
 .sn-notice-body { flex: 1; min-width: 0; }
 .sn-notice-body > :first-child { margin-top: 0; }
 .sn-notice-body > :last-child { margin-bottom: 0; }
@@ -1524,6 +1529,19 @@ html:not([data-sn-notice-hide]) .sn-notice ~ .sn-body :is(p):first-child:has(> s
    hijo interno sobra y descuadraría los bordes. */
 :is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info, .fondo-noche, .fondo-dia, .fondo-opuesto) > :first-child { margin-top: 0; }
 :is(.sn-paper, .sn-canvas) :is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info, .fondo-noche, .fondo-dia, .fondo-opuesto) > :last-child  { margin-bottom: 0; }
+
+/* ─── .pegado: un bloque pegado al anterior ─────────────────────────────
+   Caso típico: una banda .fondo-* como pie de un mapa de con§tel o de una
+   imagen a sangre (.full-width). Sin esto queda el margen vertical del bloque
+   de arriba (--sn-s-5 en .full-width) y la salida era un margin-top negativo
+   a mano. Dos reglas: el .pegado anula su margen superior y, vía :has(), el
+   hermano anterior anula el inferior —hay que tocar los dos porque los
+   márgenes colapsan al mayor, no se suman—. Sin soporte de :has() queda el
+   aire del bloque anterior: degrada, no rompe. */
+/* Prefijo .mw-parser-output: sube a (0,3,0) para empatar con la regla base de
+   .full-width (cuyo :is() vale .thumb.full-width) y ganarle por orden. */
+:is(.sn-paper, .sn-canvas) .mw-parser-output .pegado { margin-block-start: 0; }
+:is(.sn-paper, .sn-canvas) .mw-parser-output :has(+ .pegado) { margin-block-end: 0; }
 
 /* El skin DECRETA que <canvas> e <iframe> embebidos (p5.js, widgets como
    {{#widget:P5js}} que incrustan un sitio externo, lienzos experimentales)

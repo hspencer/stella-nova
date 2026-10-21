@@ -9,6 +9,21 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.9.3] — 2026-10-21
+
+### Added
+- **`.pegado`.** Pega un bloque al anterior: anula su margen superior y, por
+  `:has()`, el inferior del hermano previo. Reemplaza el `margin-top`
+  negativo a mano para poner una banda `fondo-*` como pie de un mapa de
+  Con§tel o de una imagen a sangre. Documentado en el espécimen.
+
+### Fixed
+- **`.sn-notice` escrito en el contenido se montaba sobre el texto.** El
+  bleed superior está pensado para el `<aside>` que el skin pone antes del
+  cuerpo; dentro de `.mw-parser-output` se neutraliza. El espécimen usaba
+  mal la clase en la diagramación de portada: ahora va con `fondo-ambar` y el
+  inventario deja claro que para avisos en el contenido se usa esa banda.
+
 ## [0.9.2] — 2026-10-21
 
 ### Added
