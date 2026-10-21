@@ -229,7 +229,7 @@
 	   stella-nova.css y skinStyles/oojs-ui.css. Consumen SOLO variables
 	   semánticas (capa 2), nunca primitivas: heredan el flip automático.
 	   ═══════════════════════════════════════════════════════════════════ */
-	/* Botón neutro (enmarcado, acción secundaria) */
+	/* — Componente · botones — neutro (enmarcado, acción secundaria) */
 	--sn-btn-bg:            var(--sn-sunk);
 	--sn-btn-bg-hover:      var(--sn-paper);
 	--sn-btn-fg:            var(--sn-ink);
@@ -242,13 +242,13 @@
 	/* Acción destructiva primaria */
 	--sn-btn-danger-bg:     var(--sn-danger);
 	--sn-btn-danger-fg:     var(--sn-nova-ink);
-	/* Campos de texto / select / textarea */
+	/* — Componente · campos — texto, select, textarea */
 	--sn-field-bg:          var(--sn-paper);
 	--sn-field-bg-disabled: var(--sn-sunk);
 	--sn-field-fg:          var(--sn-ink);
 	--sn-field-border:      var(--sn-hairline);
 	--sn-field-placeholder: var(--sn-ink-faint);
-	/* Marcado (casilla/radio/interruptor activos) */
+	/* — Componente · marcado · opciones · foco — casilla/radio/interruptor activos */
 	--sn-on-bg:             var(--sn-ink);
 	--sn-on-fg:             var(--sn-paper);
 	/* Opciones de menú/desplegable */
@@ -434,6 +434,7 @@
 	   contexto propio (`.sn-canvas { isolation: isolate }`), así que ni un
 	   `z-index: 999999` inyectado por JS puede escalar por encima del header.
 	   Los paneles del modal móvil usan 1000 crudo y quedan sobre esta banda. */
+	/* — Apilamiento — banda z-index del chrome del skin */
 	--sn-z-rail: 900;
 	--sn-z-header: 910;
 	--sn-z-panel: 920;

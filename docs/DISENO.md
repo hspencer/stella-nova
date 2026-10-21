@@ -206,7 +206,9 @@ diseño). Tres páginas:
 - `index.html` — tokens, escalas, sombras (auto-generadas desde
   `tokens.css`).
 - `components.html` — botones, inputs, toolbar, washes, TOC.
-- `layout.html` — página simulada completa.
+- `aplicados.html` — estilos aplicados: página tipo con el chrome completo, y
+  subpáginas por categoría (`aplicados-tipografia.html`, `-grilla`, `-tablas`,
+  `-imagenes`, `-diagramaciones`).
 
 Las tres cargan los CSS reales del skin y exponen un bloque
 `<style id="overrides">` para redefinir variables en vivo, más un

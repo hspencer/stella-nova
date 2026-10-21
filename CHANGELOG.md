@@ -9,6 +9,45 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.9.1] — 2026-10-21
+
+### Added
+- **Espécimen: inventario completo de clases instrumentales.** Nueva sección
+  al cierre de `components.html` con todas las clases que el skin pone a
+  disposición del wikitexto, por categoría (texto, medios, grilla, bandas,
+  tablas, controles, accesibilidad e impresión, palabras mágicas, retiradas),
+  con sinónimos en castellano, uso previsto y enlace a su demo.
+- **Espécimen: demo del sangrado a tope de `.full-width`.** La sección muestra
+  el caso «primer/último elemento del cuerpo» (sangra arriba o abajo y hereda
+  el radio de la hoja) y explica cuándo no se dispara (título visible sin
+  `__NOTITLE__`, aviso administrado visible).
+
+- **Espécimen: «Fundamentos» explica las tres capas de variables.** Nueva
+  sección inicial con el encadenamiento primitiva → semántica → componente,
+  una demo en claro y oscuro de por qué una primitiva queda como isla y la
+  semántica voltea, y rótulos de capa antes de cada grupo. En `tokens.css`
+  se rotularon con `/* — … */` las secciones de la capa de componente y el
+  apilamiento, para que el espécimen las agrupe.
+- **Espécimen: «Layout» pasa a «Estilos aplicados», con subpáginas.** Página
+  tipo más cinco páginas simuladas con el chrome completo: tipografía,
+  grilla, tablas (simula `__PAGINAANCHA__`), imágenes (cabecera a sangre con
+  `__NOTITLE__`) y diagramaciones (portada con bandas, secciones plegables,
+  tarjetas). La hoja del simulacro usa ahora el relleno real de la hoja
+  (`--sn-paper-px/py`), así los sangrados calzan exacto.
+
+### Fixed
+- **SMW: espacio entre el sujeto y sus printouts** en resultados en línea
+  (`#ask format=list/ul`, búsqueda semántica). Antes vivía como arreglo en
+  `MediaWiki:Common.css`; pasa a `skinStyles/smw.css`.
+- **Espécimen: «Fundamentos» volvía a salir como una sola lista «General».**
+  El limpiador de comentarios del generador borraba también las cabeceras
+  `/* — Sección */` que agrupan los tokens; ahora las conserva.
+- **`scripts/build-specimen.py` corre con Python 3.11.** Una f-string con
+  barra invertida exigía 3.12+; el `python3` por defecto de macOS fallaba.
+- **Espécimen: referencias falsas.** Las clases de color remitían a unas cajas
+  `.wash` inexistentes (ahora a `.fondo-*`); se advierte que `sn-pill` sólo
+  existe en el CSS del espécimen y el skin no la define.
+
 ## [0.9.0] — 2026-09-25
 
 ### Added

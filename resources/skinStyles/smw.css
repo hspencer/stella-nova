@@ -75,6 +75,12 @@
 .smw-column { break-inside: avoid; }
 .smw-columnlist-container ul { margin: 0; padding-left: var(--sn-s-5); }
 
+/* Resultados en línea (#ask format=list/ul y búsqueda semántica «cualquiera»):
+   SMW no separa el sujeto de sus printouts, así que el título queda pegado al
+   "(Propiedad: valor)". Este espacio lo restituye. Antes vivía como hack en
+   MediaWiki:Common.css; su lugar propio es el skin. */
+li.smw-row .smw-field .smw-value a::after { content: " "; }
+
 /* ── Entity-examiner / indicadores (cargan async; no saltos) ── */
 .smw-entity-examiner { margin-top: var(--sn-s-4); }
 .smw-indicator-vertical-bar-loader,

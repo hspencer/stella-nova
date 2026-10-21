@@ -84,6 +84,17 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
    --sn-paper-px (lo normal de .demo es --sn-s-5), para que el margin negativo
    de .full-width sangre EXACTO hasta el borde del demo. */
 .demo--bleed { padding-inline: var(--sn-paper-px); }
+/* Demo del sangrado a tope: el padding vertical del contenedor se iguala a
+   --sn-paper-py para que el margin-block negativo del primer/último
+   .full-width llegue EXACTO al borde del demo. */
+.demo--bleed-v { padding-block: var(--sn-paper-py); }
+.spec-bleed--hero { padding-block: var(--sn-s-7); }
+/* Inventario de clases instrumentales: tablas apiladas, celdas arriba. */
+.spec-inventory table.wikitable { display: table; width: 100%; margin: 0 0 var(--sn-s-6); }
+.spec-inventory table.wikitable:last-child { margin-bottom: 0; }
+.spec-inventory td, .spec-inventory th { vertical-align: top; font-size: var(--sn-fs-sm); }
+.spec-inventory td:first-child { min-width: 11rem; }
+.spec-inventory caption { text-align: start; font-weight: 600; padding-bottom: var(--sn-s-2); }
 .spec-bleed { background: var(--sn-sunk); color: var(--sn-ink-soft);
   padding: var(--sn-s-3); text-align: center; font-size: var(--sn-fs-sm); }
 
@@ -136,6 +147,20 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
 .theme-side .grid-color { display: grid; grid-template-columns: 1fr;
                           gap: var(--sn-s-3); }
 @media (max-width: 40rem) { .theme-duo { grid-template-columns: 1fr; } }
+/* Rótulos de capa en Fundamentos + tarjetas de la demo primitiva/semántica. */
+.layer-h { margin: var(--sn-s-8) 0 var(--sn-s-5); padding-top: var(--sn-s-5);
+           border-top: 2px solid var(--sn-ink); }
+.layer-h h2 { font-family: var(--sn-font-display); font-size: var(--sn-fs-xl);
+              margin: 0 0 var(--sn-s-3); }
+.layer-h .meta { max-width: 48rem; }
+.layer-card { padding: var(--sn-s-4); border-radius: var(--sn-radius);
+              font-size: var(--sn-fs-sm); line-height: 1.5; margin-top: var(--sn-s-3); }
+.layer-card code { font-size: var(--sn-fs-xs); }
+.layer-card-note { font-style: italic; opacity: .8; }
+.layer-card--sem  { background: var(--sn-paper); color: var(--sn-ink);
+                    border: 1px solid var(--sn-hairline); }
+.layer-card--prim { background: var(--sn-papel-50); color: var(--sn-tinta-750);
+                    border: 1px solid var(--sn-papel-600); }
 
 /* Size */
 .sz { margin: 0; padding: var(--sn-s-3); background: var(--sn-paper);
@@ -332,7 +357,18 @@ body.spec { display: flex; flex-direction: column; min-height: 100vh; }
 .demo-app .sn-shell { max-width: var(--sn-shell); margin-inline: auto;
                        padding: var(--sn-s-6) var(--sn-s-5); }
 .demo-app .sn-paper { background: var(--sn-paper); border-radius: var(--sn-radius-paper);
-                       box-shadow: var(--sn-lift-paper); padding: var(--sn-s-6); }
+                       box-shadow: var(--sn-lift-paper);
+                       /* el relleno REAL de la hoja (contrato --sn-paper-px/py), para
+                          que .full-width y .fondo-* sangren exacto al borde */
+                       padding: var(--sn-paper-py) var(--sn-paper-px); }
+/* Subnavegación de "Estilos aplicados" */
+.spec-subnav { display: flex; flex-wrap: wrap; gap: var(--sn-s-1);
+               padding: var(--sn-s-2) var(--sn-s-5); background: var(--sn-sunk);
+               border-bottom: 1px solid var(--sn-hairline); font-size: var(--sn-fs-sm); }
+.spec-subnav a { padding: var(--sn-s-1) var(--sn-s-3); border-radius: var(--sn-radius);
+                 color: var(--sn-ink-soft); text-decoration: none; }
+.spec-subnav a:hover { color: var(--sn-ink); }
+.spec-subnav a[aria-current="page"] { color: var(--sn-ink); background: var(--sn-paper); }
 /* El CONTENIDO del paper (h1/h2/párrafos/enlaces/cita/aviso .sn-notice) NO se
    re-estila aquí: lo pinta la CSS REAL del skin (stella-nova.css, que el
    espécimen carga). El contenido del layout vive dentro de `.sn-body`, así que

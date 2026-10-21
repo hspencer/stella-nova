@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Componentes — Stella Nova v0.9.0</title>
+<title>Componentes — Stella Nova v0.9.1</title>
 <link rel="icon" href="assets/icons/casiopea-icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/tokens.css">
 <link rel="stylesheet" href="assets/stella-nova.css">
 <link rel="stylesheet" href="assets/specimen.css">
 <!-- ── overrides ────────────────────────────────────────────────────────────
-     El taller de diseño pega aquí redefiniciones de tokens para proponer
+     El taller de diseño pega aquí redefiniciones de variables de diseño para proponer
      cambios. Sobreescriben tokens.css sin tocar el archivo fuente. Ejemplo:
        :root { --sn-nova: #c33; --sn-fs-display: 2.4rem; }
      ─────────────────────────────────────────────────────────────────── -->
@@ -70,9 +70,9 @@
 	</g>
 </svg>
     <span class="spec-brand-name">Stella Nova</span>
-    <span class="spec-brand-ver">v0.9.0</span>
+    <span class="spec-brand-ver">v0.9.1</span>
   </a>
-  <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html">Fundamentos</a><a href="components.html" aria-current="page">Componentes</a><a href="layout.html">Layout</a></nav>
+  <nav class="spec-nav" aria-label="Secciones del espécimen"><a href="index.html">Fundamentos</a><a href="components.html" aria-current="page">Componentes</a><a href="aplicados.html">Estilos aplicados</a></nav>
   <div class="spec-controls">
     <fieldset class="spec-seg" aria-label="Tema">
       <legend class="vh">Tema</legend>
@@ -82,12 +82,13 @@
     </fieldset>
   </div>
 </header>
+
 <main class="spec-main">
 
 <section class="comp">
   <h1 class="display">Stella Nova · componentes</h1>
   <p class="lede">Espécimen de primitivos del skin. Cada bloque documenta los
-  tokens en juego y muestra el componente con texto simulado.</p>
+  variables de diseño en juego y muestra el componente con texto simulado.</p>
 </section>
 
 <section class="comp">
@@ -101,7 +102,7 @@
         <div class="colophon-name" style="font-family: var(--sn-font-text);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
           <strong>IBM Plex Sans</strong> · variable, dos ejes wght 100–700 + wdth 75–100<br>
-          Token <code>--sn-font-sans</code> (primitiva). Alias semánticos:
+          Variable <code>--sn-font-sans</code> (primitiva). Alias semánticos:
           <code>--sn-font-text</code> = cuerpo + UI + cabeceras,
           <code>--sn-font-display</code> = alias de text.
         </div>
@@ -110,7 +111,7 @@
         <div class="colophon-name" style="font-family: var(--sn-font-serif);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
           <strong>Roboto Serif</strong> · variable, cuatro ejes wght 100–900 + wdth 75–100 + opsz 8–60 + GRAD −50–100<br>
-          Token <code>--sn-font-serif</code> (primitiva). Alias semántico:
+          Variable <code>--sn-font-serif</code> (primitiva). Alias semántico:
           <code>--sn-font-quote</code> = citas + <code>&lt;poem&gt;</code> por defecto.<br>
           Activable como familia del cuerpo desde el menú del usuario
           (<code>data-sn-family="serif"</code>): cuerpo + UI voltean a Serif y
@@ -124,7 +125,7 @@
         <div class="colophon-name" style="font-family: var(--sn-font-mono);">Aa Bb Cc · 0123</div>
         <div class="colophon-meta">
           <strong>IBM Plex Mono</strong> · monospace técnico<br>
-          Token <code>--sn-font-mono</code><br>
+          Variable <code>--sn-font-mono</code><br>
           Uso: código, valores numéricos, identificadores
         </div>
       </div>
@@ -172,7 +173,7 @@
 </section>
 
 <section class="comp">
-  <h2>Helpers de contenido</h2>
+  <h2 id="texto">Clases instrumentales de texto</h2>
   <p class="meta">Clases utilitarias para el wikitexto — <strong>las trae el
   skin</strong> desde la v0.8.0 (antes vivían en
   <code>MediaWiki:Common.css</code> y el espécimen las replicaba). Lo que se ve
@@ -185,7 +186,7 @@
   explícita porque <code>.sn-body p</code> fija <code>justify</code>.</p>
   <p class="meta">Alcance <code>:is(.sn-body, .sn-notice-body,
   .sn-footer-managed)</code>: el cuerpo del artículo —hoja normal y
-  <code>__PANTALLACOMPLETA__</code>— <em>y</em> los dos fragmentos del chrome
+  <code>__PANTALLACOMPLETA__</code>— <em>y</em> los dos fragmentos del marco
   administrable (<code>Stella-Nova:Aviso</code> y <code>Stella-Nova:Pie</code>),
   que antes quedaban fuera y obligaban a escribir <code>style=</code> inline.
   Al vivir en el skin también viajan a la <strong>exportación a PDF</strong>: la
@@ -271,7 +272,7 @@ alineado de otro modo)&lt;/div&gt;</pre>
 
   <h3 class="spec-subh">Color semántico — <code>nova</code> · <code>ok</code> · <code>warn</code> · <code>danger</code></h3>
   <p class="meta">Color de texto por rol; voltean claro/oscuro con el tema. Para
-  fondos y avisos en bloque, usar las cajas <code>.wash</code> del skin, no estas
+  fondos y avisos en bloque, usar las bandas <code>.fondo-*</code> del skin, no estas
   clases.</p>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;span class="nova"&gt;Marca / acento&lt;/span&gt;
@@ -338,7 +339,7 @@ punto mayor que el cuerpo.
     </div>
   </div>
 
-  <h3 class="spec-subh">También en el chrome administrable</h3>
+  <h3 class="spec-subh">También en el marco administrable</h3>
   <p class="meta">Novedad de la v0.8.0. <code>Stella-Nova:Pie</code> y
   <code>Stella-Nova:Aviso</code> se parsean sin el envoltorio
   <code>.mw-parser-output</code>, así que el alcance viejo de
@@ -390,7 +391,7 @@ de Valparaíso
 </section>
 
 <section class="comp">
-  <h2>Ancho de fuente — <code>fw-50</code> … <code>fw-150</code></h2>
+  <h2 id="fw">Ancho de fuente — <code>fw-50</code> … <code>fw-150</code></h2>
   <p class="meta">Sexto eje, ortogonal a los cinco de arriba y —como ellos— en
   la skin (nunca en TemplateStyles). Existen porque el
   sanitizador de TemplateStyles (css-sanitizer) <strong>no acepta
@@ -562,7 +563,7 @@ Filete horizontal: cuatro guiones al inicio: ----</pre>
 </section>
 
 <section class="comp">
-  <h2>Tablas</h2>
+  <h2 id="tablas">Tablas</h2>
   <p class="meta">Clase <code>.wikitable</code> (y las de consulta semántica
   <code>.smwtable</code> / <code>.broadtable</code>): diseño minimalista de
   <strong>solo filetes horizontales</strong> — nunca verticales ni contorno
@@ -576,7 +577,7 @@ Filete horizontal: cuatro guiones al inicio: ----</pre>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">{| class="wikitable"
 |+ Título descriptivo de la tabla
-! Token !! Rol !! Familia
+! Variable !! Rol !! Familia
 |-
 | --sn-fs-display || H1 display || text
 |-
@@ -590,7 +591,7 @@ Filete horizontal: cuatro guiones al inicio: ----</pre>
       <table class="wikitable">
         <caption>Escala tipográfica del sistema</caption>
         <thead>
-          <tr><th>Token</th><th>Rol</th><th>Familia</th></tr>
+          <tr><th>Variable</th><th>Rol</th><th>Familia</th></tr>
         </thead>
         <tbody>
           <tr><td><code>--sn-fs-display</code></td><td>H1 display</td><td>text</td></tr>
@@ -880,10 +881,12 @@ function loremIpsum(dolor, sit) {
 </section>
 
 <section class="comp">
-  <h2>Badges y contadores</h2>
+  <h2 id="insignias">Insignias (badges) y contadores</h2>
   <p class="meta">Badge: tipografía <code>--sn-fs-xs</code> peso 500, radio
   <code>--sn-radius</code> · fondo wash correspondiente a la señal.<br>
-  Pill: <code>--sn-radius-pill</code> + familia mono para valores numéricos.</p>
+  Pill (<code>sn-pill</code>): <code>--sn-radius-pill</code> + familia mono para valores
+  numéricos. <strong>Ojo:</strong> hoy <code>sn-pill</code> sólo existe en el CSS de este
+  espécimen; el skin no la define, así que en la wiki no hace nada.</p>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;span class="sn-badge"&gt;Neutro&lt;/span&gt;
 &lt;span class="sn-badge sn-badge-nova"&gt;Nova&lt;/span&gt;
@@ -904,7 +907,7 @@ function loremIpsum(dolor, sit) {
   </div>
   <div class="spec-notes">
     <p>Badges para estados cortos (palabras); pills para contadores
-    numéricos (familia mono). Variantes:
+    numéricos (familia mono; pendiente de pasar al skin). Variantes:
     <code>sn-badge-nova</code> · <code>-ok</code> · <code>-warn</code>
     · <code>-danger</code>. Útiles para marcar el estado de una etapa,
     un proyecto o una observación dentro de fichas y plantillas.</p>
@@ -956,7 +959,7 @@ __FORCETOC__  fuerza el índice aun con &lt; 4 cabeceras.</pre>
 </section>
 
 <section class="comp">
-  <h2>Aviso administrado (.sn-notice)</h2>
+  <h2 id="aviso">Aviso administrado (.sn-notice)</h2>
   <p class="meta"><code>aside.sn-notice</code> · banner que el skin inyecta al
   <strong>tope del paper</strong> desde el fragmento administrable
   <code>Stella-Nova:Aviso</code>. Se revienta al borde superior de la hoja
@@ -984,43 +987,91 @@ El skin lo envuelve en:
   </div>
   <div class="spec-notes">
     <p>Lo pinta la CSS real del skin (no hay estilo propio del espécimen). Es la
-    misma banda superior que aparece en la página de <em>Layout</em>. Para bandas
+    misma banda superior que aparece en la página tipo de <em>Estilos aplicados</em>. Para bandas
     de contenido dentro del cuerpo, ver <code>.fondo-*</code> (Bandas de fondo).</p>
   </div>
 </section>
 
-<section class="comp">
-  <h2>Imágenes a sangre completa (.full-width)</h2>
+<section class="comp" id="full-width">
+  <h2>Imágenes a sangre (.full-width / .ancho-completo)</h2>
   <p class="meta">Clase de wikitexto migrada desde <code>Common.css</code> de
   producción para que viaje con el tema. Una imagen, figura o envoltorio con
-  <code>class="full-width"</code> se &laquo;revienta&raquo; del padding lateral
-  de la hoja para ir <strong>borde a borde</strong> del artículo. Sirve a tres
-  patrones de wikitexto.</p>
+  <code>class="full-width"</code> (sinónimo en castellano:
+  <code>class="ancho-completo"</code>) se &laquo;revienta&raquo; del relleno
+  lateral de la hoja para ir <strong>borde a borde</strong> del artículo. Sirve
+  a tres patrones de wikitexto y también al mapa de con§tel
+  (<code>{{#constel: … | class=full-width}}</code>).</p>
 
+  <h3 class="spec-subh">Sangrado lateral (a media página)</h3>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">[[Archivo:foo.jpg|class=full-width]]
 [[Archivo:foo.jpg|frameless|class=full-width]]
-&lt;div class="full-width"&gt;[[Archivo:foo.jpg]]&lt;/div&gt;</pre>
+&lt;div class="full-width"&gt;[[Archivo:foo.jpg]]&lt;/div&gt;
+[[Archivo:foo.jpg|class=ancho-completo]]</pre>
     <div class="sn-paper sn-body demo demo--bleed">
       <p>Párrafo del cuerpo, con el ancho de lectura normal de la hoja.</p>
-      <div class="full-width spec-bleed">imagen a sangre completa · borde a borde</div>
+      <div class="full-width spec-bleed">imagen a sangre · borde a borde · sin esquinas</div>
       <p>El párrafo siguiente regresa al ancho de lectura.</p>
     </div>
   </div>
 
+  <h3 class="spec-subh">Sangrado a tope: primer y último elemento del cuerpo</h3>
+  <p class="meta">La gracia de la clase. Si el elemento <code>.full-width</code>
+  es el <strong>primer</strong> elemento de flujo del cuerpo, además del
+  relleno lateral revienta el relleno <strong>superior</strong> de la hoja: se
+  pega al borde de arriba y hereda el radio de esquina del papel
+  (<code>--sn-radius-paper</code>). Lo mismo, hacia abajo, si es el
+  <strong>último</strong>. Es el patrón «imagen de cabecera» de fichas de obra,
+  travesía o proyecto, y el del mapa de con§tel en la portada.</p>
+  <div class="grilla cols-2 spec-usage">
+<pre class="howto-code">__NOTITLE__
+[[Archivo:cabecera.jpg|class=full-width]]
+Primer párrafo de la ficha…
+
+…último párrafo.
+[[Archivo:cierre.jpg|class=full-width]]</pre>
+    <div class="sn-paper sn-body demo demo--bleed demo--bleed-v">
+      <div class="full-width spec-bleed spec-bleed--hero">imagen de cabecera · primer elemento del cuerpo<br>sangra arriba y a los lados · hereda el radio de la hoja</div>
+      <p>Primer párrafo de la ficha. El texto conserva el ancho de lectura y el
+      relleno de la hoja; sólo la imagen fue al borde.</p>
+      <p>Último párrafo. Lo que sigue es el último elemento del cuerpo.</p>
+      <div class="full-width spec-bleed">imagen de cierre · último elemento · sangra abajo</div>
+    </div>
+  </div>
+
   <div class="spec-notes">
-    <p>El truco: <code>margin-inline: calc(-1 * var(--sn-paper-px))</code>, el
-    mismo padding lateral que la hoja expone como contrato. Sólo funciona
-    dentro de <code>.sn-paper</code> / <code>.sn-canvas</code>. También casa el
-    token con apóstrofes <code>'full-width'</code> que MediaWiki preserva en
-    <code>[[Imagen:…|class='full-width']]</code>. Sin esquinas redondeadas
-    (salvo el primer y último elemento de la página, que calzan con la hoja).
-    Sinónimo en castellano: <code>class="ancho-completo"</code>.</p>
+    <p><strong>Cómo funciona.</strong> La hoja expone su relleno como contrato
+    (<code>--sn-paper-px</code> / <code>--sn-paper-py</code>); la clase lo
+    niega con <code>margin-inline</code> y, en el primer/último elemento, con
+    <code>margin-block</code> negativos. Sólo opera dentro de
+    <code>.sn-paper</code> / <code>.sn-canvas</code>. También casa la forma con
+    apóstrofes <code>'full-width'</code> que MediaWiki preserva en
+    <code>[[Imagen:…|class='full-width']]</code>. Un elemento a sangre no lleva
+    esquinas redondeadas; sólo el primero y el último reponen las de la hoja.</p>
+    <p><strong>Para que el sangrado a tope se dispare.</strong> (1) La imagen
+    debe ser el primer elemento <em>de flujo</em> en toda la cadena desde
+    <code>.sn-body</code>: el párrafo que la envuelve también debe ser el
+    primero. El skin tolera tres intrusos habituales que no ocupan flujo pero
+    sí cuentan como primer hijo: el <code>&lt;style&gt;</code> que inyecta
+    TemplateStyles, el <code>&lt;p&gt;</code> vacío que deja un widget y el
+    <code>&lt;p&gt;</code> que sólo contiene el <code>&lt;script&gt;</code> de
+    un widget (p5, con§tel). (2) Con el título visible, la imagen sube y se
+    superpone a <code>firstHeading</code>: hay que sumar
+    <code>__NOTITLE__</code>; sin esa palabra mágica el sangrado superior no
+    se ve y el síntoma es «no revienta arriba». (3) Si hay un aviso
+    administrado visible (<code>Stella-Nova:Aviso</code>), el sangrado superior
+    se suspende para no chocar con él, y vuelve cuando el lector lo descarta.</p>
+    <p><strong>En pantalla completa</strong> (<code>__PANTALLACOMPLETA__</code>,
+    contenedor <code>.sn-canvas</code>) la imagen no va al borde de la hoja
+    sino al borde real de la ventana (<code>width: 100vw</code>). La leyenda de
+    un <code>thumb</code> a sangre vuelve al ancho de lectura para no quedar
+    pegada al borde. Subir originales de <strong>1600&nbsp;px</strong> de ancho
+    como mínimo.</p>
   </div>
 </section>
 
 <section class="comp">
-  <h2>Bandas de fondo (.fondo-*)</h2>
+  <h2 id="fondo">Bandas de fondo (.fondo-*)</h2>
   <p class="meta">Bloque de contenido a <strong>sangre lateral</strong>: el
   fondo va de lado a lado de la hoja (misma técnica de bleed que
   <code>.full-width</code>) pero el <strong>contenido vuelve al ancho de
@@ -1071,12 +1122,12 @@ El skin lo envuelve en:
 </section>
 
 <section class="comp">
-  <h2>Botón de contenido (.wiki-btn)</h2>
+  <h2 id="wiki-btn">Botón de contenido (.wiki-btn)</h2>
   <p class="meta">Clase de wikitexto migrada desde <code>Common.css</code> al
   tema. Botón &laquo;outline&raquo;: contorno fino (1&nbsp;px) en forma de
   píldora; al pasar el cursor se rellena y el texto voltea a
   <code>--sn-nova-ink</code>. Tres variantes: por defecto (gris),
-  <code>red</code> y <code>green</code>. Color 100&nbsp;% por tokens → voltea
+  <code>red</code> y <code>green</code>. Color 100&nbsp;% por variables de diseño → voltea
   claro/oscuro. <strong>Robusto a tres usos</strong>: envolviendo un enlace,
   como <em>span suelto</em> (p.ej. un toggle) o aplicado directo a un
   <code>&lt;a&gt;</code> — el volteo del texto no depende de que haya un enlace
@@ -1113,13 +1164,13 @@ El skin lo envuelve en:
     <p>El alto es <strong>exacto de una línea base</strong>
     (<code>--sn-baseline</code>) con relleno solo horizontal: el interior calza
     igual en los tres usos y el botón no rompe la retícula, suelto o en medio de
-    un párrafo. La variante <code>blue</code> se retiró (sin token, sin uso).
+    un párrafo. La variante <code>blue</code> se retiró (sin variable equivalente, sin uso).
     Debe vivir dentro de <code>.sn-body</code>.</p>
   </div>
 </section>
 
 <section class="comp">
-  <h2>Grid / grilla — framework de layout</h2>
+  <h2 id="grilla">Grid / grilla — sistema de columnas</h2>
   <p class="meta">Reemplaza el patrón <code>.row &gt; .col-md-*</code> del
   skin Bootstrap anterior. Nombre <strong>bilingüe</strong>:
   <code>.grid</code> (canónico) y <code>.grilla</code> (alias en español).
@@ -1260,7 +1311,7 @@ Bloque angosto (un tercio)
   <h3 class="spec-subh">full / completa (a todo el campo)</h3>
   <p class="meta"><code>full</code> rompe el ancho de lectura con la técnica de
   <code>full-width</code> (100vw + margen inline negativo): a sangre del viewport
-  en pantalla completa, del paper en chrome normal. No se demuestra en vivo aquí
+  en pantalla completa, de la hoja con el marco normal. No se demuestra en vivo aquí
   porque reventaría el recuadro del espécimen; ver la wiki para el efecto real.</p>
   <div class="grilla cols-2 spec-usage">
 <pre class="howto-code">&lt;div class="grid cols-3 full"&gt;
@@ -1282,7 +1333,7 @@ Bloque angosto (un tercio)
     <code>--sn-s-5</code> (1.5 rem) en ambos ejes; se ajusta uniforme con
     <code>.gap-0/s/m/l</code> o por eje con <code>.gap-h-*</code> (columnas) y
     <code>.gap-v-*</code> (filas), combinables entre sí.</p>
-    <p>Funciona en chrome normal y en <code>__PANTALLACOMPLETA__</code>:
+    <p>Funciona con el marco normal y en <code>__PANTALLACOMPLETA__</code>:
     ambos contenedores llevan <code>.sn-body</code>, que es donde el
     skin define la regla. En pantalla completa el contenido es libre
     (sin columna central), así que <code>.grid</code> es la herramienta
@@ -1292,7 +1343,7 @@ Bloque angosto (un tercio)
 </section>
 
 <section class="comp">
-  <h2>Imagen con leyenda (thumb)</h2>
+  <h2 id="thumb">Imagen con leyenda (thumb)</h2>
   <p class="meta">Miniatura enmarcada con pie, el patrón
   <code>[[Archivo:…|thumb|…]]</code>. MediaWiki moderno (Parsoid) emite
   <code>&lt;figure typeof="mw:File/Thumb"&gt;</code> con su
@@ -1328,10 +1379,10 @@ de la miniatura flotada…</pre>
 </section>
 
 <section class="comp">
-  <h2>Galería (<code>&lt;gallery&gt;</code> nativa)</h2>
+  <h2 id="galeria">Galería (<code>&lt;gallery&gt;</code> nativa)</h2>
   <p class="meta">El tag <code>&lt;gallery&gt;</code> del core produce
   <code>ul.gallery.mw-gallery-traditional</code> con una
-  <code>li.gallerybox</code> por imagen. El <em>layout</em> lo aporta el módulo
+  <code>li.gallerybox</code> por imagen. La diagramación la aporta el módulo
   <code>mediawiki.page.gallery.styles</code> (replicado aquí); el skin viste el
   recuadro de cada caja (papel + <code>--sn-radius-s</code>) y achica el pie al
   grado más pequeño.</p>
@@ -1501,7 +1552,7 @@ Archivo:C.jpg|Tercera obra
   <div class="spec-notes">
     <p>El filete que separa cada tarjeta es un <code>box-shadow</code> inset de
     media línea, no un margen — el ritmo lo fija sólo el relleno
-    <code>--sn-baseline-half</code>. Antes de este token la plantilla aproximaba
+    <code>--sn-baseline-half</code>. Antes de esta variable la plantilla aproximaba
     con <code>--sn-s-3</code> (0.75&nbsp;rem, fijo en <code>rem</code>): quedaba
     corto ~0.1&nbsp;rem por tarjeta y el error se acumulaba columna abajo.</p>
   </div>
@@ -1544,7 +1595,7 @@ Archivo:C.jpg|Tercera obra
     </div>
   </div>
   <div class="spec-notes">
-    <p>Consumidor del mismo token que <code>.dm</code>: cualquier tarjeta de
+    <p>Consumidora de la misma variable que <code>.dm</code>: cualquier tarjeta de
     plantilla que deba calzar en la retícula usa
     <code>padding: var(--sn-baseline-half) var(--sn-s-3)</code> — nunca
     <code>var(--sn-s-3)</code> en el eje vertical, porque la escala
@@ -1553,11 +1604,238 @@ Archivo:C.jpg|Tercera obra
   </div>
 </section>
 
+<section class="comp" id="inventario">
+  <h2>Inventario de clases instrumentales</h2>
+  <p class="meta">Clases que no describen contenido sino que <em>instrumentan</em>
+  la maqueta: se escriben en el wikitexto o en una plantilla y el skin les da
+  comportamiento. Es la lista completa de lo que trae Stella Nova v0.9, con sus
+  sinónimos en castellano cuando existen. El conjunto se mantiene chico a
+  propósito; antes de pedir una clase nueva, revisar si alguna de estas sirve.
+  Las que tienen demostración en este espécimen enlazan a su sección; las que
+  no la tienen, dicen por qué.</p>
+
+  <div class="sn-paper sn-body demo spec-inventory">
+    <table class="wikitable">
+      <caption>Texto: seis ejes que se combinan en un mismo <code>class=</code></caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>jumbo</code> · <code>lg</code> · <code>sm</code> · <code>xs</code></td>
+            <td><code>&lt;p class="lg"&gt;…&lt;/p&gt;</code></td>
+            <td>Tamaño alrededor del cuerpo (que es el valor sin clase). Respetan la escala S/M/L del lector. <em>Uso previsto:</em> titular de portada (<code>jumbo</code>), entradilla (<code>lg</code>), pie o nota (<code>sm</code>, <code>xs</code>).</td>
+            <td><a href="#texto">demo</a></td></tr>
+        <tr><td><code>serif</code> · <code>sans</code> · <code>mono</code></td>
+            <td><code>&lt;span class="serif"&gt;…&lt;/span&gt;</code></td>
+            <td>Fija la familia de un fragmento; el cuerpo la elige el lector. <em>Uso previsto:</em> contraste puntual, no costumbre. Heredan el ancho del cuerpo: si el ancho importa, sumar <code>fw-*</code>.</td>
+            <td><a href="#texto">demo</a></td></tr>
+        <tr><td><code>uppercase</code> · <code>italic</code> · <code>bold</code></td>
+            <td><code>&lt;span class="uppercase"&gt;…&lt;/span&gt;</code></td>
+            <td>Énfasis de presentación. Para énfasis real preferir <code>&#39;&#39;&#39;negrita&#39;&#39;&#39;</code> y <code>&#39;&#39;cursiva&#39;&#39;</code> del wikitexto, que emiten semántica.</td>
+            <td><a href="#texto">demo</a></td></tr>
+        <tr><td><code>left</code> · <code>center</code> · <code>right</code> · <code>justify</code></td>
+            <td><code>&lt;div class="center"&gt;…&lt;/div&gt;</code></td>
+            <td>Alineación; puesta en un contenedor alcanza los párrafos de adentro. El cuerpo ya va justificado; <code>justify</code> sólo sirve para recuperarlo dentro de un bloque alineado de otro modo.</td>
+            <td><a href="#texto">demo</a></td></tr>
+        <tr><td><code>nova</code> · <code>ok</code> · <code>warn</code> · <code>danger</code></td>
+            <td><code>&lt;span class="nova"&gt;…&lt;/span&gt;</code></td>
+            <td>Color de texto por rol; voltea con el tema. El color nunca debe ser el único portador del significado. Para fondos usar las bandas <code>fondo-*</code>.</td>
+            <td><a href="#texto">demo</a></td></tr>
+        <tr><td><code>fw-50</code> … <code>fw-150</code> (de 10 en 10, más <code>fw-75</code> <code>fw-85</code> <code>fw-95</code>)</td>
+            <td><code>&lt;div class="fw-85"&gt;…&lt;/div&gt;</code></td>
+            <td>Ancho de fuente por el eje variable. Existen porque TemplateStyles no acepta <code>font-stretch</code> en porcentaje. Lo que se ve queda recortado al rango de la familia (sans 75–100, serif 62,5–100).</td>
+            <td><a href="#fw">demo</a></td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Medios: imágenes, video, lienzos</caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>full-width</code><br>sinónimo <code>ancho-completo</code></td>
+            <td><code>[[Archivo:x.jpg|class=full-width]]</code><br><code>&lt;div class="full-width"&gt;…&lt;/div&gt;</code><br><code>{{#constel: … | class=full-width}}</code></td>
+            <td>Imagen a sangre: revienta el relleno lateral de la hoja; si es el primer o último elemento del cuerpo, también el superior o inferior, y hereda el radio de la hoja. Requiere <code>__NOTITLE__</code> para el sangrado superior. En pantalla completa va al borde de la ventana. <em>Uso previsto:</em> imagen de cabecera de fichas y portadas.</td>
+            <td><a href="#full-width">demo</a></td></tr>
+        <tr><td><code>img-circle</code></td>
+            <td><code>[[Archivo:retrato.jpg|class=img-circle]]</code></td>
+            <td>Recorte circular limpio sobre la propia imagen; oculta la leyenda. <em>Uso previsto:</em> retratos en fichas de persona, donde el nombre ya aparece debajo. Subir fotos cuadradas.</td>
+            <td>sin demo (requiere imagen)</td></tr>
+        <tr><td><code>no-icon</code></td>
+            <td>clase sobre el propio <code>&lt;a class="external"&gt;</code></td>
+            <td>Suprime el ícono de enlace externo que el skin añade a todo enlace saliente. No se puede escribir desde wikitexto plano; <em>uso previsto:</em> HTML que emiten extensiones y widgets. Un enlace externo que envuelve una imagen ya pierde el ícono solo.</td>
+            <td>—</td></tr>
+        <tr><td><code>p5m-sketch</code> · <code>constel-embed</code></td>
+            <td>las emiten el widget P5 y <code>{{#constel:}}</code></td>
+            <td>No las escribe el editor; el skin las reconoce para quitar borde, contorno y sombra a lienzos e <code>iframe</code> incrustados, y para que el mapa de con§tel sangre con <code>full-width</code>.</td>
+            <td>—</td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Composición: la grilla y sus modificadores</caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>grid</code><br>sinónimo <code>grilla</code></td>
+            <td><code>&lt;div class="grid cols-3"&gt;…&lt;/div&gt;</code></td>
+            <td>Activa la cuadrícula: cada hijo directo es una celda. Reemplaza <code>row</code> / <code>col-md-*</code> del skin anterior. Funciona en la hoja y en pantalla completa, donde es la herramienta de maqueta.</td>
+            <td><a href="#grilla">demo</a></td></tr>
+        <tr><td><code>cols-1</code> … <code>cols-6</code> · <code>cols-auto</code> · <code>cols1-2</code> · <code>cols2-1</code></td>
+            <td><code>class="grid cols-auto"</code></td>
+            <td>Número de columnas: iguales (1 a 6), tantas de 16 rem como quepan (<code>cols-auto</code>, para tarjetas), o pareja asimétrica en tercios. Bajo 64 rem las densas reducen columnas; bajo 48 rem todas caen a una.</td>
+            <td><a href="#grilla">demo</a></td></tr>
+        <tr><td><code>gap-0</code> · <code>gap-s</code> · <code>gap-m</code> · <code>gap-l</code><br><code>gap-h-*</code> · <code>gap-v-*</code></td>
+            <td><code>class="grid cols-3 gap-h-0 gap-v-l"</code></td>
+            <td>Separación entre celdas, en ambos ejes o por eje (<code>h</code> entre columnas, <code>v</code> entre filas). Sin clase, 1,5 rem.</td>
+            <td><a href="#grilla">demo</a></td></tr>
+        <tr><td><code>flujo-v</code></td>
+            <td><code>class="grid cols-3 flujo-v"</code></td>
+            <td>Las celdas llenan cada columna de arriba abajo y saltan a la siguiente (columnas de texto), en vez de repartirse por filas. <em>Uso previsto:</em> listas largas en varias columnas.</td>
+            <td>—</td></tr>
+        <tr><td><code>stack</code></td>
+            <td><code>class="grid stack gap-s"</code></td>
+            <td>Pila en una sola columna, con el mismo sistema de separación. Se usa solo, sin <code>cols-N</code>.</td>
+            <td><a href="#grilla">demo</a></td></tr>
+        <tr><td><code>align-top</code> / <code>arriba</code> · <code>align-center</code> / <code>centro</code> · <code>align-bottom</code> / <code>abajo</code> · <code>align-baseline</code></td>
+            <td><code>class="grid cols2-1 centro"</code></td>
+            <td>Alineación vertical del contenido de las celdas cuando tienen alturas distintas (por defecto se estiran). <code>align-baseline</code> alinea la primera línea de texto.</td>
+            <td><a href="#grilla">demo</a></td></tr>
+        <tr><td><code>sin-margen</code> / <code>flush</code></td>
+            <td><code>class="grid cols-2 sin-margen"</code></td>
+            <td>Anula el margen vertical de la grilla. <em>Uso previsto:</em> grillas anidadas o pegadas a una banda.</td>
+            <td>—</td></tr>
+        <tr><td><code>full</code> / <code>completa</code></td>
+            <td><code>class="grid cols-3 completa"</code></td>
+            <td>La grilla rompe el ancho de lectura y ocupa todo el campo, con la técnica de <code>full-width</code>. No se demuestra aquí porque reventaría el recuadro.</td>
+            <td><a href="#grilla">nota</a></td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Bandas de fondo</caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>fondo-ahuesado</code> · <code>fondo-coral</code> · <code>fondo-verde</code> · <code>fondo-ambar</code> · <code>fondo-info</code></td>
+            <td><code>&lt;div class="fondo-verde"&gt;…&lt;/div&gt;</code></td>
+            <td>Fondo de lado a lado de la hoja con el contenido de vuelta al ancho de lectura; alto en líneas base enteras. <em>Uso previsto:</em> dividir una página larga en zonas, destacar una entradilla o un índice de portada. Se combina con la grilla y con las clases de texto.</td>
+            <td><a href="#fondo">demo</a></td></tr>
+        <tr><td><code>fondo-noche</code> · <code>fondo-dia</code> · <code>fondo-opuesto</code></td>
+            <td><code>&lt;div class="fondo-opuesto"&gt;…&lt;/div&gt;</code></td>
+            <td>Bandas que invierten el tema de todo lo que contienen (texto, enlaces, tablas). <code>fondo-opuesto</code> sostiene el contraste sea cual sea el tema del lector.</td>
+            <td>—</td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Tablas</caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>wikitable</code> (+ <code>sortable</code>)</td>
+            <td><code>{| class="wikitable sortable"</code></td>
+            <td>Clase de MediaWiki, tematizada por el skin: sólo filetes horizontales, sin colores alternados, cabecera transparente. <code>sortable</code> añade orden por columna. <em>Uso previsto:</em> tablas de datos.</td>
+            <td><a href="#tablas">demo</a></td></tr>
+        <tr><td><code>template</code><br>sinónimo <code>plantilla</code></td>
+            <td><code>{| class="wikitable plantilla"</code></td>
+            <td>Modificador de <code>wikitable</code>: ficha vertical clave→valor, sin filetes, etiqueta a la derecha en versalita tenue. Sola no hace nada. <em>Uso previsto:</em> fichas de identificación (perfil, ficha técnica, créditos), no datos comparables.</td>
+            <td><a href="#tablas">nota</a></td></tr>
+        <tr><td><code>toccolours</code> · <code>broadtable</code></td>
+            <td><code>{| class="toccolours"</code></td>
+            <td>Clases heredadas (MediaWiki y SMW); el skin sólo les enruta color y borde por variables de diseño. <em>Se mantienen</em> por compatibilidad; para contenido nuevo usar <code>wikitable</code>.</td>
+            <td>—</td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Controles y señales dentro del contenido</caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>wiki-btn</code> (+ <code>red</code>, <code>green</code>)</td>
+            <td><code>&lt;span class="wiki-btn red"&gt;[[Página|Ir]]&lt;/span&gt;</code></td>
+            <td>Botón de contorno en píldora, alto exacto de una línea base; al pasar el cursor se rellena. Sirve envolviendo un enlace, como <code>span</code> suelto (disparador de un desplegable) o sobre un <code>&lt;a&gt;</code>. <em>Uso previsto:</em> llamadas a la acción en portada y guías.</td>
+            <td><a href="#wiki-btn">demo</a></td></tr>
+        <tr><td><code>sn-notice</code></td>
+            <td><code>&lt;div class="sn-notice"&gt;…&lt;/div&gt;</code></td>
+            <td>Aviso editorial destacado: filete carmín, fondo lavado, cuerpo pequeño. Una sola variante. <em>Uso previsto:</em> el fragmento administrable <code>Stella-Nova:Aviso</code>; disponible para cualquier página.</td>
+            <td><a href="#aviso">demo</a></td></tr>
+        <tr><td><code>sn-badge</code> (+ <code>sn-badge-nova</code> / <code>-ok</code> / <code>-warn</code> / <code>-danger</code>)</td>
+            <td><code>&lt;span class="sn-badge sn-badge-ok"&gt;Activo&lt;/span&gt;</code></td>
+            <td>Insignia breve (una palabra) con el lavado de su señal. <em>Uso previsto:</em> estado de una etapa, proyecto u observación dentro de fichas. (<code>sn-pill</code> aparece en este espécimen pero el skin aún no la define.)</td>
+            <td><a href="#insignias">demo</a></td></tr>
+        <tr><td><code>mw-customtoggle-*</code> + <code>mw-collapsible</code> · <code>title-toggle</code></td>
+            <td><code>&lt;h2&gt;&lt;span class="mw-customtoggle-x title-toggle"&gt;Título&lt;/span&gt;&lt;/h2&gt;</code> + <code>&lt;div class="mw-collapsible mw-collapsed" id="mw-customcollapsible-x"&gt;</code></td>
+            <td>Desplegables nativos de MediaWiki; el skin tiñe el disparador en carmín y, con <code>title-toggle</code> en una cabecera, añade el signo más/flecha, el filete y la apertura animada. <em>Uso previsto:</em> secciones plegables de la portada y fichas largas.</td>
+            <td>—</td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Accesibilidad e impresión</caption>
+      <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>sn-vh</code></td>
+            <td><code>&lt;span class="sn-vh"&gt;Buscar&lt;/span&gt;</code></td>
+            <td>Oculto visualmente pero presente para lectores de pantalla. <em>Uso previsto:</em> etiquetar íconos y botones sin texto visible en plantillas y fragmentos administrables.</td>
+            <td>—</td></tr>
+        <tr><td><code>noprint</code></td>
+            <td><code>&lt;div class="noprint"&gt;…&lt;/div&gt;</code></td>
+            <td>Clase estándar de MediaWiki, respetada en <code>print.css</code> y en la previsualización paginada: desaparece al imprimir o exportar a PDF. <em>Uso previsto:</em> banderolas, botones y módulos interactivos sin sentido en papel.</td>
+            <td>—</td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Palabras mágicas (no son clases: conmutan el modo de la página)</caption>
+      <thead><tr><th>Palabra</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>__PANTALLACOMPLETA__</code><br>sinónimo <code>__FULLSCREEN__</code></td>
+            <td>en cualquier lugar del wikitexto; sensible a mayúsculas</td>
+            <td>Modo lienzo: suprime cabecera, pie y portlets; queda el cuerpo y una salida mínima (isotipo, tecla Escape). El contenedor pasa de <code>.sn-paper</code> a <code>.sn-canvas</code>. <em>Uso previsto:</em> páginas con <code>canvas</code> o <code>iframe</code> a ventana completa y portadas a borde de pantalla. No oculta el título por sí sola.</td>
+            <td><a href="aplicados-diagramaciones.html">diagramaciones</a></td></tr>
+        <tr><td><code>__PAGINAANCHA__</code><br>sinónimo <code>__WIDEPAGE__</code></td>
+            <td>ídem</td>
+            <td>Marco estándar con la hoja ensanchada de la medida de lectura al ancho del conjunto (<code>body.sn-wide</code>). <em>Uso previsto:</em> tablas, grillas o grafos que no caben en la columna de lectura. Si además hay <code>__PANTALLACOMPLETA__</code>, gana pantalla completa.</td>
+            <td>—</td></tr>
+        <tr><td><code>__NOTITLE__</code> (extensión NoTitle)</td>
+            <td>ídem</td>
+            <td>Oculta el título grande. Necesaria para que una imagen <code>full-width</code> de cabecera sangre arriba sin superponerse al título.</td>
+            <td><a href="#full-width">demo</a></td></tr>
+        <tr><td><code>__TOC__</code> · <code>__NOTOC__</code> · <code>__FORCETOC__</code></td>
+            <td>ídem</td>
+            <td>Posición y presencia de la tabla de contenidos. El skin la reviste donde MediaWiki la ponga; no la reubica.</td>
+            <td>—</td></tr>
+        <tr><td><code>__NOEDITSECTION__</code></td>
+            <td>ídem</td>
+            <td>Suprime los enlaces de edición por sección. <em>Uso previsto:</em> portadas y páginas maquetadas por plantilla.</td>
+            <td>—</td></tr>
+      </tbody>
+    </table>
+
+    <table class="wikitable">
+      <caption>Reconocidas por compatibilidad (no las escribe el editor) y retiradas</caption>
+      <thead><tr><th>Clase</th><th>Origen</th><th>Estado</th><th>Ver</th></tr></thead>
+      <tbody>
+        <tr><td><code>poem</code></td><td>extensión Poem (<code>&lt;poem&gt;</code>)</td>
+            <td>Reconocida: toma la familia de contraste (<code>--sn-font-quote</code>) como <code>blockquote</code>.</td>
+            <td>—</td></tr>
+        <tr><td><code>external</code> · <code>thumb</code> · <code>thumbcaption</code> · <code>gallery</code> · <code>catlinks</code></td><td>MediaWiki</td>
+            <td>Tematizadas automáticamente; no hay que escribirlas.</td>
+            <td><a href="#thumb">thumb</a> · <a href="#galeria">galería</a></td></tr>
+        <tr><td><code>dm</code> · <code>curso-listado</code> · <code>curso-fotos</code> · tarjeta Portafolio · ficha Personal</td><td>plantillas de Casiopea</td>
+            <td>No son instrumentales: son componentes de plantilla con su propio TemplateStyles. Se muestran más arriba para iterar su diseño.</td>
+            <td>—</td></tr>
+        <tr><td><code>row</code> · <code>col-md-*</code></td><td>skin anterior (Bootstrap)</td>
+            <td><strong>Retiradas.</strong> Sin efecto. Reemplazar por <code>grid cols-N</code>.</td>
+            <td><a href="#grilla">demo</a></td></tr>
+        <tr><td><code>wiki-btn blue</code></td><td><code>Common.css</code> antiguo</td>
+            <td><strong>Retirada.</strong> Sin variable equivalente ni uso. Usar la variante por defecto, <code>red</code> o <code>green</code>.</td>
+            <td><a href="#wiki-btn">demo</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 </main>
 <footer class="spec-foot">
   <p>
     Espécimen generado por <code>scripts/build-specimen.py</code> ·
-    Stella Nova v0.9.0 ·
+    Stella Nova v0.9.1 ·
     <a href="notes.md">notes.md</a> (notas del taller de diseño) ·
     <a href="https://wiki.ead.pucv.cl">wiki.ead.pucv.cl</a>
   </p>

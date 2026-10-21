@@ -1,6 +1,6 @@
-# Stella Nova — espécimen gráfico v0.9.0
+# Stella Nova — espécimen gráfico v0.9.1
 
-Mini-sitio estático con todos los tokens, componentes y un layout simulado del
+Mini-sitio estático con todas las variables de diseño, los componentes y una diagramación simulada del
 skin **Stella Nova** para iteración con el taller de diseño.
 
 ## Cómo verlo
@@ -9,7 +9,9 @@ Abrí cualquiera de los HTML directamente en el navegador:
 
 - `index.html` — fundamentos (paleta, tipografía, escala, sombras).
 - `components.html` — componentes (botones, inputs, toolbar, etc.).
-- `layout.html` — layout completo simulado.
+- `aplicados.html` — estilos aplicados: página tipo con el marco completo.
+- `aplicados-tipografia.html`, `-grilla`, `-tablas`, `-imagenes`,
+  `-diagramaciones` — una página simulada por categoría, con sus variaciones.
 
 No necesita servidor. Las fuentes y CSS van inlinados en `assets/`.
 
