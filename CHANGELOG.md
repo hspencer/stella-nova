@@ -9,6 +9,23 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [0.9.2] — 2026-10-21
+
+### Added
+- **`.wiki-btn.grande` (alias `.lg`).** Modificador de tamaño del botón de
+  contenido: dos líneas base de alto, doble relleno horizontal, misma píldora.
+  Para llamadas a la acción que van solas (descarga, portada). Sigue en
+  retícula. Documentado con el caso «Descargar Luca» en el espécimen.
+
+### Fixed
+- **Formularios: el texto libre se achicaba al previsualizar.** La
+  previsualización en tiempo real de WikiEditor quita `rows` al textarea y
+  solo le devuelve el alto a `#wpTextbox1`; en PageForms el texto libre es
+  `#pf_free_text` y quedaba en dos filas dentro de un envoltorio de la altura
+  original. La regla upstream se generaliza en `skinStyles/wikieditor.css`.
+  Se retira de `pageforms.css` una regla muerta que apuntaba a `#free_text`
+  (PageForms 6 emite `#pf_free_text`).
+
 ## [0.9.1] — 2026-10-21
 
 ### Added

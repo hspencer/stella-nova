@@ -3182,6 +3182,17 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	border-color: var(--sn-ok);
 	color: var(--sn-nova-ink);
 }
+/* Tamaño grande (`.grande` / alias `.lg`): llamada a la acción que va SOLA
+   (portada, guía de descarga), no en medio de un párrafo. Dos líneas base de
+   alto y el doble de relleno horizontal; el radio sigue a la mitad del alto
+   para que siga siendo píldora. Sigue ON-GRID: ocupa exactamente dos
+   renglones. Se combina con .red / .green. */
+.sn-body .wiki-btn.grande,
+.sn-body .wiki-btn.lg {
+	height: calc(var(--sn-baseline) * 2);
+	padding: 0 3ex;
+	border-radius: var(--sn-baseline);
+}
 
 /* ─── Grilla / grid: framework de layout semántico para wikitexto.
    Reemplaza el patrón `.row > .col-md-*` del skin Bootstrap anterior.

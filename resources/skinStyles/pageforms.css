@@ -180,10 +180,6 @@ input.createboxInput, textarea.createboxInput, select.createboxInput,
 .pacContainer .pacItem:hover, ul.ui-autocomplete .ui-menu-item:hover {
 	background: var(--sn-nova-wash);
 }
-.pfFreeText, textarea#free_text {
-	width: 100%; min-height: 14rem;
-}
-
 /* Mensajes de validación del formulario */
 .pfFormValidationError, .errorMessage {
 	color: var(--sn-danger); font-size: var(--sn-fs-sm);

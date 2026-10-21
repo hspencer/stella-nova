@@ -1583,7 +1583,12 @@ Primer párrafo de la ficha…
 
 &lt;!-- span suelto, sin enlace (toggle): --&gt;
 &lt;span class="mw-customtoggle-x link-toggle wiki-btn green"&gt;
-  ver versión en inglés&lt;/span&gt;</pre>
+  ver versión en inglés&lt;/span&gt;
+
+&lt;!-- tamaño grande (grande / lg), para una llamada que va sola: --&gt;
+&lt;span class="wiki-btn red grande"&gt;
+  [https://github.com/mediafranca/luca/releases Descargar Luca]&lt;/span&gt;
+(disponible para Windows, Mac y Linux).</pre>
     <div class="sn-paper sn-body demo">
       <div class="demo-inline">
         <span class="wiki-btn"><a href="#">Por defecto</a></span>
@@ -1591,6 +1596,8 @@ Primer párrafo de la ficha…
         <span class="wiki-btn green"><a href="#">Verde</a></span>
         <span class="wiki-btn green">span suelto (toggle)</span>
       </div>
+      <p><span class="wiki-btn red grande"><a href="#">Descargar Luca</a></span>
+      (disponible para Windows, Mac y Linux).</p>
     </div>
   </div>
 
@@ -1609,6 +1616,14 @@ Primer párrafo de la ficha…
     igual en los tres usos y el botón no rompe la retícula, suelto o en medio de
     un párrafo. La variante <code>blue</code> se retiró (sin variable equivalente, sin uso).
     Debe vivir dentro de <code>.sn-body</code>.</p>
+    <p><strong>Más relleno.</strong> No sirve poner <code>padding</code> a mano:
+    el alto está fijado por <code>height</code>, así que el relleno vertical no
+    agranda el botón. Para una llamada a la acción que va sola (descarga,
+    portada) se agrega el modificador <code>grande</code> (alias
+    <code>lg</code>): dos líneas base de alto, doble relleno horizontal, misma
+    píldora. Sigue en retícula: ocupa exactamente dos renglones, por eso el
+    texto que lo acompaña en la misma línea se centra a esa altura. Se combina
+    con <code>red</code> o <code>green</code>.</p>
   </div>
 </section>
 
@@ -2189,9 +2204,9 @@ Archivo:C.jpg|Tercera obra
       <caption>Controles y señales dentro del contenido</caption>
       <thead><tr><th>Clase</th><th>Cómo se escribe</th><th>Qué hace · uso previsto</th><th>Ver</th></tr></thead>
       <tbody>
-        <tr><td><code>wiki-btn</code> (+ <code>red</code>, <code>green</code>)</td>
-            <td><code>&lt;span class="wiki-btn red"&gt;[[Página|Ir]]&lt;/span&gt;</code></td>
-            <td>Botón de contorno en píldora, alto exacto de una línea base; al pasar el cursor se rellena. Sirve envolviendo un enlace, como <code>span</code> suelto (disparador de un desplegable) o sobre un <code>&lt;a&gt;</code>. <em>Uso previsto:</em> llamadas a la acción en portada y guías.</td>
+        <tr><td><code>wiki-btn</code> (+ <code>red</code>, <code>green</code>; tamaño <code>grande</code> / <code>lg</code>)</td>
+            <td><code>&lt;span class="wiki-btn red"&gt;[[Página|Ir]]&lt;/span&gt;</code><br><code>&lt;span class="wiki-btn red grande"&gt;[https://… Descargar]&lt;/span&gt;</code></td>
+            <td>Botón de contorno en píldora, alto exacto de una línea base; al pasar el cursor se rellena. Sirve envolviendo un enlace, como <code>span</code> suelto (disparador de un desplegable) o sobre un <code>&lt;a&gt;</code>. Con <code>grande</code> mide dos líneas base y dobla el relleno horizontal, para una llamada que va sola. <em>Uso previsto:</em> llamadas a la acción en portada y guías.</td>
             <td><a href="#wiki-btn">demo</a></td></tr>
         <tr><td><code>sn-notice</code></td>
             <td><code>&lt;div class="sn-notice"&gt;…&lt;/div&gt;</code></td>

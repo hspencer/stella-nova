@@ -334,3 +334,20 @@ form#editform {
  * `+ext.wikiEditor.styles`, solo cargaban en wikitexto, dejando el editor de
  * CSS/JS/JSON (p. ej. `…/style.css`) sin tokenizar y roto en modo oscuro.
  * Este archivo conserva únicamente el cromo propio de WikiEditor (.wikiEditor-ui*). */
+
+/* ─── Previsualización en tiempo real + PageForms: el texto libre se achica ──
+   Al armar su botón, `ext.wikiEditor.realtimepreview` (RealtimePreview.js,
+   getToolbarButton) fija en píxeles el alto del envoltorio `.wikiEditor-ui-text`,
+   le QUITA `rows` y `cols` al textarea y le pone esta clase; el alto se lo
+   devuelve por CSS con `height:100%`… pero solo al `#wpTextbox1` del editor
+   de página. En un formulario de PageForms el texto libre es `#pf_free_text`:
+   pierde `rows` (15 → 2 por defecto del navegador) y queda chico dentro de un
+   envoltorio que sigue midiendo lo de antes. Se ve al previsualizar porque
+   recién ahí entra el módulo (la previsualización pasa por EditPage y sus
+   hooks). Generalizamos la regla upstream a cualquier textarea envuelto. */
+.wikiEditor-ui-text > .ext-WikiEditor-realtimepreview-textbox {
+	height: 100%;
+	min-height: auto;
+	max-height: none;
+	resize: none;
+}
