@@ -9,6 +9,11 @@ ajustes editoriales. La fuente de verdad del comportamiento es
 [`specs/stella-nova.allium`](specs/stella-nova.allium); cada entrada que toque
 comportamiento debería reflejarse también ahí.
 
+## [Unreleased]
+
+### Fixed
+- Imágenes normales: sin la franja de fondo de `.mw-default-size`; sus cajas y enlaces abarcan la imagen completa. Miniaturas y galerías usan fondos que cambian con el tema.
+
 ## [0.9.3] — 2026-10-21
 
 ### Added

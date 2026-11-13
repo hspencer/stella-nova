@@ -1303,6 +1303,16 @@ html[data-sn-notice-hide] .sn-notice { display: none; }
 	border-inline-width: 0;
 }
 
+/* Combinación .ancho-completo + .fondo-*: la familia .fondo-* repone
+   `padding-inline: var(--sn-paper-px)` y `padding-block: var(--sn-baseline)`
+   para que el contenido textual de una banda a sangre vuelva al ancho de
+   lectura con ritmo vertical. En un embed de con§tel el único hijo es el
+   lienzo del mapa, que debe ir a sangre completo sin padding alguno. */
+:is(.sn-paper, .sn-canvas) .constel-embed:is(.full-width, .ancho-completo):is(.fondo-ahuesado, .fondo-coral, .fondo-verde, .fondo-ambar, .fondo-info, .fondo-noche, .fondo-dia, .fondo-opuesto) {
+	padding-inline: 0;
+	padding-block: 0;
+}
+
 /* Bleed vertical de borde: cuando .full-width es el PRIMER o ÚLTIMO elemento
    del cuerpo (.sn-body), también revienta el padding vertical del paper
    y redondea las esquinas para alinearse con el border-radius del <article>.
@@ -2980,13 +2990,13 @@ details[open]::details-content { block-size: auto; opacity: 1; }
    especificidad lo justo para ganarle a los selectores del core.
    `border-color` (no `border`) preserva los `border-bottom:0`/`border-top:0`
    con que el core une imagen y leyenda en una sola tarjeta. La superficie
-   `--sn-sunk 60%` es la MISMA que usa la miniatura legacy → paridad visual
+   `--sn-paper-edge` es la MISMA que usa la miniatura legacy → paridad visual
    entre miniaturas Parsoid (figure) y de wikitexto clásico (.thumbinner). */
 
 /* Miniaturas Parsoid: <figure typeof="mw:File/Thumb|Frame"> + su leyenda. */
 .sn-body :is(figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"]),
 .sn-body :is(figure[typeof~="mw:File/Thumb"], figure[typeof~="mw:File/Frame"]) > figcaption {
-	background-color: var(--sn-papel-100);
+	background-color: var(--sn-paper-edge);
 	border: 0;
 	/* Padding parejo en los 4 lados para que la leyenda no se pegue al borde
 	   de la imagen ni a los costados de la tarjeta. */
@@ -3014,12 +3024,20 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 	content: none;
 }
 
-/* Miniaturas de wikitexto clásico (.thumbinner) y tamaños por defecto. */
-.sn-body :is(.thumbinner, .mw-default-size, figure.mw-default-size) {
-	background: var(--sn-papel-100);
+/* Miniaturas de wikitexto clásico: solo los marcos reciben fondo. */
+.sn-body .thumbinner {
+	background: var(--sn-paper-edge);
 	border: 0;
 	border-radius: var(--sn-radius-s);
 	overflow: hidden;
+}
+
+/* mw-default-size indica tamaño, no un marco; la caja debe abarcar la imagen. */
+.sn-body span[typeof~="mw:File"],
+.sn-body span[typeof~="mw:File"] > a {
+	display: inline-block;
+	max-width: 100%;
+	vertical-align: middle;
 }
 
 /* Sin filete en la imagen interna (mw-file-element / .thumbimage / border=):
@@ -3040,7 +3058,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
    `transparent`/`border:0` con mayor especificidad (0,3,3), así que esta
    regla (0,3,2) sólo viste la galería tradicional y las deja intactas. */
 .sn-body li.gallerybox div.thumb {
-	background-color: var(--sn-papel-100);
+	background-color: var(--sn-paper-edge);
 	border: 0;
 	border-radius: var(--sn-radius-s);
 	overflow: hidden;
